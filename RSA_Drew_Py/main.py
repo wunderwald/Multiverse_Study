@@ -1,0 +1,61 @@
+import os
+import numpy as np
+import pandas as pd
+from scipy.signal import convolve, detrend
+from scipy.interpolate import interp1d
+from resampled_ibi_ts import resampled_IBI_ts
+from poly_filter_data_2011 import poly_filter_data_2011
+from dyad_rsa_to_csv_file import dyad_rsa_to_csv_file
+from number_to_csv import number_to_csv
+from arr_to_csv import arr_to_csv
+
+# I/O dirs
+inputDir = "./dyadIbiData"
+outputDir = "./dyadRsaData"
+
+# clear output dirs
+for f in os.listdir(outputDir):
+    os.remove(os.path.join(outputDir, f))
+
+# get input dirs
+dyads = [d for d in os.listdir(inputDir) if os.path.isdir(os.path.join(inputDir, d))]
+
+# process dyads
+for dyad in dyads:
+    print(f"## Processing {dyad}")
+
+    # paths of IBI files
+    motherPath = os.path.join(inputDir, dyad, "ECG1", "ibi_ms.csv")
+    infantPath = os.path.join(inputDir, dyad, "ECG2", "ibi_ms.csv")
+
+    # load IBI data
+    M = pd.read_csv(motherPath).to_numpy().flatten()
+    I = pd.read_csv(infantPath).to_numpy().flatten()
+
+    # load filters
+    filt_M = pd.read_csv('adult_rsa_5Hz_cLSq.csv').to_numpy().flatten()
+    filt_I = pd.read_csv('child_RSA.csv').to_numpy().flatten()
+
+    # resamle IBI data to 5Hz
+    r_M = resampled_IBI_ts(M, 5, False)
+    r_I = resampled_IBI_ts(I, 5, False)
+
+    # get RSA/BPM and filter RSA
+    RSA_M, BPM_M = poly_filter_data_2011(r_M[:, 1], 51)
+    RSA_M_filt = convolve(RSA_M, filt_M, mode='valid')
+
+    RSA_I, BPM_I = poly_filter_data_2011(r_I[:, 1], 51)
+    RSA_I_filt = convolve(RSA_I, filt_I, mode='valid')
+
+    # interpolate filtered RSA data
+    if len(RSA_M_filt) < 2 or len(RSA_I_filt) < 2:
+        print("! Insufficient length of filtered RSA data")
+        continue
+
+    f = interp1d(np.arange(len(RSA_M_filt)), RSA_M_filt)
+    RSA_M_filt = f(np.linspace(0, len(RSA_M_filt) - 1, len(r_M)))
+
+    f = interp1d(np.arange(len(RSA_I_filt)), RSA_I_filt)
+    RSA_I_filt = f(np.linspace(0, len(RSA_I_filt) - 1, len(r_I)))
+
+ 
