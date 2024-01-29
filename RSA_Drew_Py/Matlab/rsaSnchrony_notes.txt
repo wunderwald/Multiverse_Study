@@ -1,0 +1,16 @@
+# MEASURING RSA SYNCHRONY
+
+## Idea
+
+- Calculate continuous RSA of mother and infants
+- Remove linear dependencies: substract 1st derivative from cont. rsa
+- Calculate cross-correlation between detrended signals
+- select lag-0 coefficient as measure of synchony
+	-> corellation value for phase_shift = 0
+- window sizes for calculating cont. rsa: 5, 10, 15, 20, 30 seconds
+
+## Matlab
+
+- Linear detrending: detrend(signal)
+- Cross-correlation: xcorr(x, y, maxlag) => lags in range [-maxlag, maxlag]
+
