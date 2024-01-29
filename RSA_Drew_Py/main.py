@@ -28,11 +28,7 @@ for f in os.listdir(outputDir):
 dyads = [d for d in os.listdir(inputDir) if os.path.isdir(os.path.join(inputDir, d))]
 
 # process dyads
-i=0
 for dyad in dyads:
-    if i>0: break
-    i=i+1
-
     print(f"## Processing {dyad}")
 
     # paths of IBI files
