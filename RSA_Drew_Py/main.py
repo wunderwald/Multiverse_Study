@@ -80,5 +80,3 @@ for dyad in dyads:
     dyad_rsa_to_csv_file(lv_RSA_M_fif_detrended, lv_RSA_I_fif_detrended, "detrended", dyad, outputDir)
     number_to_csv(zeroLagCoefficient, "zeroLagCoefficient", dyad, outputDir)
     arr_to_csv(ccf, "ccf", dyad, outputDir)
-
- 
