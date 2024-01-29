@@ -14,11 +14,12 @@ def dyad_rsa_to_csv_file(mother_rsa, infant_rsa, name, dyad_id, output_dir):
     output_dir (str): directory where the CSV file will be saved
 
     Returns:
-    str: Path of the saved CSV file, or an error message if lengths do not match
+    str: Path of the saved CSV file, or throws error message if lengths do not match
     """
 
     if len(mother_rsa) != len(infant_rsa):
-        return "! Lengths of mother and infant RSA do not match. Output cannot be written."
+        print("! Lengths of mother and infant RSA do not match. Output cannot be written.")
+        return
 
     df = pd.DataFrame({'motherRsa': mother_rsa, 'infantRsa': infant_rsa})
     
