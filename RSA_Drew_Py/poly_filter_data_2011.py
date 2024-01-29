@@ -1,5 +1,3 @@
-
-import numpy as np
 from scipy.signal import convolve
 from poly_v import PolyV
 
