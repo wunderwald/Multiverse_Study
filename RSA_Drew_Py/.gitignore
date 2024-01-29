@@ -1,3 +1,4 @@
 rsa_env/*
 test_data/*
 dyadIbiData/*
+*.pyc
