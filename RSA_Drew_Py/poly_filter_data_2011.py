@@ -1,7 +1,7 @@
 from scipy.signal import convolve
 from poly_v import PolyV
 
-def PolyFilterData_2011(data, poly_size):
+def poly_filter_data_2011(data, poly_size):
 
     """
     Applies a polynomial filter to the given data
