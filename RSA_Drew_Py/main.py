@@ -13,9 +13,15 @@ from arr_to_csv import arr_to_csv
 inputDir = "./dyadIbiData"
 outputDir = "./dyadRsaData"
 
-# clear output dirs
+# create output dir if it doesn't exist yet
+if not os.path.exists(outputDir):
+    os.makedirs(outputDir)
+
+# clear output dir
 for f in os.listdir(outputDir):
-    os.remove(os.path.join(outputDir, f))
+    file_path = os.path.join(outputDir, f)
+    if os.path.isfile(file_path):
+        os.remove(file_path)
 
 # get input dirs
 dyads = [d for d in os.listdir(inputDir) if os.path.isdir(os.path.join(inputDir, d))]
