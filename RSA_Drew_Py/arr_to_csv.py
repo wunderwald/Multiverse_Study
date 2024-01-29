@@ -3,16 +3,16 @@ import pandas as pd
 
 def arr_to_csv(arr, name, dyad_id, output_dir):
     """
-    Converts an array to a CSV file.
+    stores an array in a csv file
 
     Parameters:
-    arr (array-like): The array to be converted to CSV.
-    name (str): Name for the CSV header.
-    dyad_id (str): Dyad identifier to be used in the filename.
-    output_dir (str): Directory where the CSV file will be saved.
+    arr (array-like): array to be converted to CSV
+    name (str): data descriptor
+    dyad_id (str): dyad identifer
+    output_dir (str): directory where the CSV file will be saved
 
     Returns:
-    str: The path to the saved CSV file.
+    str: The path to the saved CSV file
     """
 
     df = pd.DataFrame(arr, columns=[name])
