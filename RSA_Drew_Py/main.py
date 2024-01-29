@@ -8,6 +8,7 @@ from poly_filter_data_2011 import poly_filter_data_2011
 from dyad_rsa_to_csv_file import dyad_rsa_to_csv_file
 from number_to_csv import number_to_csv
 from arr_to_csv import arr_to_csv
+from sliding_window import sliding_window_log_var
 
 # I/O dirs
 inputDir = "./dyadIbiData"
@@ -27,7 +28,11 @@ for f in os.listdir(outputDir):
 dyads = [d for d in os.listdir(inputDir) if os.path.isdir(os.path.join(inputDir, d))]
 
 # process dyads
+i=0
 for dyad in dyads:
+    if i>0: break
+    i=i+1
+
     print(f"## Processing {dyad}")
 
     # paths of IBI files
@@ -62,15 +67,31 @@ for dyad in dyads:
     RSA_M_filt = f(np.linspace(0, len(RSA_M_filt) - 1, len(r_M)))
 
     f = interp1d(np.arange(len(RSA_I_filt)), RSA_I_filt)
-    RSA_I_filt = f(np.linspace(0, len(RSA_I_filt) - 1, len(r_I)))
+    RSA_I_filt = f(np.linspace(0, len(RSA_I_filt) - 1, len(r_M)))
+
+    # calculate log of variance with sliding window
+    window_size = 74  # 15 seconds window at 5 Hz sampling rate
+    lv_RSA_M_fif = sliding_window_log_var(RSA_M_filt, window_size)
+    lv_RSA_I_fif = sliding_window_log_var(RSA_I_filt, window_size)
+
+    # Trim the results to the same length
+    min_length = min(len(lv_RSA_M_fif), len(lv_RSA_I_fif))
+    lv_RSA_M_fif = lv_RSA_M_fif[:min_length]
+    lv_RSA_I_fif = lv_RSA_I_fif[:min_length]
 
     # detrend RSA signals
-    lv_RSA_M_fif_detrended = detrend(np.log(np.var(RSA_M_filt)))
-    lv_RSA_I_fif_detrended = detrend(np.log(np.var(RSA_I_filt)))
+    lv_RSA_M_fif_detrended = detrend(lv_RSA_M_fif)
+    lv_RSA_I_fif_detrended = detrend(lv_RSA_I_fif)
 
-    # calculate cross-correlation with a specified maximum lag
+    # calculate full cross-correlation
+    ccf_full = correlate(lv_RSA_M_fif_detrended, lv_RSA_I_fif_detrended, mode='full', method='auto')
+
+    # set maximum lag
     maxlag = 1000
-    ccf = correlate(lv_RSA_M_fif_detrended, lv_RSA_I_fif_detrended, mode='full', method='auto', maxlag=maxlag)      
+    
+    # exctact ccf with maximum lag
+    num_lags = (len(ccf_full) - 1) // 2
+    ccf = ccf_full[num_lags - maxlag : num_lags + maxlag + 1]
 
     # read zero lag coefficient
     zeroLagCoefficient = ccf[len(ccf) // 2]
