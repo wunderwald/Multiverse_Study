@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
-from scipy.signal import convolve, detrend
+from scipy.signal import convolve, detrend, correlate
 from scipy.interpolate import interp1d
 from resampled_ibi_ts import resampled_IBI_ts
 from poly_filter_data_2011 import poly_filter_data_2011
@@ -57,5 +57,22 @@ for dyad in dyads:
 
     f = interp1d(np.arange(len(RSA_I_filt)), RSA_I_filt)
     RSA_I_filt = f(np.linspace(0, len(RSA_I_filt) - 1, len(r_I)))
+
+    # detrend RSA signals
+    lv_RSA_M_fif_detrended = detrend(np.log(np.var(RSA_M_filt)))
+    lv_RSA_I_fif_detrended = detrend(np.log(np.var(RSA_I_filt)))
+
+    # calculate cross-correlation with a specified maximum lag
+    maxlag = 1000
+    ccf = correlate(lv_RSA_M_fif_detrended, lv_RSA_I_fif_detrended, mode='full', method='auto', maxlag=maxlag)      
+
+    # read zero lag coefficient
+    zeroLagCoefficient = ccf[len(ccf) // 2]
+
+    # export data
+    dyad_rsa_to_csv_file(RSA_M_filt, RSA_I_filt, "raw", dyad, outputDir)
+    dyad_rsa_to_csv_file(lv_RSA_M_fif_detrended, lv_RSA_I_fif_detrended, "detrended", dyad, outputDir)
+    number_to_csv(zeroLagCoefficient, "zeroLagCoefficient", dyad, outputDir)
+    arr_to_csv(ccf, "ccf", dyad, outputDir)
 
  
