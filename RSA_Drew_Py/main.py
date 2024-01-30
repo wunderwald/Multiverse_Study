@@ -11,11 +11,9 @@ from number_to_csv import number_to_csv
 from arr_to_csv import arr_to_csv
 from sliding_window import sliding_window_log_var
 
-DEBUG = False
-
 # I/O dirs
-inputDir = "./dyadIbiData"
-outputDir = "./dyadRsaData"
+inputDir = "./dyad_ibi_data"
+outputDir = "./dyad_rsa_data"
 
 # create output dir if it doesn't exist yet
 if not os.path.exists(outputDir):
@@ -59,12 +57,6 @@ for dyad in dyads:
     RSA_I, BPM_I = poly_filter_data_2011(r_I[:, 1], 51)
     RSA_I_filt = convolve(RSA_I, filt_I, mode='valid')
 
-    if DEBUG:
-        arr_to_csv(RSA_M, "rsa_m_unfiltered", dyad, outputDir) # results are not exactly the same here (but very close), length matches
-        arr_to_csv(RSA_I, "rsa_i_unfiltered", dyad, outputDir)
-        arr_to_csv(RSA_M_filt, "rsa_m_filtered", dyad, outputDir)
-        arr_to_csv(RSA_I_filt, "rsa_i_filtered", dyad, outputDir)
-
     # interpolate filtered RSA data
     if len(RSA_M_filt) < 2 or len(RSA_I_filt) < 2:
         print("! Insufficient length of filtered RSA data")
@@ -75,37 +67,22 @@ for dyad in dyads:
     f = interp1d(np.arange(len(RSA_I_filt)), RSA_I_filt)
     RSA_I_filt_intpl = f(np.linspace(0, len(RSA_I_filt) - 1, len(r_M)))
 
-    if DEBUG:
-        arr_to_csv(RSA_M_filt_intpl, "rsa_m_filtered_interpolated", dyad, outputDir) # length matches
-        arr_to_csv(RSA_I_filt_intpl, "rsa_i_filtered_interpolated", dyad, outputDir)
-
     # calculate log of variance with sliding window
     window_size = 74  # 15 seconds window at 5 Hz sampling rate
     lv_RSA_M_fif_raw = sliding_window_log_var(RSA_M_filt_intpl, window_size)
     lv_RSA_I_fif_raw = sliding_window_log_var(RSA_I_filt_intpl, window_size)
-    if DEBUG:
-        arr_to_csv(lv_RSA_M_fif_raw, "rsa_m_window", dyad, outputDir)
-        arr_to_csv(lv_RSA_I_fif_raw, "rsa_i_window", dyad, outputDir)
 
     # Trim the results to the same length
     min_length = min(len(lv_RSA_M_fif_raw), len(lv_RSA_I_fif_raw))
     lv_RSA_M_fif = lv_RSA_M_fif_raw[:min_length]
     lv_RSA_I_fif = lv_RSA_I_fif_raw[:min_length]
-    if DEBUG:
-        arr_to_csv(lv_RSA_M_fif, "rsa_m_window_crop", dyad, outputDir) # values are super close, length matches
-        arr_to_csv(lv_RSA_I_fif, "rsa_i_window_crop", dyad, outputDir)
 
     # detrend RSA signals
     lv_RSA_M_fif_detrended = detrend(lv_RSA_M_fif)
     lv_RSA_I_fif_detrended = detrend(lv_RSA_I_fif)
-    if DEBUG:
-        arr_to_csv(lv_RSA_M_fif_detrended, "rsa_m_detrended", dyad, outputDir) # values are super close, length matches
-        arr_to_csv(lv_RSA_I_fif_detrended, "rsa_i_detrended", dyad, outputDir)
 
     # calculate full cross-correlation
     ccf_full = np.correlate(lv_RSA_M_fif_detrended, lv_RSA_I_fif_detrended, mode='full')
-    if DEBUG:
-        arr_to_csv(ccf_full, "ccf_full", dyad, outputDir)
 
     # set maximum lag
     maxlag = 1000
