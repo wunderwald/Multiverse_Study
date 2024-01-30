@@ -10,7 +10,7 @@ from number_to_csv import number_to_csv
 from arr_to_csv import arr_to_csv
 from sliding_window import sliding_window_log_var
 
-DEBUG = True
+DEBUG = False
 
 # I/O dirs
 inputDir = "./dyadIbiData"
@@ -49,19 +49,15 @@ for dyad in dyads:
     r_M = resampled_IBI_ts(M, 5, False)
     r_I = resampled_IBI_ts(I, 5, False)
 
-    if DEBUG:
-        arr_to_csv(r_M[:, 1], "resampled_mother", dyad, outputDir)
-        arr_to_csv(r_I[:, 1], "resampled_infant", dyad, outputDir)
-
     # get RSA/BPM and filter RSA
-    RSA_M, BPM_M = poly_filter_data_2011(r_M[:, 1], 51)
+    RSA_M, BPM_M = poly_filter_data_2011(r_M[:, 1], 51) 
     RSA_M_filt = convolve(RSA_M, filt_M, mode='valid')
 
     RSA_I, BPM_I = poly_filter_data_2011(r_I[:, 1], 51)
     RSA_I_filt = convolve(RSA_I, filt_I, mode='valid')
 
     if DEBUG:
-        arr_to_csv(RSA_M, "rsa_m_unfiltered", dyad, outputDir)
+        arr_to_csv(RSA_M, "rsa_m_unfiltered", dyad, outputDir) # results are not exactly the same here (but very close), length matches
         arr_to_csv(RSA_I, "rsa_i_unfiltered", dyad, outputDir)
         arr_to_csv(RSA_M_filt, "rsa_m_filtered", dyad, outputDir)
         arr_to_csv(RSA_I_filt, "rsa_i_filtered", dyad, outputDir)
@@ -77,7 +73,7 @@ for dyad in dyads:
     RSA_I_filt_intpl = f(np.linspace(0, len(RSA_I_filt) - 1, len(r_M)))
 
     if DEBUG:
-        arr_to_csv(RSA_M_filt_intpl, "rsa_m_filtered_interpolated", dyad, outputDir)
+        arr_to_csv(RSA_M_filt_intpl, "rsa_m_filtered_interpolated", dyad, outputDir) # length matches
         arr_to_csv(RSA_I_filt_intpl, "rsa_i_filtered_interpolated", dyad, outputDir)
 
     # calculate log of variance with sliding window
@@ -93,14 +89,14 @@ for dyad in dyads:
     lv_RSA_M_fif = lv_RSA_M_fif_raw[:min_length]
     lv_RSA_I_fif = lv_RSA_I_fif_raw[:min_length]
     if DEBUG:
-        arr_to_csv(lv_RSA_M_fif, "rsa_m_window_crop", dyad, outputDir)
+        arr_to_csv(lv_RSA_M_fif, "rsa_m_window_crop", dyad, outputDir) # values are super close, length matches
         arr_to_csv(lv_RSA_I_fif, "rsa_i_window_crop", dyad, outputDir)
 
     # detrend RSA signals
     lv_RSA_M_fif_detrended = detrend(lv_RSA_M_fif)
     lv_RSA_I_fif_detrended = detrend(lv_RSA_I_fif)
     if DEBUG:
-        arr_to_csv(lv_RSA_M_fif_detrended, "rsa_m_detrended", dyad, outputDir)
+        arr_to_csv(lv_RSA_M_fif_detrended, "rsa_m_detrended", dyad, outputDir) # values are super close, length matches
         arr_to_csv(lv_RSA_I_fif_detrended, "rsa_i_detrended", dyad, outputDir)
 
     # calculate full cross-correlation
