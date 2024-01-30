@@ -33,13 +33,13 @@ def generate_ibi_sequence(num_samples, base_ibi, freq_bands, freq_weights):
     # Iterate over each frequency band
     for freq, weight in zip(freq_bands, freq_weights):
         # Calculate the sine wave for this frequency
-        sine_wave = (np.sin(2 * np.pi * freq * times / 1000) + 1.001) * .5
+        sine_wave = (np.sin(2 * np.pi * freq * times / 1000)) * 1/64
 
         # Scale the sine wave by its weight
         scaled_sine_wave = sine_wave * weight
 
         # Multiply the IBI sequence by the scaled sine wave (1 + value) to adjust the base IBI
-        ibi_sequence *= scaled_sine_wave
+        ibi_sequence *= (1 + scaled_sine_wave)
 
     return ibi_sequence
 
