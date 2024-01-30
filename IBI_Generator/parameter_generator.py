@@ -15,9 +15,9 @@ def generate_ibi_params():
     - High Frequency (HF): 6 bands between 0.15 Hz and 0.4 Hz
 
     The weights are assigned randomly within specified ranges for each band:
-    - VLF weights: 0.1 to 0.5
-    - LF weights: 0.5 to 1.5
-    - HF weights: 0.5 to 1.5
+    - VLF weights: 0.1 to 1.0
+    - LF weights: 0.04 to 0.4
+    - HF weights: 0.02 to 0.2
     """
 
     # Set number of bands per frequency division
@@ -35,9 +35,9 @@ def generate_ibi_params():
     freq_bands = np.concatenate((vlf_bands, lf_bands, hf_bands))
 
     # Assign weights to each band
-    vlf_weights = np.random.uniform(0.1, 0.5, NUM_VLF_BANDS)
-    lf_weights = np.random.uniform(0.5, 1.5, NUM_LF_BANDS)
-    hf_weights = np.random.uniform(0.5, 1.5, NUM_HF_BANDS)
+    vlf_weights = np.random.uniform(0.1, 1.0, NUM_VLF_BANDS)
+    lf_weights = np.random.uniform(0.04, 0.4, NUM_LF_BANDS)
+    hf_weights = np.random.uniform(0.02, 0.2, NUM_HF_BANDS)
 
     # Combine all weights
     freq_weights = np.concatenate((vlf_weights, lf_weights, hf_weights))
