@@ -19,4 +19,6 @@ except ValueError as e:
 
 # TODO dyad_ibi_generator
 # return base_ibi_infant, base_ibi_adult, freq_weights_adult....
-# generate sequences for infant and adult shorten the longer sequence so that the sum difference is minimal [ or so]
+# generate sequences for infant and adult shorten the longer sequence so that the sum difference is minimal
+    
+# TODO dyad_parameter_generator -> returns objects
