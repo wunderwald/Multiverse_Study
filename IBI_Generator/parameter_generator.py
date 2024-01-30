@@ -1,6 +1,6 @@
 import numpy as np
 
-def generate_ibi_generator_params():
+def generate_ibi_params():
     """
     Generates randomized physiologically meaningful frequency bands and weights for the ibi_generator based on HRV.
 
@@ -23,6 +23,7 @@ def generate_ibi_generator_params():
     NUM_VLF_BANDS = 4
     NUM_LF_BANDS = 6
     NUM_HF_BANDS = 6
+    NUM_TOTAL_BANDS = NUM_VLF_BANDS + NUM_LF_BANDS + NUM_HF_BANDS
 
     # Randomize frequency bands within each range
     vlf_bands = np.random.uniform(0.01, 0.04, NUM_VLF_BANDS)
@@ -40,4 +41,7 @@ def generate_ibi_generator_params():
     # Combine all weights
     freq_weights = np.concatenate((vlf_weights, lf_weights, hf_weights))
 
-    return freq_bands, freq_weights
+    # Generate random phase shifts for each band
+    phase_shifts = np.random.uniform(0, 2 * np.pi, NUM_TOTAL_BANDS)
+
+    return freq_bands, freq_weights, phase_shifts
