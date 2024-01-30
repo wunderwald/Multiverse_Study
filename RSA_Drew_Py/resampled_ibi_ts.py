@@ -23,30 +23,25 @@ def resampled_IBI_ts(ibi_in, sample_freq, is_sec):
         ibi_in = ibi_in * 1000
 
     # Create a cumulative sum of the IBI data
-    time_ser = np.cumsum(ibi_in)
+    ibi_cum = np.cumsum(ibi_in)
 
     # Calculate the number of points in the resampled series
-    num_pts = int(np.ceil(time_ser[-1] / samp_interval))
+    num_pts = int(np.ceil(ibi_cum[-1] / samp_interval))
 
     # Initialize the output time series
-    time_series_out = np.zeros((num_pts - 1, 2))
-
-    marker = 0
-    prev_beat = time_ser[0]
-    next_beat = time_ser[0]
+    ibi_rs_ts = np.zeros((num_pts - 1, 2))
 
     # Resample the IBI series
+    marker = 0
+    next_beat = ibi_cum[0]
     for i in range(num_pts - 1):
-        time_series_out[i, 0] = samp_interval * (i + 1)
-        if time_series_out[i, 0] < next_beat:
-            time_series_out[i, 1] = ibi_in[marker]
+        ibi_rs_ts[i, 0] = samp_interval * (i + 1)
+        if ibi_rs_ts[i, 0] < next_beat:
+            ibi_rs_ts[i, 1] = ibi_in[marker]
         else:
-            rt_side = time_series_out[i, 0] - next_beat
+            rt_side = ibi_rs_ts[i, 0] - next_beat
             lt_side = samp_interval - rt_side
-            time_series_out[i, 1] = (rt_side / samp_interval) * ibi_in[marker + 1] + (lt_side / samp_interval) * ibi_in[marker]
+            ibi_rs_ts[i, 1] = (rt_side / samp_interval) * ibi_in[marker + 1] + (lt_side / samp_interval) * ibi_in[marker]
             marker += 1
-            prev_beat = time_ser[marker - 1]
-            next_beat = time_ser[marker]
-
-    return time_series_out
-
+            next_beat = ibi_cum[marker]
+    return ibi_rs_ts
