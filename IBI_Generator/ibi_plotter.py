@@ -27,13 +27,13 @@ def plot_dyad_ibi_sequences(adult_ibi, infant_ibi):
     """
 
     # Create a figure with two subplots (2 rows, 1 column)
-    _, axs = plt.subplots(2, 1, figsize=(12, 12))
+    _, axs = plt.subplots(2, 1, figsize=(12, 6))
 
     # Plotting the adult's IBI sequence in the first subplot
     axs[0].plot(adult_ibi, label='Adult IBI Sequence')
     axs[0].set_xlabel('Sample Index')
     axs[0].set_ylabel('IBI (ms)')
-    axs[0].set_title('Adult Inter-Beat-Interval (IBI) Sequence')
+    axs[0].set_title('Adult IBI Sequence')
     axs[0].legend()
     axs[0].grid(True)
 
@@ -41,7 +41,7 @@ def plot_dyad_ibi_sequences(adult_ibi, infant_ibi):
     axs[1].plot(infant_ibi, label='Infant IBI Sequence')
     axs[1].set_xlabel('Sample Index')
     axs[1].set_ylabel('IBI (ms)')
-    axs[1].set_title('Infant Inter-Beat-Interval (IBI) Sequence')
+    axs[1].set_title('Infant IBI Sequence')
     axs[1].legend()
     axs[1].grid(True)
 
