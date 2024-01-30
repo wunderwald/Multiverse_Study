@@ -44,3 +44,73 @@ def generate_ibi_sequence(num_samples, base_ibi, freq_bands, freq_weights, phase
 
     return ibi_sequence
 
+def generate_dyad_ibi(recording_time_s, adult_params, infant_params):
+    '''
+    Generates IBI sequences for a dyad (an adult and an infant) based on given parameters.
+
+    Parameters:
+    - recording_time_s (float): Total recording time in seconds.
+    - adult_params (dict): Dictionary of parameters for the adult's IBI sequence. 
+                           Must include 'base_ibi', 'freq_bands', 'freq_weights', and 'phase_shifts'.
+    - infant_params (dict): Dictionary of parameters for the infant's IBI sequence.
+                            Must include 'base_ibi', 'freq_bands', 'freq_weights', and 'phase_shifts'.
+
+    Returns:
+    - tuple: A tuple containing two numpy arrays, one for the adult's IBI sequence and one for the infant's IBI sequence.
+
+    Raises:
+    - ValueError: If there's an issue with the parameters or with generating the IBI sequence.
+    '''
+
+    required_keys = ['base_ibi', 'freq_bands', 'freq_weights', 'phase_shifts']
+
+    # Check for required keys in parameters
+    for key in required_keys:
+        if key not in adult_params or key not in infant_params:
+            raise ValueError(f'Missing required parameter: {key}')
+
+    # Convert recording time to milliseconds
+    recording_time_ms = recording_time_s * 1000
+
+    # Determine num_samples so that recording time is definitely exceeded
+    min_base_ibi = min(adult_params['base_ibi'], infant_params['base_ibi'])
+    num_samples = recording_time_ms // min_base_ibi * 2
+
+    try:
+        # Create IBI sequences for the dyad
+        adult_ibi_full = generate_ibi_sequence(
+            num_samples, 
+            adult_params['base_ibi'], 
+            adult_params['freq_bands'],
+            adult_params['freq_weights'],
+            adult_params['phase_shifts']
+        )
+        infant_ibi_full = generate_ibi_sequence(
+            num_samples, 
+            infant_params['base_ibi'], 
+            infant_params['freq_bands'],
+            infant_params['freq_weights'],
+            infant_params['phase_shifts']
+        )
+    except ValueError as e:
+        raise ValueError(f"Error generating IBI sequence: {e}")
+
+    # Crop adult IBI sequence to fit the recording length
+    adult_ibi = np.array([])
+    ibi_sum_adult = 0
+    for ibi_sample in adult_ibi_full:
+        ibi_sum_adult += ibi_sample
+        if ibi_sum_adult > recording_time_ms:
+            break
+        adult_ibi = np.append(adult_ibi, ibi_sample)
+
+    # Crop infant IBI sequence to fit the recording length
+    infant_ibi = np.array([])
+    ibi_sum_infant = 0
+    for ibi_sample in infant_ibi_full:
+        ibi_sum_infant += ibi_sample
+        if ibi_sum_infant > recording_time_ms:
+            break
+        infant_ibi = np.append(infant_ibi, ibi_sample)
+
+    return adult_ibi, infant_ibi

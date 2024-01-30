@@ -46,3 +46,8 @@ def generate_ibi_params():
     phase_shifts = np.random.uniform(0, 2 * np.pi, NUM_TOTAL_BANDS)
 
     return freq_bands, freq_weights, phase_shifts
+
+def generate_dyad_ibi_params():
+    '''
+    TODO
+    '''
