@@ -49,5 +49,36 @@ def generate_ibi_params():
 
 def generate_dyad_ibi_params():
     '''
-    TODO
+    Generates parameter sets for generating IBI sequences for a dyad.
+
+    Returns:
+    - tuple: A tuple containing two dictionaries, one with parameters for the adult and one for the infant.
     '''
+
+    # Define base inter-beat intervals for adult and infant in milliseconds
+    BASE_IBI_ADULT = 700  
+    BASE_IBI_INFANT = 500 
+
+    # Generate frequency bands, weights, and phase shifts for the adult
+    freq_bands_adult, freq_weights_adult, phase_shifts_adult = generate_ibi_params()
+
+    # Generate frequency bands, weights, and phase shifts for the infant
+    freq_bands_infant, freq_weights_infant, phase_shifts_infant = generate_ibi_params()
+
+    # Create a parameter dictionary for the adult
+    adult_params = {
+        'base_ibi': BASE_IBI_ADULT,
+        'freq_bands': freq_bands_adult,
+        'freq_weights': freq_weights_adult,
+        'phase_shifts': phase_shifts_adult
+    }
+
+    # Create a parameter dictionary for the infant
+    infant_params = {
+        'base_ibi': BASE_IBI_INFANT,
+        'freq_bands': freq_bands_infant,
+        'freq_weights': freq_weights_infant,
+        'phase_shifts': phase_shifts_infant
+    }
+
+    return adult_params, infant_params
