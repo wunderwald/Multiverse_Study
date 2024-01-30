@@ -1,4 +1,5 @@
 import os
+import shutil
 import numpy as np
 import pandas as pd
 from scipy.signal import convolve, detrend, correlate
@@ -25,6 +26,8 @@ for f in os.listdir(outputDir):
     file_path = os.path.join(outputDir, f)
     if os.path.isfile(file_path):
         os.remove(file_path)
+    elif os.path.isdir(file_path):
+        shutil.rmtree(file_path)
 
 # get input dirs
 dyads = [d for d in os.listdir(inputDir) if os.path.isdir(os.path.join(inputDir, d))]
@@ -114,8 +117,12 @@ for dyad in dyads:
     # read zero lag coefficient
     zeroLagCoefficient = ccf[len(ccf) // 2]
 
+    # make subdir
+    outputSubdir = os.path.join(outputDir, dyad)
+    os.makedirs(outputSubdir)
+
     # export data
-    dyad_rsa_to_csv_file(RSA_M_filt, RSA_I_filt, "raw", dyad, outputDir)
-    dyad_rsa_to_csv_file(lv_RSA_M_fif_detrended, lv_RSA_I_fif_detrended, "detrended", dyad, outputDir)
-    number_to_csv(zeroLagCoefficient, "zeroLagCoefficient", dyad, outputDir)
-    arr_to_csv(ccf, "ccf", dyad, outputDir)
+    dyad_rsa_to_csv_file(RSA_M_filt, RSA_I_filt, "raw", dyad, outputSubdir)
+    dyad_rsa_to_csv_file(lv_RSA_M_fif_detrended, lv_RSA_I_fif_detrended, "detrended", dyad, outputSubdir)
+    number_to_csv(zeroLagCoefficient, "zeroLagCoefficient", dyad, outputSubdir)
+    arr_to_csv(ccf, "ccf", dyad, outputSubdir)
