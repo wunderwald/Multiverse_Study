@@ -122,7 +122,7 @@ for dyad in dyads:
     os.makedirs(outputSubdir)
 
     # export data
-    dyad_rsa_to_csv_file(RSA_M_filt, RSA_I_filt, "raw", dyad, outputSubdir)
-    dyad_rsa_to_csv_file(lv_RSA_M_fif_detrended, lv_RSA_I_fif_detrended, "detrended", dyad, outputSubdir)
     number_to_csv(zeroLagCoefficient, "zeroLagCoefficient", dyad, outputSubdir)
     arr_to_csv(ccf, "ccf", dyad, outputSubdir)
+    dyad_rsa_to_csv_file(lv_RSA_M_fif_detrended, lv_RSA_I_fif_detrended, "detrended", dyad, outputSubdir)
+    
