@@ -1,6 +1,6 @@
 import numpy as np
 
-def generate_ibi_sequence(num_samples, base_ibi, freq_bands, freq_weights):
+def generate_ibi_sequence(num_samples, base_ibi, freq_bands, freq_weights, phase_shifts):
     """
     Generates an IBI (Inter-Beat-Interval) sequence.
 
@@ -8,7 +8,8 @@ def generate_ibi_sequence(num_samples, base_ibi, freq_bands, freq_weights):
     - num_samples (int): Number of samples in the output sequence.
     - base_ibi (float): Base inter-beat interval in milliseconds. This is used to initialize the output sequence.
     - freq_bands (array-like): An array of 16 frequencies in Hz that are used to manipulate the base_ibi sequence.
-    - freq_weights (array-like): Weights for each frequency band in the range ]0, 2].
+    - freq_weights (array-like): Weights for each frequency band.
+    - phase_shifts (array-like): An array of 16 phase shifts, one for each frequency band.
 
     Returns:
     - numpy.ndarray: An array representing the IBI sequence.
@@ -18,8 +19,8 @@ def generate_ibi_sequence(num_samples, base_ibi, freq_bands, freq_weights):
     """
 
     # Parameter checks
-    if len(freq_bands) != 16 or len(freq_weights) != 16:
-        raise ValueError("freq_bands and freq_weights must both have exactly 16 elements.")
+    if len(freq_bands) != 16 or len(freq_weights) != 16 or len(phase_shifts) != 16:
+        raise ValueError("freq_bands, freq_weights and phase_shifts must all have exactly 16 elements.")
     
     if any(weight <= 0 for weight in freq_weights):
         raise ValueError("All freq_weights must be greater than 0.")
@@ -31,9 +32,9 @@ def generate_ibi_sequence(num_samples, base_ibi, freq_bands, freq_weights):
     ibi_sequence = np.full(num_samples, base_ibi, dtype=float)
 
     # Iterate over each frequency band
-    for freq, weight in zip(freq_bands, freq_weights):
+    for freq, weight, phase_shift in zip(freq_bands, freq_weights, phase_shifts):
         # Calculate the sine wave for this frequency
-        sine_wave = (np.sin(2 * np.pi * freq * times / 1000)) * 1/64
+        sine_wave = (np.sin(2 * np.pi * freq * times / 1000 + phase_shift)) * 1/64
 
         # Scale the sine wave by its weight
         scaled_sine_wave = sine_wave * weight
