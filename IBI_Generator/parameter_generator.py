@@ -7,6 +7,7 @@ def generate_ibi_params():
     Returns:
     - freq_bands (numpy.ndarray): An array of 16 frequency bands distributed across VLF, LF, and HF ranges.
     - freq_weights (numpy.ndarray): An array of 16 weights corresponding to the frequency bands, indicating their relative importance in HRV.
+    - phase_shifts (numpy.ndarray): An array of 16 phase shifts, one for each frequency band.
 
     The frequency bands are divided and randomized as follows:
     - Very Low Frequency (VLF): 4 bands between 0.01 Hz and 0.04 Hz
