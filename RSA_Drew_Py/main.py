@@ -38,8 +38,8 @@ for dyad in dyads:
     infantPath = os.path.join(inputDir, dyad, "ECG2", "ibi_ms.csv")
 
     # load IBI data
-    M = pd.read_csv(motherPath).to_numpy().flatten()
-    I = pd.read_csv(infantPath).to_numpy().flatten()
+    M = pd.read_csv(motherPath)['ms'].to_numpy().flatten()
+    I = pd.read_csv(infantPath)['ms'].to_numpy().flatten()
 
     # load filters
     filt_M = pd.read_csv('adult_rsa_5Hz_cLSq.csv').to_numpy().flatten()
