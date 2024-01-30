@@ -1,24 +1,13 @@
-from ibi_generator import generate_ibi_sequence
-from parameter_generator import generate_ibi_params
-from ibi_plotter import plot_ibi_sequence
+from ibi_generator import generate_dyad_ibi
+from parameter_generator import generate_dyad_ibi_params
+from ibi_plotter import plot_dyad_ibi_sequences
 
-# base inter beat intervals in ms
-BASE_IBI_ADULT = 700
-BASE_IBI_INFANT = 500
+RECORDING_LENGTH_S = 500 # 5 minutes
 
-# number of samples to be generated
-NUM_SAMPLES = 100
-
-# generate ibi seqence
 try:
-    freq_bands, freq_weights, phase_shifts = generate_ibi_params()
-    ibi_sequence = generate_ibi_sequence(NUM_SAMPLES, BASE_IBI_ADULT, freq_bands, freq_weights, phase_shifts)
-    plot_ibi_sequence(ibi_sequence)
+    adult_params, infant_params = generate_dyad_ibi_params()
+    adult_ibi, infant_ibi = generate_dyad_ibi(RECORDING_LENGTH_S, adult_params, infant_params)
+    plot_dyad_ibi_sequences(adult_ibi, infant_ibi)
 except ValueError as e:
     print(e)
 
-# TODO dyad_ibi_generator
-# return base_ibi_infant, base_ibi_adult, freq_weights_adult....
-# generate sequences for infant and adult shorten the longer sequence so that the sum difference is minimal
-    
-# TODO dyad_parameter_generator -> returns objects
