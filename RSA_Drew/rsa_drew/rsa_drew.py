@@ -1,3 +1,4 @@
+import pkg_resources
 import numpy as np
 import pandas as pd
 from scipy.signal import convolve, detrend
@@ -25,8 +26,12 @@ def rsa_synchrony(mother_ibi, infant_ibi):
     """
 
     # load filters
-    filt_M = pd.read_csv('adult_rsa_5Hz_cLSq.csv').to_numpy().flatten()
-    filt_I = pd.read_csv('child_RSA.csv').to_numpy().flatten()
+    # filt_M = pd.read_csv('adult_rsa_5Hz_cLSq.csv').to_numpy().flatten()
+    # filt_I = pd.read_csv('child_RSA.csv').to_numpy().flatten()
+    filt_M_path = pkg_resources.resource_filename('rsa_drew', 'adult_rsa_5Hz_cLSq.csv')
+    filt_I_path = pkg_resources.resource_filename('rsa_drew', 'child_RSA.csv')
+    filt_M = pd.read_csv(filt_M_path).to_numpy().flatten()
+    filt_I = pd.read_csv(filt_I_path).to_numpy().flatten()
 
     # resamle IBI data to 5Hz
     r_M = resampled_IBI_ts(mother_ibi, 5, False)
