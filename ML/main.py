@@ -1,20 +1,42 @@
 import ibi_generator as ibi
 import rsa_drew as rsa
-import numpy as np
 
+# define parameter ranges for IBI generation
+PARAM_RANGES = {
+    'freq_vlf': [],
+    'freq_lf': [],
+    'freq_hf': [],
+    'weights_vlf': [],
+    'weights_lf': [],
+    'weights_hf': [],
+    'phase_shift': [],
+    'base_ibi_adult': [],
+    'base_ibi_infant': []
+}
+
+# define hyper-parameter ranges for parameter optimization
+HYPERPARAM_RANGES = {}
+
+# define constants for IBI generation
 RECORDING_TIME = 300
 
-zlcs = []
+# define constants for parameter optimization
+TARGET_ZLC = 300
 
-for i in range(100):
-    adult_params, infant_params = ibi.generate_dyad_ibi_params()
+# define objective function
+def rsa_sync_zlc(params, target_zlc):
+
+    # extract parameters
+    adult_params = params['adult']
+    infant_params = params['adult']
+
+    # generate IBIs
     adult_ibi, infant_ibi = ibi.generate_dyad_ibi(RECORDING_TIME, adult_params, infant_params)
 
-    zlc, ccf = rsa.rsa_synchrony(adult_ibi, infant_ibi)
+    # calculate synchrony
+    zlc, _ = rsa.rsa_synchrony(adult_ibi, infant_ibi)
 
-    zlcs.append(zlc)
+    # calculate error
+    err = abs(zlc - target_zlc)
 
-print(f"Min: {np.min(zlcs)}")
-print(f"Max: {np.max(zlcs)}")
-print(f"Mean: {np.mean(zlcs)}")
-print(f"Median: {np.median(zlcs)}")
+    return err
