@@ -18,10 +18,10 @@ PARAM_RANGES = {
 HYPERPARAM_RANGES = {}
 
 # define constants for IBI generation
-RECORDING_TIME = 300
+RECORDING_TIME = 300.
 
 # define constants for parameter optimization
-TARGET_ZLC = 300
+TARGET_ZLC = 300.
 
 # define objective function
 def obj_rsa_sync_zlc(params: dict, target_zlc: float):
