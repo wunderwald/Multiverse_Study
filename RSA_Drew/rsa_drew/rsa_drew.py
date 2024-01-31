@@ -9,6 +9,23 @@ from poly_filter_data_2011 import poly_filter_data_2011
 from sliding_window import sliding_window_log_var
 
 def rsa_drew(inputDir, dyad):
+    """
+    This function calculates the zero lag coefficient and the full cross-correlation function (ccf)
+    between detrended, logarithmic variances of filtered Respiratory Sinus Arrhythmia (RSA) signals 
+    from a mother-infant dyad.
+
+    Parameters:
+    - inputDir (str): Path to the directory containing IBI data files.
+    - dyad (str): Identifier for the mother-infant dyad.
+
+    Returns:
+    - zeroLagCoefficient (float): The zero lag coefficient in the cross-correlation function, indicating the degree of synchrony at zero time lag between the RSA signals.
+    - ccf (numpy.ndarray): The full cross-correlation function (limited by maxlag) between the detrended RSA signals of the mother and infant.
+
+    Raises:
+    - ValueError: If the length of filtered RSA data is insufficient for further processing.
+    """
+
      # paths of IBI files
     motherPath = os.path.join(inputDir, dyad, "ECG1", "ibi_ms.csv")
     infantPath = os.path.join(inputDir, dyad, "ECG2", "ibi_ms.csv")
@@ -68,4 +85,4 @@ def rsa_drew(inputDir, dyad):
     # read zero lag coefficient
     zeroLagCoefficient = ccf[len(ccf) // 2]
 
-    return zeroLagCoefficient
+    return zeroLagCoefficient, ccf
