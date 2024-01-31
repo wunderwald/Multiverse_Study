@@ -8,7 +8,7 @@ from resampled_ibi_ts import resampled_IBI_ts
 from poly_filter_data_2011 import poly_filter_data_2011
 from sliding_window import sliding_window_log_var
 
-def rsa_drew(inputDir, dyad):
+def rsa_synchrony(inputDir, dyad):
     """
     This function calculates the zero lag coefficient and the full cross-correlation function (ccf)
     between detrended, logarithmic variances of filtered Respiratory Sinus Arrhythmia (RSA) signals 
@@ -16,7 +16,7 @@ def rsa_drew(inputDir, dyad):
 
     Parameters:
     - inputDir (str): Path to the directory containing IBI data files.
-    - dyad (str): Identifier for the mother-infant dyad.
+    - dyad (str): Identifier for the mother-infant dyad. Must match the name of the dyads subdirectory in inputDir. Subdir must include sub-subdirectories ECG1 for the adult and ECG2 for the infant. Those must include a file 'ibi_ms.csv' with one column 'ms' with a list of IBIs in millis.
 
     Returns:
     - zeroLagCoefficient (float): The zero lag coefficient in the cross-correlation function, indicating the degree of synchrony at zero time lag between the RSA signals.
