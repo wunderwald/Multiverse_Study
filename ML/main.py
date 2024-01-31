@@ -24,7 +24,7 @@ RECORDING_TIME = 300
 TARGET_ZLC = 300
 
 # define objective function
-def rsa_sync_zlc(params, target_zlc):
+def obj_rsa_sync_zlc(params, target_zlc):
 
     # extract parameters
     adult_params = params['adult']
