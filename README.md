@@ -30,7 +30,7 @@ In the directories IBI_Generator or RSA_Drew, run `python setup.py sdist bdist_w
 
 ### Adding Exports
 
-The functions to be included in the build are defined in `__init.py__` (in the package directories of IBI_Generator and RSA_Drew)
+The functions to be included in the build are defined in `__init__.py` (in the package directories of IBI_Generator and RSA_Drew)
 
 ### Installing
 
