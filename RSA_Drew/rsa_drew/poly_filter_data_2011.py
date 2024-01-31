@@ -1,5 +1,5 @@
 from scipy.signal import convolve
-from poly_v import PolyV
+from .poly_v import PolyV
 
 def poly_filter_data_2011(data, poly_size):
 

@@ -1,12 +1,10 @@
-import os
-import shutil
 import numpy as np
 import pandas as pd
 from scipy.signal import convolve, detrend
 from scipy.interpolate import interp1d
-from resampled_ibi_ts import resampled_IBI_ts
-from poly_filter_data_2011 import poly_filter_data_2011
-from sliding_window import sliding_window_log_var
+from .resampled_ibi_ts import resampled_IBI_ts
+from .poly_filter_data_2011 import poly_filter_data_2011
+from .sliding_window import sliding_window_log_var
 
 def rsa_synchrony(mother_ibi, infant_ibi):
     """
