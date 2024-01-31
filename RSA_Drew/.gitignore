@@ -1,5 +1,5 @@
 rsa_env/*
-test_data/*
-dyad_ibi_data/*
-dyad_rsa_data/*
+*/test_data/*
+*/dyad_ibi_data/*
+*/dyad_rsa_data/*
 *.pyc
