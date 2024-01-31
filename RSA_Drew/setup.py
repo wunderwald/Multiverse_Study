@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='rsa',
+    name='rsa_drew',
     version='0.4',
     packages=find_packages(),
     package_data={'rsa_drew': ['*.csv']},
