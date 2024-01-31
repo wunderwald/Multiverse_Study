@@ -1,13 +1,13 @@
 import numpy as np
 
-def generate_ibi_sequence(num_samples, base_ibi, freq_bands, freq_weights, phase_shifts):
+def generate_ibi_sequence(num_samples, base_ibi, frequencies, freq_weights, phase_shifts):
     """
     Generates an IBI (Inter-Beat-Interval) sequence.
 
     Parameters:
     - num_samples (int): Number of samples in the output sequence.
     - base_ibi (float): Base inter-beat interval in milliseconds. This is used to initialize the output sequence.
-    - freq_bands (array-like): An array of 16 frequencies in Hz that are used to manipulate the base_ibi sequence.
+    - frequencies (array-like): An array of 16 frequencies in Hz that are used to manipulate the base_ibi sequence.
     - freq_weights (array-like): Weights for each frequency band.
     - phase_shifts (array-like): An array of 16 phase shifts, one for each frequency band.
 
@@ -15,12 +15,12 @@ def generate_ibi_sequence(num_samples, base_ibi, freq_bands, freq_weights, phase
     - numpy.ndarray: An array representing the IBI sequence.
 
     Raises:
-    - ValueError: If the length of freq_bands or freq_weights is not 16, or if any weight is <= 0.
+    - ValueError: If the length of frequencies or freq_weights is not 16, or if any weight is <= 0.
     """
 
     # Parameter checks
-    if len(freq_bands) != 16 or len(freq_weights) != 16 or len(phase_shifts) != 16:
-        raise ValueError("freq_bands, freq_weights and phase_shifts must all have exactly 16 elements.")
+    if len(frequencies) != 16 or len(freq_weights) != 16 or len(phase_shifts) != 16:
+        raise ValueError("frequencies, freq_weights and phase_shifts must all have exactly 16 elements.")
     
     if any(weight <= 0 for weight in freq_weights):
         raise ValueError("All freq_weights must be greater than 0.")
@@ -32,7 +32,7 @@ def generate_ibi_sequence(num_samples, base_ibi, freq_bands, freq_weights, phase
     ibi_sequence = np.full(num_samples, base_ibi, dtype=float)
 
     # Iterate over each frequency band
-    for freq, weight, phase_shift in zip(freq_bands, freq_weights, phase_shifts):
+    for freq, weight, phase_shift in zip(frequencies, freq_weights, phase_shifts):
         # Calculate the sine wave for this frequency
         sine_wave = (np.sin(2 * np.pi * freq * times / 1000 + phase_shift)) * 1/64
 
@@ -51,9 +51,9 @@ def generate_dyad_ibi(recording_time_s, adult_params, infant_params):
     Parameters:
     - recording_time_s (float): Total recording time in seconds.
     - adult_params (dict): Dictionary of parameters for the adult's IBI sequence. 
-                           Must include 'base_ibi', 'freq_bands', 'freq_weights', and 'phase_shifts'.
+                           Must include 'base_ibi', 'frequencies', 'freq_weights', and 'phase_shifts'.
     - infant_params (dict): Dictionary of parameters for the infant's IBI sequence.
-                            Must include 'base_ibi', 'freq_bands', 'freq_weights', and 'phase_shifts'.
+                            Must include 'base_ibi', 'frequencies', 'freq_weights', and 'phase_shifts'.
 
     Returns:
     - tuple: A tuple containing two numpy arrays, one for the adult's IBI sequence and one for the infant's IBI sequence.
@@ -62,7 +62,7 @@ def generate_dyad_ibi(recording_time_s, adult_params, infant_params):
     - ValueError: If there's an issue with the parameters or with generating the IBI sequence.
     '''
 
-    required_keys = ['base_ibi', 'freq_bands', 'freq_weights', 'phase_shifts']
+    required_keys = ['base_ibi', 'frequencies', 'freq_weights', 'phase_shifts']
 
     # Check for required keys in parameters
     for key in required_keys:
@@ -81,14 +81,14 @@ def generate_dyad_ibi(recording_time_s, adult_params, infant_params):
         adult_ibi_full = generate_ibi_sequence(
             num_samples, 
             adult_params['base_ibi'], 
-            adult_params['freq_bands'],
+            adult_params['frequencies'],
             adult_params['freq_weights'],
             adult_params['phase_shifts']
         )
         infant_ibi_full = generate_ibi_sequence(
             num_samples, 
             infant_params['base_ibi'], 
-            infant_params['freq_bands'],
+            infant_params['frequencies'],
             infant_params['freq_weights'],
             infant_params['phase_shifts']
         )
