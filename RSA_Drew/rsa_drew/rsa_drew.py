@@ -8,16 +8,16 @@ from resampled_ibi_ts import resampled_IBI_ts
 from poly_filter_data_2011 import poly_filter_data_2011
 from sliding_window import sliding_window_log_var
 
-def rsa_synchrony(inputDir, dyad):
+def rsa_synchrony(mother_ibi, infant_ibi):
     """
     This function calculates the zero lag coefficient and the full cross-correlation function (ccf)
     between detrended, logarithmic variances of filtered Respiratory Sinus Arrhythmia (RSA) signals 
     from a mother-infant dyad.
 
     Parameters:
-    - inputDir (str): Path to the directory containing IBI data files.
-    - dyad (str): Identifier for the mother-infant dyad. Must match the name of the dyads subdirectory in inputDir. Subdir must include sub-subdirectories ECG1 for the adult and ECG2 for the infant. Those must include a file 'ibi_ms.csv' with one column 'ms' with a list of IBIs in millis.
-
+    - mother_ibi (array-like): list of mother's IBIs in ms
+    - infant_ibi (array-like): list of infant's IBIs in ms
+    
     Returns:
     - zeroLagCoefficient (float): The zero lag coefficient in the cross-correlation function, indicating the degree of synchrony at zero time lag between the RSA signals.
     - ccf (numpy.ndarray): The full cross-correlation function (limited by maxlag) between the detrended RSA signals of the mother and infant.
@@ -26,21 +26,13 @@ def rsa_synchrony(inputDir, dyad):
     - ValueError: If the length of filtered RSA data is insufficient for further processing.
     """
 
-     # paths of IBI files
-    motherPath = os.path.join(inputDir, dyad, "ECG1", "ibi_ms.csv")
-    infantPath = os.path.join(inputDir, dyad, "ECG2", "ibi_ms.csv")
-
-    # load IBI data
-    M = pd.read_csv(motherPath)['ms'].to_numpy().flatten()
-    I = pd.read_csv(infantPath)['ms'].to_numpy().flatten()
-
     # load filters
     filt_M = pd.read_csv('adult_rsa_5Hz_cLSq.csv').to_numpy().flatten()
     filt_I = pd.read_csv('child_RSA.csv').to_numpy().flatten()
 
     # resamle IBI data to 5Hz
-    r_M = resampled_IBI_ts(M, 5, False)
-    r_I = resampled_IBI_ts(I, 5, False)
+    r_M = resampled_IBI_ts(mother_ibi, 5, False)
+    r_I = resampled_IBI_ts(infant_ibi, 5, False)
 
     # get RSA/BPM and filter RSA
     RSA_M, BPM_M = poly_filter_data_2011(r_M[:, 1], 51) 
