@@ -1,5 +1,0 @@
-setup.py
-ibi_gen.egg-info/PKG-INFO
-ibi_gen.egg-info/SOURCES.txt
-ibi_gen.egg-info/dependency_links.txt
-ibi_gen.egg-info/top_level.txt
