@@ -5,7 +5,7 @@ def generate_ibi_params():
     Generates randomized physiologically meaningful frequency bands and weights for the ibi_generator based on HRV.
 
     Returns:
-    - freq_bands (numpy.ndarray): An array of 16 frequency bands distributed across VLF, LF, and HF ranges.
+    - frequencies (numpy.ndarray): An array of 16 frequency bands distributed across VLF, LF, and HF ranges.
     - freq_weights (numpy.ndarray): An array of 16 weights corresponding to the frequency bands, indicating their relative importance in HRV.
     - phase_shifts (numpy.ndarray): An array of 16 phase shifts, one for each frequency band.
 
@@ -29,7 +29,7 @@ def generate_ibi_params():
     hf_bands = np.random.uniform(0.15, 0.4, NUM_HF_BANDS)
 
     # Combine all frequency bands
-    freq_bands = np.concatenate((vlf_bands, lf_bands, hf_bands))
+    frequencies = np.concatenate((vlf_bands, lf_bands, hf_bands))
 
     # Assign weights to each band
     vlf_weights = np.random.uniform(0.015, 1.0, NUM_VLF_BANDS)
@@ -42,7 +42,7 @@ def generate_ibi_params():
     # Generate random phase shifts for each band
     phase_shifts = np.random.uniform(0, 2 * np.pi, NUM_TOTAL_BANDS)
 
-    return freq_bands, freq_weights, phase_shifts
+    return frequencies, freq_weights, phase_shifts
 
 def generate_dyad_ibi_params():
     '''
@@ -57,15 +57,15 @@ def generate_dyad_ibi_params():
     BASE_IBI_INFANT = 500 
 
     # Generate frequency bands, weights, and phase shifts for the adult
-    freq_bands_adult, freq_weights_adult, phase_shifts_adult = generate_ibi_params()
+    frequencies_adult, freq_weights_adult, phase_shifts_adult = generate_ibi_params()
 
     # Generate frequency bands, weights, and phase shifts for the infant
-    freq_bands_infant, freq_weights_infant, phase_shifts_infant = generate_ibi_params()
+    frequencies_infant, freq_weights_infant, phase_shifts_infant = generate_ibi_params()
 
     # Create a parameter dictionary for the adult
     adult_params = {
         'base_ibi': BASE_IBI_ADULT,
-        'freq_bands': freq_bands_adult,
+        'frequencies': frequencies_adult,
         'freq_weights': freq_weights_adult,
         'phase_shifts': phase_shifts_adult
     }
@@ -73,7 +73,7 @@ def generate_dyad_ibi_params():
     # Create a parameter dictionary for the infant
     infant_params = {
         'base_ibi': BASE_IBI_INFANT,
-        'freq_bands': freq_bands_infant,
+        'frequencies': frequencies_infant,
         'freq_weights': freq_weights_infant,
         'phase_shifts': phase_shifts_infant
     }
