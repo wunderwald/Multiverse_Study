@@ -8,7 +8,7 @@ DO_PLOT = True
 DO_EXPORT = False
 ITERATIONS = 1
 
-RECORDING_LENGTH_S = 500  # 5 minutes
+RECORDING_LENGTH_S = 300  # 5 minutes
 OUTPUT_DIR = './dyad_ibi_data'
 
 def save_ibi_to_csv(ibi_sequence, directory, filename):
