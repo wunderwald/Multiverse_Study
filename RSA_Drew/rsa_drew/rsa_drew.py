@@ -26,8 +26,6 @@ def rsa_synchrony(mother_ibi, infant_ibi):
     """
 
     # load filters
-    # filt_M = pd.read_csv('adult_rsa_5Hz_cLSq.csv').to_numpy().flatten()
-    # filt_I = pd.read_csv('child_RSA.csv').to_numpy().flatten()
     filt_M_path = pkg_resources.resource_filename('rsa_drew', 'adult_rsa_5Hz_cLSq.csv')
     filt_I_path = pkg_resources.resource_filename('rsa_drew', 'child_RSA.csv')
     filt_M = pd.read_csv(filt_M_path).to_numpy().flatten()
@@ -38,10 +36,10 @@ def rsa_synchrony(mother_ibi, infant_ibi):
     r_I = resampled_IBI_ts(infant_ibi, 5, False)
 
     # get RSA/BPM and filter RSA
-    RSA_M, BPM_M = poly_filter_data_2011(r_M[:, 1], 51) 
+    RSA_M, BPM_M = poly_filter_data_2011(r_M[:, 1], 51, True) 
     RSA_M_filt = convolve(RSA_M, filt_M, mode='valid')
 
-    RSA_I, BPM_I = poly_filter_data_2011(r_I[:, 1], 51)
+    RSA_I, BPM_I = poly_filter_data_2011(r_I[:, 1], 51, True)
     RSA_I_filt = convolve(RSA_I, filt_I, mode='valid')
 
     # interpolate filtered RSA data
