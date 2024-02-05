@@ -38,6 +38,3 @@ for dyad in dyads:
     zcl, ccf = rsa.rsa_synchrony(M, I, True)
 
     print(zcl)
-    
-
-    # add data exporters to export

@@ -4,6 +4,7 @@ import pandas as pd
 import os
 import time
 from scipy.signal import convolve, detrend
+from oct2py import Oct2Py
 from scipy.interpolate import interp1d
 from .resampled_ibi_ts import resampled_IBI_ts
 from .poly_filter_data_2011 import poly_filter_data_2011
@@ -11,7 +12,7 @@ from .sliding_window import sliding_window_log_var
 from .number_to_csv import number_to_csv
 from .arr_to_csv import arr_to_csv
 
-def rsa_synchrony(mother_ibi, infant_ibi, export_steps=False):
+def rsa_synchrony(mother_ibi, infant_ibi, export_steps=False, use_octave=False, octave_instance=None):
     """
     This function calculates the zero lag coefficient and the full cross-correlation function (ccf)
     between detrended, logarithmic variances of filtered Respiratory Sinus Arrhythmia (RSA) signals 
@@ -21,6 +22,8 @@ def rsa_synchrony(mother_ibi, infant_ibi, export_steps=False):
     - mother_ibi (array-like): list of mother's IBIs in ms
     - infant_ibi (array-like): list of infant's IBIs in ms
     - export_steps (bool): export data at each processing step
+    - use_octave (bool): use octave instance for convolution
+    - octave_instance (Oct2Py): instance of octave created by Oct2Py()
     
     Returns:
     - zeroLagCoefficient (float): The zero lag coefficient in the cross-correlation function, indicating the degree of synchrony at zero time lag between the RSA signals.
@@ -29,6 +32,10 @@ def rsa_synchrony(mother_ibi, infant_ibi, export_steps=False):
     Raises:
     - ValueError: If the length of filtered RSA data is insufficient for further processing.
     """
+    # optionally create octave instance
+    if use_octave and not octave_instance:
+        octave_instance = Oct2Py()
+
     # export directories for export_steps
     export_dir = './log'
     if not os.path.exists(export_dir):
@@ -53,10 +60,10 @@ def rsa_synchrony(mother_ibi, infant_ibi, export_steps=False):
         arr_to_csv(r_I[:, 1], 'r_I', export_ts, export_subdir)
 
     # get RSA/BPM and filter RSA
-    RSA_M, BPM_M = poly_filter_data_2011(r_M[:, 1], 51, True) 
+    RSA_M, BPM_M = poly_filter_data_2011(r_M[:, 1], 51, True, True, octave_instance) 
     RSA_M_filt = convolve(RSA_M, filt_M, mode='valid')
 
-    RSA_I, BPM_I = poly_filter_data_2011(r_I[:, 1], 51, True)
+    RSA_I, BPM_I = poly_filter_data_2011(r_I[:, 1], 51, True, True, octave_instance)
     RSA_I_filt = convolve(RSA_I, filt_I, mode='valid')
 
     # optionally export data
