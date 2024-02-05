@@ -39,3 +39,5 @@ for dyad in dyads:
 
     print(zcl)
     
+
+    # add data exporters to export
