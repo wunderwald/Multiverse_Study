@@ -11,6 +11,7 @@ from .poly_filter_data_2011 import poly_filter_data_2011
 from .sliding_window import sliding_window_log_var
 from .number_to_csv import number_to_csv
 from .arr_to_csv import arr_to_csv
+from .octave_conv import octave_convolution_valid
 
 def rsa_synchrony(mother_ibi, infant_ibi, export_steps=False, use_octave=False, octave_instance=None):
     """
@@ -61,10 +62,10 @@ def rsa_synchrony(mother_ibi, infant_ibi, export_steps=False, use_octave=False, 
 
     # get RSA/BPM and filter RSA
     RSA_M, BPM_M = poly_filter_data_2011(r_M[:, 1], 51, True, True, octave_instance) 
-    RSA_M_filt = convolve(RSA_M, filt_M, mode='valid') if not use_octave else octave_instance.conv(RSA_M, filt_M)
+    RSA_M_filt = convolve(RSA_M, filt_M, mode='valid') if not use_octave else octave_convolution_valid(RSA_M, filt_M, octave_instance)
 
     RSA_I, BPM_I = poly_filter_data_2011(r_I[:, 1], 51, True, True, octave_instance)
-    RSA_I_filt = convolve(RSA_I, filt_I, mode='valid') if not use_octave else octave_instance.conv(RSA_I, filt_I)
+    RSA_I_filt = convolve(RSA_I, filt_I, mode='valid') if not use_octave else octave_convolution_valid(RSA_I, filt_I, octave_instance)
 
     # optionally export data
     if export_steps:

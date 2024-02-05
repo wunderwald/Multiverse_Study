@@ -3,6 +3,10 @@ import os
 import shutil
 import pandas as pd
 import rsa_drew as rsa
+from oct2py import Oct2Py
+
+# make octave instance
+octave_instance = Oct2Py()
 
 # I/O dirs
 inputDir = '../RSA_Drew/rsa_drew/dyad_ibi_data'
@@ -35,6 +39,11 @@ for dyad in dyads:
     M = pd.read_csv(motherPath)['ms'].to_numpy().flatten()
     I = pd.read_csv(infantPath)['ms'].to_numpy().flatten()
 
-    zcl, ccf = rsa.rsa_synchrony(M, I, True)
+    zcl, ccf = rsa.rsa_synchrony(
+        mother_ibi=M, 
+        infant_ibi=I, 
+        export_steps=True,
+        use_octave=True,
+        octave_instance=octave_instance)
 
     print(zcl)

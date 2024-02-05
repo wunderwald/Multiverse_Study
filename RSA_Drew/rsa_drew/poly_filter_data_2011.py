@@ -1,6 +1,8 @@
 from scipy.signal import convolve
-from .poly_v import PolyV, PRE_CALCULATED_DEG_3_SIZE_51
 from oct2py import Oct2Py
+from .poly_v import PolyV, PRE_CALCULATED_DEG_3_SIZE_51
+from .octave_conv import octave_convolution_valid
+
 
 def poly_filter_data_2011(data, poly_size=51, pre_calc_filter=True, use_octave=False, octave_instance=None):
     """
@@ -21,7 +23,7 @@ def poly_filter_data_2011(data, poly_size=51, pre_calc_filter=True, use_octave=F
         octave_instance = Oct2Py()
 
     polynomial = PRE_CALCULATED_DEG_3_SIZE_51 if pre_calc_filter else PolyV(3, poly_size) 
-    trend = convolve(data, polynomial, mode='valid') if not use_octave else octave_instance.conv(data, polynomial)
+    trend = convolve(data, polynomial, mode='valid') if not use_octave else octave_convolution_valid(data, polynomial, octave_instance)
     filtered_data = data[len(polynomial) // 2: len(data) - len(polynomial) // 2] - trend
 
     return filtered_data, trend
