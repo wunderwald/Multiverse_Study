@@ -47,8 +47,8 @@ def obj_rsa_sync_zlc(params: dict, target_zlc: float):
     # TODO test if parameters are in range, return float('inf') on fail
 
     # extract parameters
-    adult_params = params['adult']
-    infant_params = params['adult']
+    adult_params = None
+    infant_params = None
 
     try:
         # generate IBIs
