@@ -11,11 +11,11 @@ def octave_convolution_valid(a, b, octave_instance):
     Returns
     array: convolution result
     '''
-    res = octave_instance.conv(a, b)
-    
-    start_index = max(len(a), len(b)) - 1
+    res = octave_instance.conv(a, b)[0]
+
+    start_index = min(len(a), len(b)) - 1
     end_index = -min(len(a), len(b)) + 1
 
-    if end_index <= 0:
+    if end_index == 0:
         return res[start_index:]
     return res[start_index:end_index]
