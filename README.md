@@ -34,4 +34,8 @@ The functions to be included in the build are defined in `__init__.py` (in the p
 
 ### Installing
 
-In the ML package, install the builds of the other packages using `pip install ../RSA_Drew/dist/rsa-0.5-py3-none-any.whl --force-reinstall` (for example)
+In the ML package, install the builds of the other packages using `pip install ../RSA_Drew/dist/rsa-<VERSION>-py3-none-any.whl [--force-reinstall]` (for example)
+
+## DEPENDENCIES
+
+GNU Octave can be used for convolution results that are numerically closer to MATLAB. If desired, make sure Octave is locally installed.
