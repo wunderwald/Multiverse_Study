@@ -61,10 +61,10 @@ def rsa_synchrony(mother_ibi, infant_ibi, export_steps=False, use_octave=False, 
 
     # get RSA/BPM and filter RSA
     RSA_M, BPM_M = poly_filter_data_2011(r_M[:, 1], 51, True, True, octave_instance) 
-    RSA_M_filt = convolve(RSA_M, filt_M, mode='valid')
+    RSA_M_filt = convolve(RSA_M, filt_M, mode='valid') if not use_octave else octave_instance.conv(RSA_M, filt_M)
 
     RSA_I, BPM_I = poly_filter_data_2011(r_I[:, 1], 51, True, True, octave_instance)
-    RSA_I_filt = convolve(RSA_I, filt_I, mode='valid')
+    RSA_I_filt = convolve(RSA_I, filt_I, mode='valid') if not use_octave else octave_instance.conv(RSA_I, filt_I)
 
     # optionally export data
     if export_steps:
