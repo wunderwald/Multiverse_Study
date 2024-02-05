@@ -35,7 +35,7 @@ for dyad in dyads:
     M = pd.read_csv(motherPath)['ms'].to_numpy().flatten()
     I = pd.read_csv(infantPath)['ms'].to_numpy().flatten()
 
-    zcl, ccf = rsa.rsa_synchrony(M, I)
+    zcl, ccf = rsa.rsa_synchrony(M, I, True)
 
     print(zcl)
     
