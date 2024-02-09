@@ -1,14 +1,13 @@
 '''
 ### NEXT STEPS ###
 
-- add frequency band id (vlf, lf, hf) to keys in initialize_individual OR replace dics by np.arrays (facilitates actually everything a LOT)
-- implement crossover functions
-- implement mutation function
-- implement apply_limits
+- [initialize_individual: replace dics by np.arrays (facilitates actually everything a LOT)]
+- therefore: upate extract_ibi_params / create param_dict_to_array and param_array_to_dict
+- implement crossover functions (using array params)
+- implement mutation function (using array params)
+- implement apply_limits (using array params, also create ranges to array_of_ranges function)
 - add documentation
-
 '''
-
 
 import numpy as np
 import genetic as gen
