@@ -119,7 +119,7 @@ def evaluate_fitness_individual(individual: dict, target_zlc: float, distance_me
     Parameters:
     - individual (dict): key-value pairs for the 98 parameters for dyad IBI generator (see README for details)
     - target_zlc (float): target zero-lag coefficient
-    - distance_metric (str): distance metric for calculating difference between measured and optimal zlc (currently supported: 'euclidian')
+    - distance_metric (str): distance metric for calculating difference between measured and optimal zlc (currently supported: 'abs')
 
     Returns:
     - fitness (float): the absolute difference between calculated and target ZLC, float('inf') on exception
@@ -141,10 +141,10 @@ def evaluate_fitness_individual(individual: dict, target_zlc: float, distance_me
 
         # calculate fitness
         match distance_metric:
-            # euclidian distance
-            case 'euclidian':
+            # absolute distance
+            case 'abs':
                 return abs(zlc - target_zlc)
-            # default case (euclidian)
+            # default case (abs)
             case _:
                 return abs(zlc - target_zlc)
     
@@ -201,9 +201,13 @@ def select_parents(population: np.array, fitness: np.array):
 def crossover(parents: np.array, crossover_method: str):
     '''
     TODO: documentation
+    Options:
+    - arithmetic
+    - blend / blx-alpha
     '''
     offspring_size = parents.shape[0]
-    # create random key order for each generation before crossover
+    
+    # make sure that params remain in range!
     return
 
 def mutate(offspring: np.array):
