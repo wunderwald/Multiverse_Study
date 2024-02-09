@@ -1,3 +1,14 @@
+'''
+### NEXT STEPS ###
+
+- implement crossover functions
+- implement mutation function
+- implement apply_limits
+- add documentation
+
+'''
+
+
 import numpy as np
 import genetic as gen
 
@@ -22,7 +33,6 @@ best_fitness = np.min(fitness)
 
 # export data
 # TODO write best individuals to database
-
 
 '''
 Open for experimentation:
