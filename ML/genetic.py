@@ -27,9 +27,6 @@ rng_weights_lf = [0.004, 0.4]
 rng_weights_hf = [0.002, 0.2]
 rng_phase_shift = [0, 2 * np.pi]
 
-# constants for parameter optimization
-TARGET_ZLC = 300
-
 # ---------------------------
 # GENETIC ALGORITHM FUNCTIONS
 # ---------------------------
@@ -114,13 +111,14 @@ def extract_ibi_params(individual: dict):
 
 
 
-def evaluate_fitness_individual(individual: dict, distance_metric: str='euclidian'):
+def evaluate_fitness_individual(individual: dict, target_zlc: float, distance_metric: str='euclidian'):
     '''
     Calculating RSA synchrony measured as the zero-lag coefficient (zlc) of RSA cross-correlation.
     Fitness is the deviation of the measured zcl from the target zlc based on the selected distance metric.
 
     Parameters:
     - individual (dict): key-value pairs for the 98 parameters for dyad IBI generator (see README for details)
+    - target_zlc (float): target zero-lag coefficient
     - distance_metric (str): distance metric for calculating difference between measured and optimal zlc (currently supported: 'euclidian')
 
     Returns:
@@ -145,27 +143,28 @@ def evaluate_fitness_individual(individual: dict, distance_metric: str='euclidia
         match distance_metric:
             # euclidian distance
             case 'euclidian':
-                return abs(zlc - TARGET_ZLC)
+                return abs(zlc - target_zlc)
             # default case (euclidian)
             case _:
-                return abs(zlc - TARGET_ZLC)
+                return abs(zlc - target_zlc)
     
     # return infinity on exception
     except ValueError:
         return float('inf')
     
-def evaluate_fitness(population: np.array, distance_metric: str='euclidian'):
+def evaluate_fitness(population: np.array, target_zlc: float, distance_metric: str='euclidian'):
     '''
     Evaluate the fitness of the whole population (using deviation from ideal zero-lag coefficient of RSA cross-correlation as metric).
     
     Parameters:
     - population (np.array): the current population represented as an array of parameter dicts
+    - target_zlc (float): target zero-lag coefficient
     - distance_metric (str): distance metric for calculating difference between measured and target zlc (currently supported: 'euclidian')
 
     Returns:
     - fitness (np.array): fitness value for each individual
     '''
-    return [evaluate_fitness_individual(individual, distance_metric) for individual in population]
+    return [evaluate_fitness_individual(individual, target_zlc, distance_metric) for individual in population]
     
 def select_parents(population: np.array, fitness: np.array, num_parents: int):
     '''
@@ -197,14 +196,14 @@ def succession(population: np.array, distance_metric: str, crossover_method: str
 
 
 # main function: run genetic evolution
-def evolution(population_size: int, max_num_generations: int, fitness_thresh: float, distance_metric: str, crossover_method: str):
+def evolution(population_size: int, max_num_generations: int, fitness_thresh: float, target_zlc: float, distance_metric: str, crossover_method: str):
     '''
     TODO: documentation
     '''
     
     # initialize population and fitness
     population = initialize_population(population_size)
-    fitness = evaluate_fitness(population, distance_metric)
+    fitness = evaluate_fitness(population, target_zlc, distance_metric)
 
     # iterate over generations
     for generation_index in range(max_num_generations):
@@ -213,7 +212,7 @@ def evolution(population_size: int, max_num_generations: int, fitness_thresh: fl
         population = succession(population, distance_metric, crossover_method)
 
         # calculate fitness
-        fitness = evaluate_fitness(population)
+        fitness = evaluate_fitness(population, target_zlc, distance_metric)
         best_fitness = np.min(fitness)        
 
         # inform about fitness state
@@ -224,4 +223,4 @@ def evolution(population_size: int, max_num_generations: int, fitness_thresh: fl
         if best_fitness < fitness_thresh:
             break
 
-    return zip(population, fitness)
+    return population, fitness
