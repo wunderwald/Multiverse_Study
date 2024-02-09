@@ -5,6 +5,7 @@
 - therefore: upate extract_ibi_params / create param_dict_to_array and param_array_to_dict
 - implement crossover functions (using array params)
 - implement mutation function (using array params)
+- implement log difference (and further methods)
 - implement apply_limits (using array params, also create ranges to array_of_ranges function)
 - add documentation
 '''
