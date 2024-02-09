@@ -1,5 +1,21 @@
+import numpy as np
 import genetic as gen
 
-# goal: have one function gen.optimize_genetic(*hyperparams) that returns given number of best individuals / arr induvidual with fitness under threshold
+# set hyper-parameters
+POPULATION_SIZE = 1000
+MAX_NUM_GENERATIONS = 100
+FITNESS_THRESH = .01
+DISTANCE_METRIC = 'euclidian'
+CROSSOVER_METHOD = None
+TARGET_ZLC = 300.0
 
-# hyperparams: popsize, maxgenerations, fitness_threshold (threshold that implies convergence, algorithm stops here), distance_metric, crossover_method, selection, mutation
+# run genetic evolution algorithm
+final_population, fitness = gen.evolution(
+    population_size=POPULATION_SIZE,
+    max_num_generations=MAX_NUM_GENERATIONS,
+    fitness_thresh=FITNESS_THRESH,
+    target_zlc=TARGET_ZLC,
+    distance_metric=DISTANCE_METRIC,
+    crossover_method=CROSSOVER_METHOD
+)
+best_fitness = np.min(fitness)
