@@ -111,7 +111,7 @@ def extract_ibi_params(individual: dict):
 
 
 
-def evaluate_fitness_individual(individual: dict, target_zlc: float, distance_metric: str='euclidian'):
+def evaluate_fitness_individual(individual: dict, target_zlc: float, distance_metric: str='abs'):
     '''
     Calculating RSA synchrony measured as the zero-lag coefficient (zlc) of RSA cross-correlation.
     Fitness is the deviation of the measured zcl from the target zlc based on the selected distance metric.
@@ -119,7 +119,7 @@ def evaluate_fitness_individual(individual: dict, target_zlc: float, distance_me
     Parameters:
     - individual (dict): key-value pairs for the 98 parameters for dyad IBI generator (see README for details)
     - target_zlc (float): target zero-lag coefficient
-    - distance_metric (str): distance metric for calculating difference between measured and optimal zlc (currently supported: 'abs')
+    - distance_metric (str): distance metric for calculating difference between measured and optimal zlc (options: 'abs', 'log')
 
     Returns:
     - fitness (float): the absolute difference between calculated and target ZLC, float('inf') on exception
