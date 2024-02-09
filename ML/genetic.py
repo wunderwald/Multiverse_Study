@@ -171,6 +171,9 @@ def mutation(offspring_crossover: np.array):
     return
 
 def succession(population: np.array, distance_metric: str, crossover_method: str):
+    '''
+    TODO: documentation
+    '''
     
     new_population = None
     fitness = None # np array with fitness for each individual
