@@ -2,6 +2,9 @@ import numpy as np
 import ibi_generator as ibi
 import rsa_drew as rsa
 
+# toggle logging
+LOG = True
+
 # ------------------------------
 # CONSTANTS AND PARAMETER RANGES
 # ------------------------------
@@ -86,7 +89,7 @@ def initialize_population(population_size: int):
     TODO: documentation
     '''
     population = [initialize_individual() for _ in range(population_size)]
-    return population
+    return np.array(population)
     
 
 def extract_ibi_params(individual: dict):
@@ -147,3 +150,63 @@ def evaluate_fitness_zlc(individual: dict, target_zlc: float):
     # return infinity on exception
     except ValueError:
         return float('inf')
+    
+def select_parents(population: np.array, fitness: np.array, num_parents: int):
+    '''
+    TODO: documentation
+    '''
+    return
+
+def crossover(parents: np.array, offspring_size: np.array):
+    '''
+    TODO: documentation
+    '''
+    # create random key order for each generation before crossover
+    return
+
+def mutation(offspring_crossover: np.array):
+    '''
+    TODO: documentation
+    '''
+    return
+
+def succession(population: np.array, distance_metric: str, crossover_method: str):
+    
+    new_population = None
+    fitness = None # np array with fitness for each individual
+    
+    return new_population, fitness
+
+
+# main function: run genetic evolution
+def evolution(population_size: int, max_num_generations: int, fitness_thresh: float, distance_metric: str, crossover_method: str):
+    '''
+    TODO: documentation
+    '''
+    
+    # initialize population
+    population = initialize_population(population_size=population_size)
+
+    # iterate over generations
+    for generation_index in range(max_num_generations):
+
+        # create new generation of population
+        new_population, fitness = succession(
+            population=population,
+            distance_metric=distance_metric, 
+            crossover_method=crossover_method
+        )
+        best_fitness = np.min(fitness)
+
+        # update population
+        population = new_population
+
+        # inform about fitness state
+        if LOG:
+            print(f"# Generation {generation_index} - best fitness: {best_fitness}")
+
+        # terminate evolution if desired fitness is reached
+        if best_fitness < fitness_thresh:
+            break
+
+    return zip(population, fitness)
