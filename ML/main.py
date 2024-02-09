@@ -22,3 +22,10 @@ best_fitness = np.min(fitness)
 
 # export data
 # TODO write best individuals to database
+
+
+'''
+Open for experimentation:
+- num_parents / offspring_size (for now, both equal to population_size//2)
+    -> introduce more variation by increasing offspring to parents ratio
+'''
