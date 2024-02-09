@@ -198,6 +198,22 @@ def select_parents(population: np.array, fitness: np.array):
 
     return parents
 
+def crossover_arithmetic(parent0: dict, parent1: dict):
+    child0 = None
+    child1 = None
+    return child0, child1
+
+def crossover_blend(parent0: dict, parent1: dict, alpha: float=.5):
+    child0 = None
+    child1 = None
+    return child0, child1
+
+def apply_limits(individual: dict):
+    '''
+    TODO: make sure all parameters are in range
+    '''
+    return individual
+
 def crossover(parents: np.array, crossover_method: str):
     '''
     TODO: documentation
@@ -205,10 +221,32 @@ def crossover(parents: np.array, crossover_method: str):
     - arithmetic
     - blend / blx-alpha
     '''
-    offspring_size = parents.shape[0]
+    # initialize offspring
+    offspring_size = parents.shape[0] - parents.shape[0] % 2
+    offspring = np.empty(offspring_size, dtype=object)
+
+    # perform crossover operation
+    for i in range(offspring_size):
+        # select pair of parents
+        idx0 = i*2
+        idx1 = i*2 + 1
+        parent0 = parents[idx0]
+        parent1 = parents[idx1]
+
+        # create children by crossover method
+        match crossover_method:
+            case 'arithmetic':
+                child0, child1 = crossover_arithmetic(parent0, parent1)
+            case 'blend':
+                child0, child1 = crossover_blend(parent0, parent1)
+            case _:
+                child0, child1 = crossover_arithmetic(parent0, parent1)
+        
+        # apply range limits to children and add them to offsprint
+        offspring[idx0] = apply_limits(child0)
+        offspring[idx1] = apply_limits(child1)
     
-    # make sure that params remain in range!
-    return
+    return offspring
 
 def mutate(offspring: np.array):
     '''
