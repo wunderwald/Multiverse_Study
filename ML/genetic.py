@@ -114,15 +114,14 @@ def extract_ibi_params(individual: dict):
 
 
 
-def evaluate_fitness_zlc(individual: dict, target_zlc: float):
+def evaluate_fitness_individual(individual: dict, distance_metric: str='euclidian'):
     '''
-    Objective function for calculating RSA synchrony using Drew's algorithm. 
-    Synchrony is measured using the zero-lag coefficient (ZLC).
-    The error is calculated as the absolute difference between the ZLC and a target ZLC.
+    Calculating RSA synchrony measured as the zero-lag coefficient (zlc) of RSA cross-correlation.
+    Fitness is the deviation of the measured zcl from the target zlc based on the selected distance metric.
 
     Parameters:
-    - params (dict): key-value pairs for the 98 parameters for dyad IBI generator (see README for details)
-    - target_zlc (float): zero lag coefficient value that is the optimization target 
+    - individual (dict): key-value pairs for the 98 parameters for dyad IBI generator (see README for details)
+    - distance_metric (str): distance metric for calculating difference between measured and optimal zlc (currently supported: 'euclidian')
 
     Returns:
     - fitness (float): the absolute difference between calculated and target ZLC, float('inf') on exception
@@ -142,14 +141,31 @@ def evaluate_fitness_zlc(individual: dict, target_zlc: float):
         # calculate synchrony
         zlc, _ = rsa.rsa_synchrony(adult_ibi, infant_ibi)
 
-        # calculate error / fitness
-        fitness = abs(zlc - target_zlc)
-
-        return fitness
+        # calculate fitness
+        match distance_metric:
+            # euclidian distance
+            case 'euclidian':
+                return abs(zlc - TARGET_ZLC)
+            # default case (euclidian)
+            case _:
+                return abs(zlc - TARGET_ZLC)
     
     # return infinity on exception
     except ValueError:
         return float('inf')
+    
+def evaluate_fitness(population: np.array, distance_metric: str='euclidian'):
+    '''
+    Evaluate the fitness of the whole population (using deviation from ideal zero-lag coefficient of RSA cross-correlation as metric).
+    
+    Parameters:
+    - population (np.array): the current population represented as an array of parameter dicts
+    - distance_metric (str): distance metric for calculating difference between measured and target zlc (currently supported: 'euclidian')
+
+    Returns:
+    - fitness (np.array): fitness value for each individual
+    '''
+    return [evaluate_fitness_individual(individual, distance_metric) for individual in population]
     
 def select_parents(population: np.array, fitness: np.array, num_parents: int):
     '''
@@ -174,11 +190,10 @@ def succession(population: np.array, distance_metric: str, crossover_method: str
     '''
     TODO: documentation
     '''
-    
+
     new_population = None
-    fitness = None # np array with fitness for each individual
     
-    return new_population, fitness
+    return new_population
 
 
 # main function: run genetic evolution
@@ -187,22 +202,19 @@ def evolution(population_size: int, max_num_generations: int, fitness_thresh: fl
     TODO: documentation
     '''
     
-    # initialize population
-    population = initialize_population(population_size=population_size)
+    # initialize population and fitness
+    population = initialize_population(population_size)
+    fitness = evaluate_fitness(population, distance_metric)
 
     # iterate over generations
     for generation_index in range(max_num_generations):
 
         # create new generation of population
-        new_population, fitness = succession(
-            population=population,
-            distance_metric=distance_metric, 
-            crossover_method=crossover_method
-        )
-        best_fitness = np.min(fitness)
+        population = succession(population, distance_metric, crossover_method)
 
-        # update population
-        population = new_population
+        # calculate fitness
+        fitness = evaluate_fitness(population)
+        best_fitness = np.min(fitness)        
 
         # inform about fitness state
         if LOG:
