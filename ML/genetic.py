@@ -152,14 +152,14 @@ def evaluate_fitness_individual(individual: dict, target_zlc: float, distance_me
     except ValueError:
         return float('inf')
     
-def evaluate_fitness(population: np.array, target_zlc: float, distance_metric: str='euclidian'):
+def evaluate_fitness(population: np.array, target_zlc: float, distance_metric: str='abs'):
     '''
     Evaluate the fitness of the whole population (using deviation from ideal zero-lag coefficient of RSA cross-correlation as metric).
     
     Parameters:
     - population (np.array): the current population represented as an array of parameter dicts
     - target_zlc (float): target zero-lag coefficient
-    - distance_metric (str): distance metric for calculating difference between measured and target zlc (currently supported: 'euclidian')
+    - distance_metric (str): distance metric for calculating difference between measured and target zlc (options: 'abs', 'log')
 
     Returns:
     - fitness (np.array): fitness value for each individual
