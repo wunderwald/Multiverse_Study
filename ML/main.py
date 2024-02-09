@@ -1,6 +1,7 @@
 '''
 ### NEXT STEPS ###
 
+- add frequency band id (vlf, lf, hf) to keys in initialize_individual OR replace dics by np.arrays (facilitates actually everything a LOT)
 - implement crossover functions
 - implement mutation function
 - implement apply_limits
