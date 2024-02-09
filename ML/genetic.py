@@ -166,31 +166,64 @@ def evaluate_fitness(population: np.array, target_zlc: float, distance_metric: s
     '''
     return [evaluate_fitness_individual(individual, target_zlc, distance_metric) for individual in population]
     
-def select_parents(population: np.array, fitness: np.array, num_parents: int):
+def select_parents(population: np.array, fitness: np.array):
     '''
-    TODO: documentation
+    Select parents using statistical uniform sampling (SUS).
+    TODO documentation
     '''
-    return
+    # set number of parents to be selected - this can be subject to experimentation (influences competition and performance)
+    num_parents = population.shape[0]// 2
 
-def crossover(parents: np.array, offspring_size: np.array):
+    # initialize parent array
+    parents = np.empty(num_parents, dtype=object)
+
+    # Normalize fitness values
+    total_fitness = np.sum(fitness)
+    normalized_fitness = fitness / total_fitness
+
+    # Calculate cumulative sum
+    cumulative_sum = np.cumsum(normalized_fitness)
+    
+    # Determine the step size and the start point
+    step = 1.0 / num_parents
+    start = np.random.uniform(0, step)
+    
+    # Select individuals as parents
+    idx = 0
+    for i in range(num_parents):
+        pointer = start + i * step
+        while cumulative_sum[idx] < pointer:
+            idx += 1
+        parents[i] = population[idx]
+
+    return parents
+
+def crossover(parents: np.array, crossover_method: str):
     '''
     TODO: documentation
     '''
+    offspring_size = parents.shape[0]
     # create random key order for each generation before crossover
     return
 
-def mutation(offspring_crossover: np.array):
+def mutate(offspring: np.array):
     '''
     TODO: documentation
     '''
     return
 
-def succession(population: np.array, distance_metric: str, crossover_method: str):
+def succession(population: np.array, fitness: np.array, crossover_method: str):
     '''
     TODO: documentation
     '''
+    # Select the best parents for mating
+    parents = select_parents(population, fitness)
 
-    new_population = None
+    # Generate the next generation using crossover and introcuce some variation through mutation
+    offspring = mutate(crossover(parents, crossover_method))
+
+    # Create the new population
+    new_population = np.concatenate(parents, offspring)
     
     return new_population
 
@@ -200,7 +233,6 @@ def evolution(population_size: int, max_num_generations: int, fitness_thresh: fl
     '''
     TODO: documentation
     '''
-    
     # initialize population and fitness
     population = initialize_population(population_size)
     fitness = evaluate_fitness(population, target_zlc, distance_metric)
@@ -209,7 +241,7 @@ def evolution(population_size: int, max_num_generations: int, fitness_thresh: fl
     for generation_index in range(max_num_generations):
 
         # create new generation of population
-        population = succession(population, distance_metric, crossover_method)
+        population = succession(population, fitness, crossover_method)
 
         # calculate fitness
         fitness = evaluate_fitness(population, target_zlc, distance_metric)
