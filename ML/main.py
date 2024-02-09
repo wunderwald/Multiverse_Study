@@ -19,3 +19,6 @@ final_population, fitness = gen.evolution(
     crossover_method=CROSSOVER_METHOD
 )
 best_fitness = np.min(fitness)
+
+# export data
+# TODO write best individuals to database
