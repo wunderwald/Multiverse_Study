@@ -32,6 +32,9 @@ TARGET_ZLC = 300
 # ---------------------------
 
 def initialize_individual():
+    '''
+    TODO: documentation
+    '''
     # Randomize base inter-beat interval
     base_ibi_adult = np.random.uniform(*rng_base_ibi_adult)
     base_ibi_infant = np.random.uniform(*rng_base_ibi_infant)
@@ -80,11 +83,33 @@ def initialize_individual():
 
 def initialize_population(population_size: int):
     '''
-    TODO
+    TODO: documentation
     '''
     population = [initialize_individual() for _ in range(population_size)]
     return population
     
+
+def extract_ibi_params(individual: dict):
+    '''
+    TODO: documentation
+    '''
+    adult_params = {
+        'base_ibi': individual['base_ibi_adult'],
+        'frequencies': [value for key, value in individual.items() if 'freq' in key and 'adult' in key],
+        'freq_weights': [value for key, value in individual.items() if 'weight' in key and 'adult' in key],
+        'phase_shifts': [value for key, value in individual.items() if 'phase' in key and 'adult' in key]
+    }
+
+    infant_params = {
+        'base_ibi': individual['base_ibi_infant'],
+        'frequencies': [value for key, value in individual.items() if 'freq' in key and 'infant' in key],
+        'freq_weights': [value for key, value in individual.items() if 'weight' in key and 'infant' in key],
+        'phase_shifts': [value for key, value in individual.items() if 'phase' in key and 'infant' in key]
+    }
+
+    return adult_params, infant_params
+
+
 
 def evaluate_fitness_zlc(individual: dict, target_zlc: float):
     '''
@@ -100,10 +125,9 @@ def evaluate_fitness_zlc(individual: dict, target_zlc: float):
     - fitness (float): the absolute difference between calculated and target ZLC, float('inf') on exception
     '''
 
-    # extract parameters
-    adult_params = None
-    infant_params = None
-
+    # extract ibi parameters
+    adult_params, infant_params = extract_ibi_params(individual=individual)
+    
     try:
         # generate IBIs
         adult_ibi, infant_ibi = ibi.generate_dyad_ibi(
