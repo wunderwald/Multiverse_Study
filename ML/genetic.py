@@ -264,7 +264,23 @@ def crossover_arithmetic(parent0_v: np.array, parent1_v: np.array, alpha:float =
 
 def crossover_blend(parent0_v: np.array, parent1_v: np.array, alpha: float=.5):
     '''
-    TODO: documentation
+    Performs blend crossover (BLX-alpha) between two parent individuals to generate two offspring.
+
+    This function takes the genetic material (parameter vectors) of two parents and applies blend crossover, a technique that creates offspring whose genes are random values chosen from a range defined by the parents' genes and an expansion factor 'alpha'. 
+    This method allows for the offspring to potentially have genes that are outside the range of the parent genes, promoting diversity in the population.
+
+    Parameters:
+    - parent0_v (np.array): The parameter vector of the first parent.
+    - parent1_v (np.array): The parameter vector of the second parent.
+    - alpha (float, optional): The expansion factor used in determining the range for gene values in the offspring. Defaults to 0.5. Higher values increase the range and hence the potential diversity of the offspring. Must be in range [0, 1].
+
+    Returns:
+    Tuple[np.array, np.array]: Two numpy arrays representing the parameter vectors of the two generated offspring.
+
+    Notes:
+    - The function calculates the gene range as the absolute difference between corresponding genes of the parents.
+    - It then expands this range by 'alpha' on both sides (lower and upper) to create a new range for each gene.
+    - Offspring genes are randomly selected within these expanded ranges, allowing for traits that may be beyond the parents' traits.
     '''
     # Calculate the range for each gene
     gene_range = np.abs(parent0_v - parent1_v)
