@@ -324,7 +324,19 @@ def crossover(parents: np.array, crossover_method: str):
 
 def gaussian_mutation(individual, mutation_rate, mutation_scale=0.1):
     '''
-    TODO: documentation
+    Applies Gaussian mutation to an individual based on a given mutation rate and scale.
+
+    This function iteratively goes through each gene (represented by key-value pairs) in an individual's genetic makeup. 
+    For each gene, there is a probability (defined by the mutation rate) that a Gaussian mutation will be applied. 
+    The mutation scale, along with the range of possible values for a gene (obtained from `get_limits`), determines the magnitude of the mutation. 
+
+    Parameters:
+    - individual (dict): A dictionary representing an individual's genes.
+    - mutation_rate (float): The probability of mutating each gene. Must be in the range [0, 1].
+    - mutation_scale (float, optional): The scale of the Gaussian distribution used for mutation. Defaults to 0.1. It adjusts the magnitude of changes applied to mutated genes.
+
+    Returns:
+    dict: A dictionary representing the mutated individual. The structure is the same as the input individual, but with mutations applied to some of the genes.
     '''
     individual_mutated = {}
     for key, value in individual.items():
