@@ -2,7 +2,7 @@ import numpy as np
 import genetic as gen
 
 # set hyper-parameters
-POPULATION_SIZE = 160
+POPULATION_SIZE = 100
 MAX_NUM_GENERATIONS = 100
 FITNESS_THRESH = 0.3
 DISTANCE_METRIC = 'log'
@@ -10,6 +10,10 @@ CROSSOVER_METHOD = None
 MUTATION_RATE = .1
 MUTATION_SCALE = .1
 TARGET_ZLC = 300.0
+
+# Output parameters
+LOG = True
+PLOT = True
 
 # run genetic evolution algorithm
 final_population, fitness = gen.evolution(
@@ -20,7 +24,9 @@ final_population, fitness = gen.evolution(
     distance_metric=DISTANCE_METRIC,
     crossover_method=CROSSOVER_METHOD,
     mutation_rate=MUTATION_RATE,
-    mutation_scale=MUTATION_SCALE
+    mutation_scale=MUTATION_SCALE,
+    log=LOG,
+    plot=PLOT
 )
 best_fitness = np.min(fitness)
 
