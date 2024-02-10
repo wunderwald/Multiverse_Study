@@ -34,9 +34,14 @@ best_fitness = np.min(fitness)
 # TODO write best individuals to database
 
 '''
-Open for experimentation:
+Open for experimentation / TODO:
+
+PARENT SELECTION SEEMS FLAWED: Too much bad individuals stay in the population, good ones get lost
+- add hyperparam to decide between SUS and simple selection of the fittest
 - num_parents / offspring_size (for now, both equal to population_size//2)
-    -> introduce more variation by increasing offspring to parents ratio
+    - introduce more variation by increasing offspring to parents ratio
+    - select less parents: population shrinks but improves mores
+    
 - expand weight ranges
 - randomize crossover method for each crossover
 - add parrallelization: evaluate individuals
