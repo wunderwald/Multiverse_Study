@@ -1,8 +1,25 @@
+'''
+Open for experimentation / TODO:
+
+PARENT SELECTION SEEMS FLAWED: Too much bad individuals stay in the population, good ones get lost
+- add hyperparam to decide between SUS and simple selection of the fittest
+- num_parents / offspring_size (for now, both equal to population_size//2)
+    - introduce more variation by increasing offspring to parents ratio
+    - select less parents: population shrinks but improves mores
+    
+- expand weight ranges
+- randomize crossover method for each crossover
+- add parrallelization: evaluate individuals
+- apply threshold not to min (bc thats probably an outlier) but to quantile or smth
+- specialise mutation to parameter characteristics
+- work on exploration / exploitation balance
+'''
+
 import numpy as np
 import genetic as gen
 
 # set hyper-parameters
-POPULATION_SIZE = 100
+POPULATION_SIZE = 140
 MAX_NUM_GENERATIONS = 100
 FITNESS_THRESH = 2.0
 DISTANCE_METRIC = 'abs'
@@ -32,20 +49,3 @@ best_fitness = np.min(fitness)
 
 # export data
 # TODO write best individuals to database
-
-'''
-Open for experimentation / TODO:
-
-PARENT SELECTION SEEMS FLAWED: Too much bad individuals stay in the population, good ones get lost
-- add hyperparam to decide between SUS and simple selection of the fittest
-- num_parents / offspring_size (for now, both equal to population_size//2)
-    - introduce more variation by increasing offspring to parents ratio
-    - select less parents: population shrinks but improves mores
-    
-- expand weight ranges
-- randomize crossover method for each crossover
-- add parrallelization: evaluate individuals
-- apply threshold not to min (bc thats probably an outlier) but to quantile or smth
-- specialise mutation to parameter characteristics
-- work on exploration / exploitation balance
-'''
