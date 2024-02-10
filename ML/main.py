@@ -17,6 +17,8 @@ MAX_NUM_GENERATIONS = 100
 FITNESS_THRESH = 5.0
 DISTANCE_METRIC = 'abs'
 CROSSOVER_METHOD = None
+MUTATION_RATE = .1
+MUTATION_SCALE = .1
 TARGET_ZLC = 300.0
 
 # run genetic evolution algorithm
@@ -26,7 +28,9 @@ final_population, fitness = gen.evolution(
     fitness_thresh=FITNESS_THRESH,
     target_zlc=TARGET_ZLC,
     distance_metric=DISTANCE_METRIC,
-    crossover_method=CROSSOVER_METHOD
+    crossover_method=CROSSOVER_METHOD,
+    mutation_rate=MUTATION_RATE,
+    mutation_scale=MUTATION_SCALE
 )
 best_fitness = np.min(fitness)
 

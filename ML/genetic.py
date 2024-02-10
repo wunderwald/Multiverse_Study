@@ -276,13 +276,29 @@ def crossover(parents: np.array, crossover_method: str):
     
     return offspring
 
-def mutate(offspring: np.array):
-    '''
-    TODO: documentation
-    '''
-    return
+def gaussian_mutation(individual, mutation_rate, mutation_scale=0.1):
+    # TODO: add get_range function (also needed for apply range), then use np.random.normal(0, scale * range)
+    # for i in range(len(individual)):
+    #     if np.random.rand() < mutation_rate:
+    #         individual[i] += np.random.normal(0, scale)
+    # return individual
+    return individual
 
-def succession(population: np.array, fitness: np.array, crossover_method: str):
+def mutate(offspring: np.array, mutation_rate: float, mutation_scale: float):
+    '''
+    Apply gaussian mutation to each individual in the offspring.
+
+    Parameters:
+    - offspring (np.array): array of individuals to be mutated 
+    - mutation_rate (float): the probability of each gene being mutated, must be in range [0, 1]
+    - mutation_scale (float): scale of randomness applied to parameters, must be in range [0, 1]
+
+    Returns:
+    offspring_mutated (np.array): array of mutated individuals
+    '''
+    return np.array([gaussian_mutation(individual, mutation_rate, mutation_scale) for individual in offspring])
+
+def succession(population: np.array, fitness: np.array, crossover_method: str, mutation_rate: float, mutation_scale: float):
     '''
     TODO: documentation
     '''
@@ -290,7 +306,7 @@ def succession(population: np.array, fitness: np.array, crossover_method: str):
     parents = select_parents(population, fitness)
 
     # Generate the next generation using crossover and introcuce some variation through mutation
-    offspring = mutate(crossover(parents, crossover_method))
+    offspring = mutate(crossover(parents, crossover_method), mutation_rate, mutation_scale)
 
     # Create the new population
     new_population = np.concatenate(parents, offspring)
@@ -299,7 +315,7 @@ def succession(population: np.array, fitness: np.array, crossover_method: str):
 
 
 # main function: run genetic evolution
-def evolution(population_size: int, max_num_generations: int, fitness_thresh: float, target_zlc: float, distance_metric: str, crossover_method: str):
+def evolution(population_size: int, max_num_generations: int, fitness_thresh: float, target_zlc: float, distance_metric: str, crossover_method: str, mutation_rate: float, mutation_scale: float):
     '''
     TODO: documentation
     '''
@@ -311,7 +327,7 @@ def evolution(population_size: int, max_num_generations: int, fitness_thresh: fl
     for generation_index in range(max_num_generations):
 
         # create new generation of population
-        population = succession(population, fitness, crossover_method)
+        population = succession(population, fitness, crossover_method, mutation_rate, mutation_scale)
 
         # calculate fitness
         fitness = evaluate_fitness(population, target_zlc, distance_metric)
