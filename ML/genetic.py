@@ -95,7 +95,6 @@ def initialize_population(population_size: int):
     population = [initialize_individual() for _ in range(population_size)]
     return np.array(population)
     
-
 def extract_ibi_params(individual: dict):
     '''
     TODO: documentation
@@ -115,8 +114,6 @@ def extract_ibi_params(individual: dict):
     }
 
     return adult_params, infant_params
-
-
 
 def evaluate_fitness_individual(individual: dict, target_zlc: float, distance_metric: str='abs'):
     '''
@@ -205,12 +202,24 @@ def select_parents(population: np.array, fitness: np.array):
 
     return parents
 
-def crossover_arithmetic(parent0: dict, parent1: dict):
-    child0 = None
-    child1 = None
-    return child0, child1
+def crossover_arithmetic(parent0_v: np.array, parent1_v: np.array, alpha:float = .3):
+    '''
+    TODO: documentation
+    Options:
+    - arithmetic
+    - blend / blx-alpha
+    '''
+    child0_v = alpha * parent0_v + (1-alpha) * parent1_v
+    child1_v = alpha * parent1_v + (1-alpha) * parent0_v
+    return child0_v, child1_v
 
-def crossover_blend(parent0: dict, parent1: dict, alpha: float=.5):
+def crossover_blend(parent0_v: np.array, parent1_v: np.array, alpha: float=.5):
+    '''
+    TODO: documentation
+    Options:
+    - arithmetic
+    - blend / blx-alpha
+    '''
     child0 = None
     child1 = None
     return child0, child1
@@ -240,14 +249,25 @@ def crossover(parents: np.array, crossover_method: str):
         parent0 = parents[idx0]
         parent1 = parents[idx1]
 
-        # create children by crossover method
+        # extract parameter vector from parents
+        parent0_v = np.array(list(parent0.values()))
+        parent1_v = np.array(list(parent1.values()))
+
+        # extract parameter names
+        param_names = parent0.keys()
+
+        # create children as parameter voctors by crossover method
         match crossover_method:
             case 'arithmetic':
-                child0, child1 = crossover_arithmetic(parent0, parent1)
+                child0_v, child1_v = crossover_arithmetic(parent0_v, parent1_v)
             case 'blend':
-                child0, child1 = crossover_blend(parent0, parent1)
+                child0_v, child1_v = crossover_blend(parent0_v, parent1_v)
             case _:
-                child0, child1 = crossover_arithmetic(parent0, parent1)
+                child0_v, child1_v = crossover_arithmetic(parent0_v, parent1_v)
+
+        # turn parameter vectors to dicts
+        child0 = dict(zip(param_names, child0_v.tolist()))
+        child1 = dict(zip(param_names, child1_v.tolist()))
         
         # apply range limits to children and add them to offsprint
         offspring[idx0] = apply_limits(child0)
