@@ -76,7 +76,16 @@ def apply_limits(individual: dict):
 
 def extract_ibi_params(individual: dict):
     '''
-    TODO: documentation
+    Extracts parameters related to inter-beat interval (IBI) sequence generation for both an adult and an infant from an individual's genetic makeup.
+
+    Parameters:
+    - individual (dict): A dictionary representing an individual's parameters.
+
+    Returns:
+    Tuple[dict, dict]: A tuple containing two dictionaries:
+        - The first dictionary contains the IBI-related parameters for the adult model.
+        - The second dictionary contains the IBI-related parameters for the infant model.
+
     '''
     adult_params = {
         'base_ibi': individual['base_ibi_adult'],
