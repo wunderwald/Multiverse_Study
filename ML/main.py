@@ -42,4 +42,5 @@ Open for experimentation:
 - add parrallelization: evaluate individuals
 - apply threshold not to min (bc thats probably an outlier) but to quantile or smth
 - specialise mutation to parameter characteristics
+- work on exploration / exploitation balance
 '''
