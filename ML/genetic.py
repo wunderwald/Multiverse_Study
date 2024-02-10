@@ -2,6 +2,10 @@ import numpy as np
 import ibi_generator as ibi
 import rsa_drew as rsa
 
+# -------
+# GLOBALS
+# -------
+
 # toggle logging
 LOG = True
 
@@ -348,7 +352,23 @@ def mutate(offspring: np.array, mutation_rate: float, mutation_scale: float):
 
 def succession(population: np.array, fitness: np.array, crossover_method: str, mutation_rate: float, mutation_scale: float):
     '''
-    TODO: documentation
+    Generates a new generation of population through the processes of selection, crossover, and mutation.
+
+    This function represents a core step in the genetic algorithm, where a new population is created from the current one. 
+    It starts by selecting the fittest individuals as parents. These parents undergo crossover and mutation to produce offspring. The offspring then form the new generation.
+
+    Parameters:
+    - population (np.array): The current population array, where each element represents an individual.
+    - fitness (np.array): An array of fitness values corresponding to each individual in the population.
+    - crossover_method (str): The crossover method to be used for generating offspring.
+    - mutation_rate (float): The probability of mutation occurring in an offspring.
+    - mutation_scale (float): The scale of mutation when it occurs.
+
+    Returns:
+    np.array: The new population formed by concatenating the parents and the mutated offspring.
+
+    Notes:
+    - The population and fitness arrays must be of the same length, each entry in the fitness array corresponding to an individual in the population array.
     '''
     # Select the best parents for mating
     parents = select_parents(population, fitness)
