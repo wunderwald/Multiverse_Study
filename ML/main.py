@@ -38,4 +38,5 @@ Open for experimentation:
 - num_parents / offspring_size (for now, both equal to population_size//2)
     -> introduce more variation by increasing offspring to parents ratio
 - expand weight ranges
+- randomize crossover method for each crossover
 '''
