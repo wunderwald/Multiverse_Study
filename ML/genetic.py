@@ -94,11 +94,15 @@ def apply_limits(individual: dict):
 
     Returns:
     dict: A dictionary representing the clamped individual. Each parameter value is guaranteed to be within its specified limits.
+
+    Notes:
+    - ibi values are beilng cast to integer.
     '''
     individual_clamped = {}
     for key, value in individual.items():
         limits = get_limits(key)
-        individual_clamped[key] = clamp(value, *limits)
+        individual_clamped[key] = int(clamp(value, *limits)) if 'ibi' in key else clamp(value, *limits)
+
     return individual_clamped
 
 def extract_ibi_params(individual: dict):
@@ -514,7 +518,7 @@ def succession(population: np.array, fitness: np.array, crossover_method: str, m
     offspring = mutate(crossover(parents, crossover_method), mutation_rate, mutation_scale)
 
     # Create the new population
-    new_population = np.concatenate(parents, offspring)
+    new_population = np.concatenate((parents, offspring))
     
     return new_population
 
