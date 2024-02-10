@@ -214,9 +214,16 @@ def crossover_blend(parent0_v: np.array, parent1_v: np.array, alpha: float=.5):
     '''
     TODO: documentation
     '''
-    child0 = None
-    child1 = None
-    return child0, child1
+    # Calculate the range for each gene
+    gene_range = np.abs(parent0_v - parent1_v)
+    min_gene = np.minimum(parent0_v, parent1_v) - alpha * gene_range
+    max_gene = np.maximum(parent0_v, parent1_v) + alpha * gene_range
+
+    # Generate offspring within the range
+    child0_v = np.random.uniform(min_gene, max_gene)
+    child1_v = np.random.uniform(min_gene, max_gene)
+
+    return child0_v, child1_v
 
 def apply_limits(individual: dict):
     '''
