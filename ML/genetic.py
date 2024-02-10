@@ -256,7 +256,24 @@ def select_parents(population: np.array, fitness: np.array):
 
 def crossover_arithmetic(parent0_v: np.array, parent1_v: np.array, alpha:float = .3):
     '''
-    TODO: documentation
+    Performs arithmetic crossover between two parent individuals to generate two offspring.
+
+    This function employs arithmetic crossover, a technique that combines the genetic material (parameter vectors) of two parents to produce offspring. 
+    Each gene in the offspring is a weighted average of the corresponding genes in the parents, with the weighting factor being 'alpha'. 
+    This method ensures that the offspring's genes are within the range defined by their parents' genes, promoting a balanced exploration of the solution space.
+
+    Parameters:
+    - parent0_v (np.array): The parameter vector of the first parent.
+    - parent1_v (np.array): The parameter vector of the second parent.
+    - alpha (float, optional): The weighting factor used in the arithmetic combination of parent genes. Defaults to 0.3. The value determines the bias towards one parent's genes over the other in the offspring.
+
+    Returns:
+    Tuple[np.array, np.array]: Two numpy arrays representing the parameter vectors of the two generated offspring.
+
+    Notes:
+    - The function calculates the offspring's genes as a weighted average of the corresponding genes from each parent, controlled by the 'alpha' parameter.
+    - The choice of 'alpha' affects how closely the offspring resemble their parents. An alpha of 0.5 results in offspring that are an equal mix of both parents, while other values bias the offspring towards one parent.
+    - This crossover method is particularly useful for maintaining genetic diversity within a range defined by the parent genes.
     '''
     child0_v = alpha * parent0_v + (1-alpha) * parent1_v
     child1_v = alpha * parent1_v + (1-alpha) * parent0_v
