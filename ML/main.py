@@ -2,10 +2,10 @@ import numpy as np
 import genetic as gen
 
 # set hyper-parameters
-POPULATION_SIZE = 1000
+POPULATION_SIZE = 160
 MAX_NUM_GENERATIONS = 100
-FITNESS_THRESH = 5.0
-DISTANCE_METRIC = 'euclidian'
+FITNESS_THRESH = 0.3
+DISTANCE_METRIC = 'log'
 CROSSOVER_METHOD = None
 MUTATION_RATE = .1
 MUTATION_SCALE = .1

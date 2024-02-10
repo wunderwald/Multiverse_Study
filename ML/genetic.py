@@ -1,13 +1,7 @@
 import numpy as np
 import ibi_generator as ibi
 import rsa_drew as rsa
-
-# -------
-# GLOBALS
-# -------
-
-# toggle logging
-LOG = True
+from plot import plot_fitness_distribution
 
 # ------------------------------
 # CONSTANTS AND PARAMETER RANGES
@@ -525,7 +519,7 @@ def succession(population: np.array, fitness: np.array, crossover_method: str, m
     
     return new_population
 
-def evolution(population_size: int, max_num_generations: int, fitness_thresh: float, target_zlc: float, distance_metric: str, crossover_method: str, mutation_rate: float, mutation_scale: float):
+def evolution(population_size: int, max_num_generations: int, fitness_thresh: float, target_zlc: float, distance_metric: str, crossover_method: str, mutation_rate: float, mutation_scale: float, log: bool=False, plot: bool=False):
     '''
     Conducts the genetic algorithm's evolution process. 
     The goal is to find parameters for an IBI generation algorithm in order to minimize the distance of the zero-lag coefficient (zlcs) in an RSA Synchrony algorithm to a target zlc.
@@ -545,6 +539,8 @@ def evolution(population_size: int, max_num_generations: int, fitness_thresh: fl
     - crossover_method (str): The crossover method to be used for generating new individuals. [options: 'arithmetic', 'blend']
     - mutation_rate (float): The probability of mutation occurring in an individual.
     - mutation_scale (float): The scale of mutation when it occurs.
+    - log (bool): Toggles logging.
+    - plot (bool): Toggles plot creation.
 
     Returns:
     Tuple[List, List]: A tuple containing two elements:
@@ -569,8 +565,12 @@ def evolution(population_size: int, max_num_generations: int, fitness_thresh: fl
         best_fitness = np.min(fitness)        
 
         # inform about fitness state
-        if LOG:
+        if log:
             print(f"# Generation {generation_index} - best fitness: {best_fitness}")
+        
+        # plot fitness distribution
+        if plot:
+            plot_fitness_distribution(fitness, generation_index, './plots')
 
         # terminate evolution if desired fitness is reached
         if best_fitness < fitness_thresh:
