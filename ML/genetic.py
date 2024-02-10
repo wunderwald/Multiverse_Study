@@ -205,9 +205,6 @@ def select_parents(population: np.array, fitness: np.array):
 def crossover_arithmetic(parent0_v: np.array, parent1_v: np.array, alpha:float = .3):
     '''
     TODO: documentation
-    Options:
-    - arithmetic
-    - blend / blx-alpha
     '''
     child0_v = alpha * parent0_v + (1-alpha) * parent1_v
     child1_v = alpha * parent1_v + (1-alpha) * parent0_v
@@ -216,9 +213,6 @@ def crossover_arithmetic(parent0_v: np.array, parent1_v: np.array, alpha:float =
 def crossover_blend(parent0_v: np.array, parent1_v: np.array, alpha: float=.5):
     '''
     TODO: documentation
-    Options:
-    - arithmetic
-    - blend / blx-alpha
     '''
     child0 = None
     child1 = None
