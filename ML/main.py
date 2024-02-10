@@ -2,7 +2,7 @@ import numpy as np
 import genetic as gen
 
 # set hyper-parameters
-POPULATION_SIZE = 80
+POPULATION_SIZE = 100
 MAX_NUM_GENERATIONS = 100
 FITNESS_THRESH = 2.0
 DISTANCE_METRIC = 'abs'
