@@ -210,15 +210,18 @@ def evaluate_fitness_individual(individual: dict, target_zlc: float, distance_me
     
 def evaluate_fitness(population: np.array, target_zlc: float, distance_metric: str='euclidian'):
     '''
-    Evaluate the fitness of the whole population (using deviation from ideal zero-lag coefficient of RSA cross-correlation as metric).
-    
+    Evaluates the fitness of each individual in the population based on the deviation from the ideal zero-lag coefficient (ZLC) of RSA cross-correlation.
+
+    This function assesses the fitness of a population in a genetic algorithm. Each individual's fitness is determined by how closely its zero-lag coefficient (a measure derived from RSA cross-correlation) matches a target value. 
+    The deviation between the measured and target ZLC is calculated using a specified distance metric.
+
     Parameters:
-    - population (np.array): the current population represented as an array of parameter dicts
-    - target_zlc (float): target zero-lag coefficient
-    - distance_metric (str): distance metric for calculating difference between measured and target zlc (options: 'euclidian', 'log')
+    - population (np.array): An array of individuals in the current generation, where each individual is represented as a dictionary of parameters.
+    - target_zlc (float): The target zero-lag coefficient value to aim for. This value is used as a benchmark to assess the fitness of individuals.
+    - distance_metric (str, optional): The metric used to calculate the distance (deviation) between the measured ZLC of an individual and the target ZLC. Options are 'euclidian' and 'log'. Defaults to 'euclidian'.
 
     Returns:
-    - fitness (np.array): fitness value for each individual
+    np.array: An array of fitness values, one for each individual in the population. Lower fitness values indicate a closer match to the target ZLC and thus a more desirable solution.
     '''
     return [evaluate_fitness_individual(individual, target_zlc, distance_metric) for individual in population]
     
