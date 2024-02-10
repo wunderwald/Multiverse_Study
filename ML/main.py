@@ -2,7 +2,7 @@ import numpy as np
 import genetic as gen
 
 # set hyper-parameters
-POPULATION_SIZE = 1000
+POPULATION_SIZE = 500
 MAX_NUM_GENERATIONS = 100
 FITNESS_THRESH = 5.0
 DISTANCE_METRIC = 'euclidian'
@@ -33,4 +33,5 @@ Open for experimentation:
     -> introduce more variation by increasing offspring to parents ratio
 - expand weight ranges
 - randomize crossover method for each crossover
+- add parrallelization: evaluate individuals
 '''
