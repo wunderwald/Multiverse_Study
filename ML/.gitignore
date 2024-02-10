@@ -1,3 +1,4 @@
 ml_env/*
 log/*
 *.pyc
+*.png
