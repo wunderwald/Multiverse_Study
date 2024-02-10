@@ -35,9 +35,32 @@ rng_phase_shift = [0, 2 * np.pi]
 # -------
 
 def clamp(val: float, min: float, max: float):
+    '''
+    Clamps a value within a specified range.
+
+    Parameters:
+    - val (float): The value to be clamped.
+    - min (float): The minimum allowable value.
+    - max (float): The maximum allowable value.
+
+    Returns:
+    float: The clamped value, which will be within the range [min, max].
+    '''
     return min if val < min else (max if max < val else val)
 
 def get_limits(key: str):
+    '''
+    Retrieves the pre-defined valid range (limits) for a given parameter key.
+
+    Parameters:
+    - key (str): The key of the parameter for which the limits are to be retrieved.
+
+    Returns:
+    List[float, float]: A list containing two floats that represent the lower and upper limits for the parameter. 
+
+    Notes:
+    - Phase parameters are treated as having no limits, reflecting their cyclical nature.
+    '''
     if 'phase' in key:
         return [float('-inf'), float('inf')]
     if 'ibi' in key and 'adult' in key:
@@ -60,13 +83,17 @@ def get_limits(key: str):
 
 def apply_limits(individual: dict):
     '''
-    Makes sure that all parameters / genes are in their corresponding limits
+    Ensures that all parameters (genes) of an individual are within their predefined limits.
+
+    This function iterates through each parameter of an individual and applies clamping based on the limits for each parameter. 
+    Clamping is the process of constraining a value within a given range. 
+    If a parameter value falls outside its specified limits, it is adjusted to the nearest boundary value within those limits. 
 
     Parameters:
-    - individual (dict): an individual
+    - individual (dict): A dictionary representing an individual's parameters. Each key-value pair corresponds to a gene and its value.
 
     Returns:
-    - individual_clamped (dict): an individual with all parameter values safely inside the corresponding limits
+    dict: A dictionary representing the clamped individual. Each parameter value is guaranteed to be within its specified limits.
     '''
     individual_clamped = {}
     for key, value in individual.items():
