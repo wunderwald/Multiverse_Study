@@ -279,10 +279,23 @@ def crossover_blend(parent0_v: np.array, parent1_v: np.array, alpha: float=.5):
 
 def crossover(parents: np.array, crossover_method: str):
     '''
-    TODO: documentation
-    Options:
-    - arithmetic
-    - blend / blx-alpha
+    Performs crossover operation on a set of parent individuals to generate offspring.
+
+    This function takes an array of parent individuals and applies a crossover method to generate offspring. 
+    The crossover methods available are 'arithmetic' and 'blend' (also referred to as blx-alpha). 
+    Each pair of parents generates two offspring, with genes combined according to the specified crossover method. 
+    The function ensures that the resulting offspring conform to the range limits of their parameters.
+
+    Parameters:
+    - parents (np.array): An array of parent individuals, where each individual is a dictionary of gene names and values.
+    - crossover_method (str): The method of crossover to be used. Options include 'arithmetic' and 'blend'.
+
+    Returns:
+    np.array: An array of offspring individuals, each represented as a dictionary of gene names and values.
+
+    Notes:
+    - The offspring array size is adjusted to be even, as each pair of parents produces two offspring.
+    - The crossover operation is applied to the parameter vectors of the parents, and the results are converted back into dictionaries for the offspring.
     '''
     # initialize offspring
     offspring_size = parents.shape[0] - parents.shape[0] % 2
