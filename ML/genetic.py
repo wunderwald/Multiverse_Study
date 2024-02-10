@@ -363,7 +363,32 @@ def succession(population: np.array, fitness: np.array, crossover_method: str, m
 
 def evolution(population_size: int, max_num_generations: int, fitness_thresh: float, target_zlc: float, distance_metric: str, crossover_method: str, mutation_rate: float, mutation_scale: float):
     '''
-    TODO: documentation
+    Conducts the genetic algorithm's evolution process. 
+    The goal is to find parameters for an IBI generation algorithm in order to minimize the distance of the zero-lag coefficient (zlcs) in an RSA Synchrony algorithm to a target zlc.
+
+    This function represents the main optimization loop in a genetic algorithm. 
+    It initializes a population and iteratively evolves it over a specified number of generations or until a fitness threshold is met. 
+    Each generation involves the creation of a new population through crossover and mutation. 
+    The fitness of each individual in the population is evaluated, and the process repeats. 
+    The function returns the final population and their respective fitness scores.
+
+    Parameters:
+    - population_size (int): The number of individuals in the population.
+    - max_num_generations (int): The maximum number of generations to run the evolution for.
+    - fitness_thresh (float): The fitness threshold for terminating the evolution early. Evolution stops if any individual's fitness is less than this threshold.
+    - target_zlc (float): A target value for the zero-lag coefficient fitness evaluation function.
+    - distance_metric (str): The type of distance metric to be used in the fitness evaluation. [options: 'euclidian', 'log']
+    - crossover_method (str): The crossover method to be used for generating new individuals. [options: 'arithmetic', 'blend']
+    - mutation_rate (float): The probability of mutation occurring in an individual.
+    - mutation_scale (float): The scale of mutation when it occurs.
+
+    Returns:
+    Tuple[List, List]: A tuple containing two elements:
+        - The final population after the evolution process.
+        - The fitness scores of the final population.
+
+    Note:
+    Logging can be toggled through the global variable LOG at the top of this script.
     '''
     # initialize population and fitness
     population = initialize_population(population_size)
