@@ -1,8 +1,6 @@
 '''
 ### NEXT STEPS ###
 
-- [initialize_individual: replace dics by np.arrays (facilitates actually everything a LOT)]
-- therefore: upate extract_ibi_params / create param_dict_to_array and param_array_to_dict
 - implement crossover functions (using array params)
 - implement mutation function (using array params)
 - implement log difference (and further methods)
