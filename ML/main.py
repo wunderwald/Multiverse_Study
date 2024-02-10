@@ -1,7 +1,6 @@
 '''
 ### NEXT STEPS ###
-
-- implement crossover functions (using array params)
+- implement get_limits(parameter)
 - implement mutation function (using array params)
 - implement log difference (and further methods)
 - implement apply_limits (using array params, also create ranges to array_of_ranges function)
