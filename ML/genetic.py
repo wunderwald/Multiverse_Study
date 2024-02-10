@@ -33,8 +33,26 @@ rng_phase_shift = [0, 2 * np.pi]
 def clamp(val: float, min: float, max: float):
     return min if val < min else (max if max < val else val)
 
-def get_limits(param_key: str):
-    return [0, 1]
+def get_limits(key: str):
+    if 'phase' in key:
+        return [float('-inf'), float('inf')]
+    if 'ibi' in key and 'adult' in key:
+        return rng_base_ibi_adult
+    if 'ibi' in key and 'infant' in key:
+        return rng_base_ibi_infant
+    if 'weight' in key and 'vlf' in key:
+        return rng_weights_vlf
+    if 'weight' in key and 'lf' in key:
+        return rng_weights_lf
+    if 'weight' in key and 'hf' in key:
+        return rng_weights_hf
+    if 'freq' in key and 'vlf' in key:
+        return rng_freq_vlf
+    if 'freq' in key and 'lf' in key:
+        return rng_freq_lf
+    if 'freq' in key and 'hf' in key:
+        return rng_freq_hf
+    return [float('-inf'), float('inf')]
 
 def apply_limits(individual: dict):
     '''
@@ -297,12 +315,18 @@ def crossover(parents: np.array, crossover_method: str):
     return offspring
 
 def gaussian_mutation(individual, mutation_rate, mutation_scale=0.1):
-    # TODO: add get_range function (also needed for apply range), then use np.random.normal(0, scale * range)
-    # for i in range(len(individual)):
-    #     if np.random.rand() < mutation_rate:
-    #         individual[i] += np.random.normal(0, scale)
-    # return individual
-    return individual
+    '''
+    TODO: documentation
+    '''
+    individual_mutated = {}
+    for key, value in individual.items():
+        if np.random.rand() < mutation_rate:
+            limits = get_limits(key)
+            rng = 2*np.pi if 'phase' in key else abs(limits[1] - limits[0])
+            individual_mutated[key] = value * np.random.normal(0, mutation_scale * rng)
+        else:
+            individual_mutated[key] = value
+    return individual_mutated
 
 def mutate(offspring: np.array, mutation_rate: float, mutation_scale: float):
     '''
