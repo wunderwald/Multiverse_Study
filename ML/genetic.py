@@ -224,8 +224,23 @@ def evaluate_fitness(population: np.array, target_zlc: float, distance_metric: s
     
 def select_parents(population: np.array, fitness: np.array):
     '''
-    Select parents using statistical uniform sampling (SUS).
-    TODO documentation
+    Selects parents from the population using Stochastic Universal Sampling (SUS).
+
+    This function implements Stochastic Universal Sampling, a selection method used in genetic algorithms to choose parent individuals for the next generation. 
+    SUS is designed to give each individual a chance of selection proportional to its fitness. 
+    It reduces the chance of premature convergence by preventing the fittest individuals from dominating the selection process too early.
+
+    Parameters:
+    - population (np.array): An array of individuals in the current generation. Each individual is a dictionary of gene names and values.
+    - fitness (np.array): An array of fitness values corresponding to each individual in the population. Higher fitness values indicate better individuals.
+
+    Returns:
+    np.array: An array of selected parent individuals.
+
+    Notes:
+    - The number of parents selected is half the size of the input population.
+    - Fitness values are normalized to create a probability distribution.
+    - The function employs a 'roulette wheel' approach with evenly spaced pointers, determined by the step size and a random start point. This method ensures a spread-out selection across the population's fitness range.
     '''
     # set number of parents to be selected - this can be subject to experimentation (influences competition and performance)
     num_parents = population.shape[0]// 2
