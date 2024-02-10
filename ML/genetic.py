@@ -14,7 +14,6 @@ RECORDING_TIME_S = 300
 NUM_VLF_FREQS = 4
 NUM_LF_FREQS = 6
 NUM_HF_FREQS = 6
-NUM_TOTAL_FREQS = 16
 
 # parameter ranges for IBI generation
 rng_base_ibi_adult = [650, 750]
@@ -47,10 +46,6 @@ def initialize_individual():
     lf_freqs_infant = np.random.uniform(*rng_freq_lf, NUM_LF_FREQS)
     hf_freqs_infant = np.random.uniform(*rng_freq_hf, NUM_HF_FREQS)
 
-    # Combine all frequencies
-    frequencies_adult = np.concatenate((vlf_freqs_adult, lf_freqs_adult, hf_freqs_adult))
-    frequencies_infant = np.concatenate((vlf_freqs_infant, lf_freqs_infant, hf_freqs_infant))
-
     # Assign weights to each band
     vlf_weights_adult = np.random.uniform(*rng_weights_vlf, NUM_VLF_FREQS)
     lf_weights_adult = np.random.uniform(*rng_weights_lf, NUM_LF_FREQS)
@@ -59,25 +54,37 @@ def initialize_individual():
     lf_weights_infant = np.random.uniform(*rng_weights_lf, NUM_LF_FREQS)
     hf_weights_infant = np.random.uniform(*rng_weights_hf, NUM_HF_FREQS)
 
-    # Combine all weights
-    weights_adult = np.concatenate((vlf_weights_adult, lf_weights_adult, hf_weights_adult))
-    weights_infant = np.concatenate((vlf_weights_infant, lf_weights_infant, hf_weights_infant))
-
     # Generate random phase shifts for each band
-    phase_shifts_adult = np.random.uniform(0, 2 * np.pi, NUM_TOTAL_FREQS)
-    phase_shifts_infant = np.random.uniform(0, 2 * np.pi, NUM_TOTAL_FREQS)
+    phase_shifts_adult = np.random.uniform(0, 2 * np.pi, NUM_VLF_FREQS + NUM_LF_FREQS + NUM_HF_FREQS)
+    phase_shifts_infant = np.random.uniform(0, 2 * np.pi, NUM_VLF_FREQS + NUM_LF_FREQS + NUM_HF_FREQS)
 
     # Collect parameters in dict
     individual = {}
     individual['base_ibi_adult'] = base_ibi_adult
     individual['base_ibi_infant'] = base_ibi_infant
-    for i in range(NUM_TOTAL_FREQS):
-        individual[f"freq_{i}_adult"] = frequencies_adult[i]
-        individual[f"weight_{i}_adult"] = weights_adult[i]
-        individual[f"phase_{i}_adult"] = phase_shifts_adult[i]
-        individual[f"freq_{i}_infant"] = frequencies_infant[i]
-        individual[f"weight_{i}_infant"] = weights_infant[i]
-        individual[f"phase_{i}_infant"] = phase_shifts_infant[i]
+        
+    for i in range(NUM_VLF_FREQS):
+        individual[f"vlf_freq_{i}_adult"] = vlf_freqs_adult[i]
+        individual[f"vlf_weight_{i}_adult"] = vlf_weights_adult[i]   
+        individual[f"vlf_freq_{i}_infant"] = vlf_freqs_infant[i]
+        individual[f"vlf_weight_{i}_infant"] = vlf_weights_infant[i]
+        individual[f"vlf_phase_{i}_infant"] = phase_shifts_infant[i]
+        individual[f"vlf_phase_{i}_adult"] = phase_shifts_adult[i]
+    for i in range(NUM_LF_FREQS):
+        individual[f"lf_freq_{i}_adult"] = lf_freqs_adult[i]
+        individual[f"lf_weight_{i}_adult"] = lf_weights_adult[i]
+        individual[f"lf_freq_{i}_infant"] = lf_freqs_infant[i]
+        individual[f"lf_weight_{i}_infant"] = lf_weights_infant[i]
+        individual[f"lf_phase_{i}_infant"] = phase_shifts_infant[i + NUM_VLF_FREQS]
+        individual[f"lf_phase_{i}_adult"] = phase_shifts_adult[i + NUM_VLF_FREQS]
+    for i in range(NUM_HF_FREQS):
+        individual[f"hf_sfreq_{i}_adult"] = hf_freqs_adult[i]
+        individual[f"hf_weight_{i}_adult"] = hf_weights_adult[i]
+        individual[f"hf_freq_{i}_infant"] = hf_freqs_infant[i]
+        individual[f"hf_weight_{i}_infant"] = hf_weights_infant[i]
+        individual[f"hf_phase_{i}_infant"] = phase_shifts_infant[i + NUM_VLF_FREQS + NUM_LF_FREQS]
+        individual[f"hf_phase_{i}_adult"] = phase_shifts_adult[i + NUM_VLF_FREQS + NUM_LF_FREQS]
+
 
     return individual
 
