@@ -101,7 +101,7 @@ def apply_limits(individual: dict):
     individual_clamped = {}
     for key, value in individual.items():
         limits = get_limits(key)
-        individual_clamped[key] = int(clamp(value, *limits)) if 'ibi' in key else clamp(value, *limits)
+        individual_clamped[key] = int(clamp(value, min(limits), max(limits))) if 'ibi' in key else clamp(value, min(limits), max(limits))
 
     return individual_clamped
 
@@ -397,7 +397,6 @@ def crossover(parents: np.array, crossover_method: str):
     This function takes an array of parent individuals and applies a crossover method to generate offspring. 
     The crossover methods available are 'arithmetic' and 'blend' (also referred to as blx-alpha). 
     Each pair of parents generates two offspring, with genes combined according to the specified crossover method. 
-    The function ensures that the resulting offspring conform to the range limits of their parameters.
 
     Parameters:
     - parents (np.array): An array of parent individuals, where each individual is a dictionary of gene names and values.
@@ -442,9 +441,9 @@ def crossover(parents: np.array, crossover_method: str):
         child0 = dict(zip(param_names, child0_v.tolist()))
         child1 = dict(zip(param_names, child1_v.tolist()))
         
-        # apply range limits to children and add them to offsprint
-        offspring[idx0] = apply_limits(child0)
-        offspring[idx1] = apply_limits(child1)
+        # add children to offspring
+        offspring[idx0] = child0
+        offspring[idx1] = child1
     
     return offspring
 
@@ -497,6 +496,7 @@ def succession(population: np.array, fitness: np.array, crossover_method: str, m
 
     This function represents a core step in the genetic algorithm, where a new population is created from the current one. 
     It starts by selecting the fittest individuals as parents. These parents undergo crossover and mutation to produce offspring. The offspring then form the new generation.
+    This function makes sure that all genes in the offspring individuals are in their corresponing range limits.
 
     Parameters:
     - population (np.array): The current population array, where each element represents an individual.
@@ -517,8 +517,11 @@ def succession(population: np.array, fitness: np.array, crossover_method: str, m
     # Generate the next generation using crossover and introcuce some variation through mutation
     offspring = mutate(crossover(parents, crossover_method), mutation_rate, mutation_scale)
 
+    # Apply valid range limits to offspring
+    offspring_valid = [apply_limits(individual) for individual in offspring]
+
     # Create the new population
-    new_population = np.concatenate((parents, offspring))
+    new_population = np.concatenate((parents, offspring_valid))
     
     return new_population
 
