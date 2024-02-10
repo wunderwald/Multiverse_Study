@@ -302,7 +302,7 @@ def select_parents(population: np.array, fitness: np.array):
     - The function employs a 'roulette wheel' approach with evenly spaced pointers, determined by the step size and a random start point. This method ensures a spread-out selection across the population's fitness range.
     '''
     # set number of parents to be selected - this can be subject to experimentation (influences competition and performance)
-    num_parents = population.shape[0]// 2
+    num_parents = population.shape[0]//2
 
     # initialize parent array
     parents = np.empty(num_parents, dtype=object)
