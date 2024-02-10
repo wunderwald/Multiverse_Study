@@ -411,7 +411,7 @@ def crossover(parents: np.array, crossover_method: str):
     offspring = np.empty(offspring_size, dtype=object)
 
     # perform crossover operation
-    for i in range(offspring_size):
+    for i in range(offspring_size // 2):
         # select pair of parents
         idx0 = i*2
         idx1 = i*2 + 1
