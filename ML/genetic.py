@@ -357,8 +357,6 @@ def succession(population: np.array, fitness: np.array, crossover_method: str, m
     
     return new_population
 
-
-# main function: run genetic evolution
 def evolution(population_size: int, max_num_generations: int, fitness_thresh: float, target_zlc: float, distance_metric: str, crossover_method: str, mutation_rate: float, mutation_scale: float):
     '''
     TODO: documentation
