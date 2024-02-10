@@ -338,15 +338,18 @@ def gaussian_mutation(individual, mutation_rate, mutation_scale=0.1):
 
 def mutate(offspring: np.array, mutation_rate: float, mutation_scale: float):
     '''
-    Apply gaussian mutation to each individual in the offspring.
+    Applies Gaussian mutation to each individual in the offspring.
+
+    This function iterates over an array of individuals (offspring) and applies Gaussian mutation to each individual based on a specified mutation rate and scale. 
+    The mutation introduces variability in the population, which is essential for the genetic algorithm's exploration of the solution space.
 
     Parameters:
-    - offspring (np.array): array of individuals to be mutated 
-    - mutation_rate (float): the probability of each gene being mutated, must be in range [0, 1]
-    - mutation_scale (float): scale of randomness applied to parameters, must be in range [0, 1]
+    - offspring (np.array): An array of individuals to be mutated. Each individual is expected to be a numeric array representing its genetic makeup.
+    - mutation_rate (float): The probability of each gene being mutated. This value should be in the range [0, 1]. A higher rate increases the likelihood of mutations in the individuals.
+    - mutation_scale (float): The scale of randomness applied during mutation, determining the magnitude of the mutation. This value should be in the range [0, 1]. A higher scale results in more significant changes to the genes during mutation.
 
     Returns:
-    offspring_mutated (np.array): array of mutated individuals
+    np.array: An array of mutated individuals. The structure of the array is similar to the input offspring array, but with mutations applied to the individuals.
     '''
     return np.array([gaussian_mutation(individual, mutation_rate, mutation_scale) for individual in offspring])
 
