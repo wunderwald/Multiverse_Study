@@ -1,9 +1,3 @@
-'''
-### NEXT STEPS ###
-- implement log difference (and further methods)
-- add documentation
-'''
-
 import numpy as np
 import genetic as gen
 
@@ -11,7 +5,7 @@ import genetic as gen
 POPULATION_SIZE = 1000
 MAX_NUM_GENERATIONS = 100
 FITNESS_THRESH = 5.0
-DISTANCE_METRIC = 'abs'
+DISTANCE_METRIC = 'euclidian'
 CROSSOVER_METHOD = None
 MUTATION_RATE = .1
 MUTATION_SCALE = .1

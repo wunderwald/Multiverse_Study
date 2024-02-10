@@ -159,7 +159,7 @@ def extract_ibi_params(individual: dict):
 
     return adult_params, infant_params
 
-def evaluate_fitness_individual(individual: dict, target_zlc: float, distance_metric: str='abs'):
+def evaluate_fitness_individual(individual: dict, target_zlc: float, distance_metric: str='euclidian'):
     '''
     Calculating RSA synchrony measured as the zero-lag coefficient (zlc) of RSA cross-correlation.
     Fitness is the deviation of the measured zcl from the target zlc based on the selected distance metric.
@@ -167,10 +167,10 @@ def evaluate_fitness_individual(individual: dict, target_zlc: float, distance_me
     Parameters:
     - individual (dict): key-value pairs for the 98 parameters for dyad IBI generator (see README for details)
     - target_zlc (float): target zero-lag coefficient
-    - distance_metric (str): distance metric for calculating difference between measured and optimal zlc (options: 'abs', 'log')
+    - distance_metric (str): distance metric for calculating difference between measured and optimal zlc (options: 'euclidian', 'log')
 
     Returns:
-    - fitness (float): the absolute difference between calculated and target ZLC, float('inf') on exception
+    - fitness (float): the difference between calculated and target ZLC, float('inf') on exception
     '''
 
     # extract ibi parameters
@@ -188,11 +188,15 @@ def evaluate_fitness_individual(individual: dict, target_zlc: float, distance_me
         zlc, _ = rsa.rsa_synchrony(adult_ibi, infant_ibi)
 
         # calculate fitness
+        abs_distance = abs(zlc - target_zlc)
         match distance_metric:
             # absolute distance
-            case 'abs':
-                return abs(zlc - target_zlc)
-            # default case (abs)
+            case 'euclidian':
+                return abs_distance
+            # log scaled distance
+            case 'log':
+                return abs_distance if abs_distance == 0 else np.log(abs_distance)
+            # default case (euclidian)
             case _:
                 return abs(zlc - target_zlc)
     
@@ -200,14 +204,14 @@ def evaluate_fitness_individual(individual: dict, target_zlc: float, distance_me
     except ValueError:
         return float('inf')
     
-def evaluate_fitness(population: np.array, target_zlc: float, distance_metric: str='abs'):
+def evaluate_fitness(population: np.array, target_zlc: float, distance_metric: str='euclidian'):
     '''
     Evaluate the fitness of the whole population (using deviation from ideal zero-lag coefficient of RSA cross-correlation as metric).
     
     Parameters:
     - population (np.array): the current population represented as an array of parameter dicts
     - target_zlc (float): target zero-lag coefficient
-    - distance_metric (str): distance metric for calculating difference between measured and target zlc (options: 'abs', 'log')
+    - distance_metric (str): distance metric for calculating difference between measured and target zlc (options: 'euclidian', 'log')
 
     Returns:
     - fitness (np.array): fitness value for each individual
