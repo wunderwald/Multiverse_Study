@@ -74,6 +74,26 @@ def apply_limits(individual: dict):
         individual_clamped[key] = clamp(value, *limits)
     return individual_clamped
 
+def extract_ibi_params(individual: dict):
+    '''
+    TODO: documentation
+    '''
+    adult_params = {
+        'base_ibi': individual['base_ibi_adult'],
+        'frequencies': [value for key, value in individual.items() if 'freq' in key and 'adult' in key],
+        'freq_weights': [value for key, value in individual.items() if 'weight' in key and 'adult' in key],
+        'phase_shifts': [value for key, value in individual.items() if 'phase' in key and 'adult' in key]
+    }
+
+    infant_params = {
+        'base_ibi': individual['base_ibi_infant'],
+        'frequencies': [value for key, value in individual.items() if 'freq' in key and 'infant' in key],
+        'freq_weights': [value for key, value in individual.items() if 'weight' in key and 'infant' in key],
+        'phase_shifts': [value for key, value in individual.items() if 'phase' in key and 'infant' in key]
+    }
+
+    return adult_params, infant_params
+
 # ---------------------------
 # GENETIC ALGORITHM FUNCTIONS
 # ---------------------------
@@ -142,39 +162,22 @@ def initialize_population(population_size: int):
     '''
     population = [initialize_individual() for _ in range(population_size)]
     return np.array(population)
-    
-def extract_ibi_params(individual: dict):
-    '''
-    TODO: documentation
-    '''
-    adult_params = {
-        'base_ibi': individual['base_ibi_adult'],
-        'frequencies': [value for key, value in individual.items() if 'freq' in key and 'adult' in key],
-        'freq_weights': [value for key, value in individual.items() if 'weight' in key and 'adult' in key],
-        'phase_shifts': [value for key, value in individual.items() if 'phase' in key and 'adult' in key]
-    }
-
-    infant_params = {
-        'base_ibi': individual['base_ibi_infant'],
-        'frequencies': [value for key, value in individual.items() if 'freq' in key and 'infant' in key],
-        'freq_weights': [value for key, value in individual.items() if 'weight' in key and 'infant' in key],
-        'phase_shifts': [value for key, value in individual.items() if 'phase' in key and 'infant' in key]
-    }
-
-    return adult_params, infant_params
 
 def evaluate_fitness_individual(individual: dict, target_zlc: float, distance_metric: str='euclidian'):
     '''
-    Calculating RSA synchrony measured as the zero-lag coefficient (zlc) of RSA cross-correlation.
-    Fitness is the deviation of the measured zcl from the target zlc based on the selected distance metric.
+    Calculates the fitness of an individual based on the deviation of its measured zero-lag coefficient (ZLC) of RSA cross-correlation from a target ZLC.
+
+    This function is used within a genetic algorithm to assess the fitness of each individual. 
+    It evaluates how well the individual's parameters generate Interbeat Interval (IBI) patterns that align with a desired level of RSA synchrony, as measured by the zero-lag coefficient (ZLC) of RSA cross-correlation. 
+    Fitness is quantified as the deviation between the calculated ZLC and the target ZLC, using a specified distance metric.
 
     Parameters:
-    - individual (dict): key-value pairs for the 98 parameters for dyad IBI generator (see README for details)
-    - target_zlc (float): target zero-lag coefficient
-    - distance_metric (str): distance metric for calculating difference between measured and optimal zlc (options: 'euclidian', 'log')
+    - individual (dict): A dictionary containing key-value pairs for the 98 parameters of a dyad IBI generator. The specifics of these parameters are detailed in the README.
+    - target_zlc (float): The target zero-lag coefficient that represents the desired level of RSA synchrony.
+    - distance_metric (str, optional): The metric used for calculating the deviation between the measured and target ZLC. Options include 'euclidian' and 'log'. Defaults to 'euclidian'.
 
     Returns:
-    - fitness (float): the difference between calculated and target ZLC, float('inf') on exception
+    float: The calculated fitness value. Lower values indicate a closer match to the target ZLC. Returns float('inf') in case of an exception during calculation.
     '''
 
     # extract ibi parameters
