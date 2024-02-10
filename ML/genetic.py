@@ -35,8 +35,8 @@ def initialize_individual():
     TODO: documentation
     '''
     # Randomize base inter-beat interval
-    base_ibi_adult = np.random.uniform(*rng_base_ibi_adult)
-    base_ibi_infant = np.random.uniform(*rng_base_ibi_infant)
+    base_ibi_adult = int(np.random.uniform(*rng_base_ibi_adult))
+    base_ibi_infant = int(np.random.uniform(*rng_base_ibi_infant))
 
     # Randomize frequencies within each range
     vlf_freqs_adult = np.random.uniform(*rng_freq_vlf, NUM_VLF_FREQS)
@@ -134,7 +134,7 @@ def evaluate_fitness_individual(individual: dict, target_zlc: float, distance_me
 
     # extract ibi parameters
     adult_params, infant_params = extract_ibi_params(individual=individual)
-    
+
     try:
         # generate IBIs
         adult_ibi, infant_ibi = ibi.generate_dyad_ibi(
