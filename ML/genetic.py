@@ -26,6 +26,32 @@ rng_weights_lf = [0.004, 0.4]
 rng_weights_hf = [0.002, 0.2]
 rng_phase_shift = [0, 2 * np.pi]
 
+# -------
+# HELPERS
+# -------
+
+def clamp(val: float, min: float, max: float):
+    return min if val < min else (max if max < val else val)
+
+def get_limits(param_key: str):
+    return [0, 1]
+
+def apply_limits(individual: dict):
+    '''
+    Makes sure that all parameters / genes are in their corresponding limits
+
+    Parameters:
+    - individual (dict): an individual
+
+    Returns:
+    - individual_clamped (dict): an individual with all parameter values safely inside the corresponding limits
+    '''
+    individual_clamped = {}
+    for key, value in individual.items():
+        limits = get_limits(key)
+        individual_clamped[key] = clamp(value, *limits)
+    return individual_clamped
+
 # ---------------------------
 # GENETIC ALGORITHM FUNCTIONS
 # ---------------------------
@@ -224,12 +250,6 @@ def crossover_blend(parent0_v: np.array, parent1_v: np.array, alpha: float=.5):
     child1_v = np.random.uniform(min_gene, max_gene)
 
     return child0_v, child1_v
-
-def apply_limits(individual: dict):
-    '''
-    TODO: make sure all parameters are in range
-    '''
-    return individual
 
 def crossover(parents: np.array, crossover_method: str):
     '''
