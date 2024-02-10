@@ -1,7 +1,7 @@
 import numpy as np
 import ibi_generator as ibi
 import rsa_drew as rsa
-from plot import plot_fitness_distribution
+from plot import plot_fitness_distribution, clear_folder
 
 # ------------------------------
 # CONSTANTS AND PARAMETER RANGES
@@ -550,6 +550,10 @@ def evolution(population_size: int, max_num_generations: int, fitness_thresh: fl
     Note:
     Logging can be toggled through the global variable LOG at the top of this script.
     '''
+    # clear plot folder
+    if plot:
+        clear_folder('./plots')
+
     # initialize population and fitness
     population = initialize_population(population_size)
     fitness = evaluate_fitness(population, target_zlc, distance_metric)

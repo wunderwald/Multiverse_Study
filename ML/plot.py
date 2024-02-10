@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import os
+import shutil
 
 def plot_fitness_distribution(fitness_values, generation_number, folder_path):
     """
@@ -32,3 +33,30 @@ def plot_fitness_distribution(fitness_values, generation_number, folder_path):
 
     # Close the plot to free up memory
     plt.close()
+
+def clear_folder(folder_path):
+    """
+    Clears all files and subdirectories in a specified folder without deleting the folder itself.
+
+    Parameters:
+    - folder_path (str): The path to the folder to be cleared.
+
+    Notes:
+    - If the folder does not exist, the function does nothing and prints a message indicating this.
+    - The function removes all files and subdirectories within the specified folder but keeps the folder itself intact.
+    """
+    # Check if the folder exists
+    if not os.path.exists(folder_path):
+        return
+
+    # Iterate over all files and directories in the folder
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+        
+        # Check if it's a file or directory
+        if os.path.isfile(file_path) or os.path.islink(file_path):
+            # If it's a file or a link, delete it
+            os.unlink(file_path)
+        elif os.path.isdir(file_path):
+            # If it's a directory, delete it and all its contents
+            shutil.rmtree(file_path)
