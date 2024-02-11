@@ -1,6 +1,12 @@
 '''
 Open for experimentation / TODO:
     
+- algorithm converges quickly now and results in a 50/50 split of good and bad results. 
+    -> work on exploraion/exploitation balance
+    -> experiment with increasing offspring/old_population ratio
+    -> add more mutation (mb not only to offspring)
+    -> increase weight ranges
+
 - expand weight ranges?
 - randomize crossover method for each crossover
 - add parrallelization: evaluate individuals
@@ -14,9 +20,9 @@ import genetic as gen
 POPULATION_SIZE = 200
 MAX_NUM_GENERATIONS = 50
 DISTANCE_METRIC = 'abs'
-CROSSOVER_METHOD = 'arithmetic'
-MUTATION_RATE = .1
-MUTATION_SCALE = .15
+CROSSOVER_METHOD = 'blend'
+MUTATION_RATE = .3
+MUTATION_SCALE = .2
 TARGET_ZLC = 300.0
 
 # Output parameters
