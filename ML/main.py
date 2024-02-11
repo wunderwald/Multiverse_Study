@@ -1,11 +1,5 @@
 '''
 Open for experimentation / TODO:
-
-PARENT SELECTION SEEMS FLAWED: Too much bad individuals stay in the population, good ones get lost
-- add hyperparam to decide between SUS and simple selection of the fittest
-- num_parents / offspring_size (for now, both equal to population_size//2)
-    - introduce more variation by increasing offspring to parents ratio
-    - select less parents: population shrinks but improves mores
     
 - expand weight ranges
 - randomize crossover method for each crossover
@@ -21,7 +15,6 @@ import genetic as gen
 # set hyper-parameters
 POPULATION_SIZE = 140
 MAX_NUM_GENERATIONS = 100
-FITNESS_THRESH = 2.0
 DISTANCE_METRIC = 'abs'
 CROSSOVER_METHOD = 'arithmetic'
 MUTATION_RATE = .1
@@ -36,7 +29,6 @@ PLOT = True
 final_population, fitness = gen.evolution(
     population_size=POPULATION_SIZE,
     max_num_generations=MAX_NUM_GENERATIONS,
-    fitness_thresh=FITNESS_THRESH,
     target_zlc=TARGET_ZLC,
     distance_metric=DISTANCE_METRIC,
     crossover_method=CROSSOVER_METHOD,
@@ -45,7 +37,7 @@ final_population, fitness = gen.evolution(
     log=LOG,
     plot=PLOT
 )
-best_fitness = np.min(fitness)
+best_fitness = np.max(fitness)
 
 # export data
 # TODO write best individuals to database

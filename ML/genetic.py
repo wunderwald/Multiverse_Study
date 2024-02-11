@@ -230,7 +230,7 @@ def evaluate_fitness_individual(individual: dict, target_zlc: float, distance_me
     - distance_metric (str, optional): The metric used for calculating the deviation between the measured and target ZLC. Options include 'euclidian' and 'log'. Defaults to 'euclidian'.
 
     Returns:
-    float: The calculated fitness value. Lower values indicate a closer match to the target ZLC. Returns float('inf') in case of an exception during calculation.
+    float: The calculated fitness value. Higher values indicate a closer match to the target ZLC. Returns float('-inf') in case of an exception during calculation.
     '''
 
     # extract ibi parameters
@@ -252,17 +252,17 @@ def evaluate_fitness_individual(individual: dict, target_zlc: float, distance_me
         match distance_metric:
             # absolute distance
             case 'euclidian':
-                return abs_distance
+                return 1/abs_distance
             # log scaled distance
             case 'log':
-                return abs_distance if abs_distance == 0 else np.log(abs_distance)
+                return 1/np.log(abs_distance)
             # default case (euclidian)
             case _:
-                return abs(zlc - target_zlc)
+                return 1/abs(zlc - target_zlc)
     
     # return infinity on exception
     except ValueError:
-        return float('inf')
+        return float('-inf')
     
 def evaluate_fitness(population: np.array, target_zlc: float, distance_metric: str='euclidian'):
     '''
@@ -519,13 +519,13 @@ def succession(population: np.array, fitness: np.array, crossover_method: str, m
     
     return new_population
 
-def evolution(population_size: int, max_num_generations: int, fitness_thresh: float, target_zlc: float, distance_metric: str, crossover_method: str, mutation_rate: float, mutation_scale: float, log: bool=False, plot: bool=False):
+def evolution(population_size: int, max_num_generations: int, target_zlc: float, distance_metric: str, crossover_method: str, mutation_rate: float, mutation_scale: float, log: bool=False, plot: bool=False):
     '''
     Conducts the genetic algorithm's evolution process. 
     The goal is to find parameters for an IBI generation algorithm in order to minimize the distance of the zero-lag coefficient (zlcs) in an RSA Synchrony algorithm to a target zlc.
 
     This function represents the main optimization loop in a genetic algorithm. 
-    It initializes a population and iteratively evolves it over a specified number of generations or until a fitness threshold is met. 
+    It initializes a population and iteratively evolves it over a specified number of generations.
     Each generation involves the creation of a new population through crossover and mutation. 
     The fitness of each individual in the population is evaluated, and the process repeats. 
     The function returns the final population and their respective fitness scores.
@@ -533,7 +533,6 @@ def evolution(population_size: int, max_num_generations: int, fitness_thresh: fl
     Parameters:
     - population_size (int): The number of individuals in the population.
     - max_num_generations (int): The maximum number of generations to run the evolution for.
-    - fitness_thresh (float): The fitness threshold for terminating the evolution early. Evolution stops if any individual's fitness is less than this threshold.
     - target_zlc (float): A target value for the zero-lag coefficient fitness evaluation function.
     - distance_metric (str): The type of distance metric to be used in the fitness evaluation. [options: 'euclidian', 'log']
     - crossover_method (str): The crossover method to be used for generating new individuals. [options: 'arithmetic', 'blend']
@@ -566,7 +565,7 @@ def evolution(population_size: int, max_num_generations: int, fitness_thresh: fl
 
         # calculate fitness
         fitness = evaluate_fitness(population, target_zlc, distance_metric)
-        best_fitness = np.min(fitness)        
+        best_fitness = np.max(fitness)        
 
         # inform about fitness state
         if log:
@@ -576,8 +575,5 @@ def evolution(population_size: int, max_num_generations: int, fitness_thresh: fl
         if plot:
             plot_fitness_distribution(fitness, generation_index, './plots')
 
-        # terminate evolution if desired fitness is reached
-        if best_fitness < fitness_thresh:
-            break
 
     return population, fitness
