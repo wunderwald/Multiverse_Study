@@ -22,7 +22,7 @@ def plot_fitness_distribution(fitness_values, generation_number, folder_path):
 
     # Create the plot
     plt.figure()
-    plt.hist(fitness_values, bins=500, alpha=0.75)
+    plt.hist(fitness_values, bins=100, alpha=0.75)
     plt.title(f'Fitness Distribution - Generation {generation_number}')
     plt.xlabel('Fitness Value')
     plt.ylabel('Frequency')
