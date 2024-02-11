@@ -13,8 +13,8 @@ import numpy as np
 import genetic as gen
 
 # set hyper-parameters
-POPULATION_SIZE = 140
-MAX_NUM_GENERATIONS = 100
+POPULATION_SIZE = 200
+MAX_NUM_GENERATIONS = 50
 DISTANCE_METRIC = 'abs'
 CROSSOVER_METHOD = 'arithmetic'
 MUTATION_RATE = .1
