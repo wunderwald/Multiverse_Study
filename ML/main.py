@@ -1,12 +1,10 @@
 '''
 Open for experimentation / TODO:
     
-- expand weight ranges
+- expand weight ranges?
 - randomize crossover method for each crossover
 - add parrallelization: evaluate individuals
-- apply threshold not to min (bc thats probably an outlier) but to quantile or smth
 - specialise mutation to parameter characteristics
-- work on exploration / exploitation balance
 '''
 
 import numpy as np
@@ -18,7 +16,7 @@ MAX_NUM_GENERATIONS = 50
 DISTANCE_METRIC = 'abs'
 CROSSOVER_METHOD = 'arithmetic'
 MUTATION_RATE = .1
-MUTATION_SCALE = .05
+MUTATION_SCALE = .15
 TARGET_ZLC = 300.0
 
 # Output parameters
