@@ -437,11 +437,12 @@ def crossover(parents: np.array, crossover_method: str, population_size: int, pa
 
     This function takes an array of parent individuals and applies a crossover method to generate offspring. 
     The crossover methods available are 'arithmetic' and 'blend' (also referred to as blx-alpha). 
+    Crossover method 'shuffle' randomly selects one of the crossover method.
     Each pair of parents generates two offspring, with genes combined according to the specified crossover method. 
 
     Parameters:
     - parents (np.array): An array of parent individuals, where each individual is a dictionary of gene names and values.
-    - crossover_method (str): The method of crossover to be used. Options include 'arithmetic' and 'blend'.
+    - crossover_method (str): The method of crossover to be used. Options include 'arithmetic', 'blend' and 'shuffle'.
 
     - parent_ratio (float): The percentage of individuals extracted from the population to be parents. Optional, defaults to 0.5.
 
@@ -476,6 +477,8 @@ def crossover(parents: np.array, crossover_method: str, population_size: int, pa
                 child0_v, child1_v = crossover_arithmetic(parent0_v, parent1_v)
             case 'blend':
                 child0_v, child1_v = crossover_blend(parent0_v, parent1_v)
+            case 'shuffle':
+                child0_v, child1_v = crossover_arithmetic(parent0_v, parent1_v) if np.random.rand() < .6 else crossover_blend(parent0_v, parent1_v)
             case _:
                 child0_v, child1_v = crossover_arithmetic(parent0_v, parent1_v)
 
@@ -589,7 +592,7 @@ def evolution(population_size: int, max_num_generations: int, target_zlc: float,
     - max_num_generations (int): The maximum number of generations to run the evolution for.
     - target_zlc (float): A target value for the zero-lag coefficient fitness evaluation function.
     - distance_metric (str): The type of distance metric to be used in the fitness evaluation. [options: 'euclidian', 'log']
-    - crossover_method (str): The crossover method to be used for generating new individuals. [options: 'arithmetic', 'blend']
+    - crossover_method (str): The crossover method to be used for generating new individuals. [options: 'arithmetic', 'blend', 'shuffle']
     - mutation_rate (float): The probability of mutation occurring in an individual.
     - mutation_scale (float): The scale of mutation when it occurs.
     - select_parents_method: The parent selection method. 'sus' selects parents standard uniform sampling, 'roulette_fittest' selects parents using a more simple version of roulette wheel selection that also excludes lower fitness parents. (Default: 'sus')

@@ -2,8 +2,7 @@
 Open for experimentation / TODO:
 
 - expand weight ranges?
-- randomize crossover method for each crossover
-- specialise mutation to parameter characteristics
+- randomize crossover method for each crossover (add this as CROSSOVER_METHOD='shuffle', give tendency towards 'abs')
 
 Create (parallel) batch optimization (run a lot of optimizations simultaneously)
 - Stop on convergence (i.e. 30 generations with same best fitness)
@@ -14,10 +13,10 @@ import numpy as np
 import genetic as gen
 
 # set hyper-parameters
-POPULATION_SIZE = 200
+POPULATION_SIZE = 100
 MAX_NUM_GENERATIONS = 200
 DISTANCE_METRIC = 'abs'
-CROSSOVER_METHOD = 'arithmetic'
+CROSSOVER_METHOD = 'shuffle'
 MUTATION_RATE = .1
 MUTATION_SCALE = .8
 SELECT_PARENTS_METHOD = 'sus'
