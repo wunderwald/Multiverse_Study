@@ -22,7 +22,8 @@ MAX_NUM_GENERATIONS = 50
 DISTANCE_METRIC = 'abs'
 CROSSOVER_METHOD = 'arithmetic'
 MUTATION_RATE = .3
-MUTATION_SCALE = .2
+MUTATION_SCALE = .7
+PARENT_RATIO = 0.7
 TARGET_ZLC = 300.0
 
 # Output parameters
@@ -38,6 +39,7 @@ final_population, fitness = gen.evolution(
     crossover_method=CROSSOVER_METHOD,
     mutation_rate=MUTATION_RATE,
     mutation_scale=MUTATION_SCALE,
+    parent_ratio=PARENT_RATIO,
     log=LOG,
     plot=PLOT
 )

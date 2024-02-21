@@ -281,7 +281,7 @@ def evaluate_fitness(population: np.array, target_zlc: float, distance_metric: s
     '''
     return [evaluate_fitness_individual(individual, target_zlc, distance_metric) for individual in population]
     
-def select_parents(population: np.array, fitness: np.array):
+def select_parents(population: np.array, fitness: np.array, parent_ratio: float=0.5):
     '''
     Selects parents from the population using Stochastic Universal Sampling (SUS).
 
@@ -292,7 +292,8 @@ def select_parents(population: np.array, fitness: np.array):
     Parameters:
     - population (np.array): An array of individuals in the current generation. Each individual is a dictionary of gene names and values.
     - fitness (np.array): An array of fitness values corresponding to each individual in the population. Higher fitness values indicate better individuals.
-
+    - parent_ratio (float): The percentage of individuals extracted from the population to be parents. Optional, defaults to 0.5.
+    
     Returns:
     np.array: An array of selected parent individuals.
 
@@ -302,7 +303,7 @@ def select_parents(population: np.array, fitness: np.array):
     - The function employs a 'roulette wheel' approach with evenly spaced pointers, determined by the step size and a random start point. This method ensures a spread-out selection across the population's fitness range.
     '''
     # set number of parents to be selected - this can be subject to experimentation (influences competition and performance)
-    num_parents = population.shape[0]//2
+    num_parents = int(population.shape[0] * parent_ratio)
 
     # initialize parent array
     parents = np.empty(num_parents, dtype=object)
@@ -484,7 +485,7 @@ def mutate(offspring: np.array, mutation_rate: float, mutation_scale: float):
     '''
     return np.array([gaussian_mutation(individual, mutation_rate, mutation_scale) for individual in offspring])
 
-def succession(population: np.array, fitness: np.array, crossover_method: str, mutation_rate: float, mutation_scale: float):
+def succession(population: np.array, fitness: np.array, crossover_method: str, mutation_rate: float, mutation_scale: float, parent_ratio: float=0.5):
     '''
     Generates a new generation of population through the processes of selection, crossover, and mutation.
 
@@ -498,6 +499,7 @@ def succession(population: np.array, fitness: np.array, crossover_method: str, m
     - crossover_method (str): The crossover method to be used for generating offspring.
     - mutation_rate (float): The probability of mutation occurring in an offspring.
     - mutation_scale (float): The scale of mutation when it occurs.
+    - parent_ratio (float): The percentage of individuals extracted from the population to be parents. Optional, defaults to 0.5.
 
     Returns:
     np.array: The new population formed by concatenating the parents and the mutated offspring.
@@ -506,7 +508,7 @@ def succession(population: np.array, fitness: np.array, crossover_method: str, m
     - The population and fitness arrays must be of the same length, each entry in the fitness array corresponding to an individual in the population array.
     '''
     # Select the best parents for mating
-    parents = select_parents(population, fitness)
+    parents = select_parents(population, fitness, parent_ratio)
 
     # Generate the next generation using crossover and introcuce some variation through mutation
     offspring = mutate(crossover(parents, crossover_method), mutation_rate, mutation_scale)
@@ -519,7 +521,7 @@ def succession(population: np.array, fitness: np.array, crossover_method: str, m
     
     return new_population
 
-def evolution(population_size: int, max_num_generations: int, target_zlc: float, distance_metric: str, crossover_method: str, mutation_rate: float, mutation_scale: float, log: bool=False, plot: bool=False):
+def evolution(population_size: int, max_num_generations: int, target_zlc: float, distance_metric: str, crossover_method: str, mutation_rate: float, mutation_scale: float, parent_ratio: float=0.5, log: bool=False, plot: bool=False):
     '''
     Conducts the genetic algorithm's evolution process. 
     The goal is to find parameters for an IBI generation algorithm in order to minimize the distance of the zero-lag coefficient (zlcs) in an RSA Synchrony algorithm to a target zlc.
@@ -538,6 +540,7 @@ def evolution(population_size: int, max_num_generations: int, target_zlc: float,
     - crossover_method (str): The crossover method to be used for generating new individuals. [options: 'arithmetic', 'blend']
     - mutation_rate (float): The probability of mutation occurring in an individual.
     - mutation_scale (float): The scale of mutation when it occurs.
+    - parent_ratio (float): The percentage of individuals extracted from the population to be parents. Optional, defaults to 0.5.
     - log (bool): Toggles logging.
     - plot (bool): Toggles plot creation.
 
@@ -561,7 +564,10 @@ def evolution(population_size: int, max_num_generations: int, target_zlc: float,
     for generation_index in range(max_num_generations):
 
         # create new generation of population
-        population = succession(population, fitness, crossover_method, mutation_rate, mutation_scale)
+        population = succession(population, fitness, crossover_method, mutation_rate, mutation_scale, parent_ratio)
+
+        # Make sure that population doesn't become larger
+        population = population if population.shape[0] <= population_size else np.random.choice(population, population_size, replace=False)
 
         # calculate fitness
         fitness = evaluate_fitness(population, target_zlc, distance_metric)
