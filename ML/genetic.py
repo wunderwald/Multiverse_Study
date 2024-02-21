@@ -280,8 +280,9 @@ def evaluate_fitness(population: np.array, target_zlc: float, distance_metric: s
     np.array: An array of fitness values, one for each individual in the population. Lower fitness values indicate a closer match to the target ZLC and thus a more desirable solution.
     '''
     return [evaluate_fitness_individual(individual, target_zlc, distance_metric) for individual in population]
-    
-def select_parents(population: np.array, fitness: np.array, parent_ratio: float=0.5):
+
+
+def select_parents_sus(population: np.array, fitness: np.array, num_parents: int):
     '''
     Selects parents from the population using Stochastic Universal Sampling (SUS).
 
@@ -298,13 +299,9 @@ def select_parents(population: np.array, fitness: np.array, parent_ratio: float=
     np.array: An array of selected parent individuals.
 
     Notes:
-    - The number of parents selected is half the size of the input population.
     - Fitness values are normalized to create a probability distribution.
     - The function employs a 'roulette wheel' approach with evenly spaced pointers, determined by the step size and a random start point. This method ensures a spread-out selection across the population's fitness range.
     '''
-    # set number of parents to be selected - this can be subject to experimentation (influences competition and performance)
-    num_parents = int(population.shape[0] * parent_ratio)
-
     # initialize parent array
     parents = np.empty(num_parents, dtype=object)
 
@@ -328,6 +325,55 @@ def select_parents(population: np.array, fitness: np.array, parent_ratio: float=
         parents[i] = population[idx]
 
     return parents
+
+def select_parents_roulette_fittest(population: np.array, fitness: np.array, num_parents: int):
+    '''
+    TODO doc
+    '''
+    # Sort the population by fitness in descending order
+    sorted_indices = np.argsort(fitness)[::-1]
+    top_idx = sorted_indices[:int(0.9 * sorted_indices.shape[0])]
+    
+    # Consider only the top 90% of individuals
+    top_population = np.array([population[i] for i in top_idx])
+    top_fitness = np.array([fitness[i] for i in top_idx])
+
+    # Normalize fitness
+    total_fitness = np.sum(top_fitness)
+    normalized_fitness = top_fitness / total_fitness
+    cumulative_sum = np.cumsum(normalized_fitness)
+
+    # Selection process
+    selected_indices = []
+    while len(selected_indices) < num_parents:
+        r = np.random.rand()
+        for i, cumulative in enumerate(cumulative_sum):
+            if r <= cumulative:
+                selected_indices.append(i)
+                break
+
+    return top_population[selected_indices]
+
+def select_parents(population: np.array, fitness: np.array, select_parents_method: str='sus', parent_ratio: float=0.5):
+    '''
+    Selects parents from the population.
+
+    Parameters:
+    - population (np.array): An array of individuals in the current generation. Each individual is a dictionary of gene names and values.
+    - fitness (np.array): An array of fitness values corresponding to each individual in the population. Higher fitness values indicate better individuals.
+    - select_parents_method: The parent selection method. 'sus' selects parents standard uniform sampling, 'roulette_fittest' selects parents using a more simple version of roulette wheel selection that also excludes lower fitness parents. (Default: 'sus')
+    - parent_ratio (float): The percentage of individuals extracted from the population to be parents. Optional, defaults to 0.5.
+    
+    Returns:
+    np.array: An array of selected parent individuals.
+    '''
+    # set number of parents to be selected - this can be subject to experimentation (influences competition and performance)
+    num_parents = int(population.shape[0] * parent_ratio)
+
+    # select parents based on selection method parameter
+    if select_parents_method == 'roulette_fittest':
+        return select_parents_roulette_fittest(population, fitness, num_parents)
+    return select_parents_sus(population, fitness, num_parents)
 
 def crossover_arithmetic(parent0_v: np.array, parent1_v: np.array, alpha:float = .3):
     '''
@@ -486,7 +532,7 @@ def mutate(offspring: np.array, mutation_rate: float, mutation_scale: float):
     '''
     return np.array([gaussian_mutation(individual, mutation_rate, mutation_scale) for individual in offspring])
 
-def succession(population: np.array, fitness: np.array, crossover_method: str, mutation_rate: float, mutation_scale: float, population_size: int, parent_ratio: float=0.5):
+def succession(population: np.array, fitness: np.array, crossover_method: str, mutation_rate: float, mutation_scale: float, population_size: int, select_parents_method: str='sus', parent_ratio: float=0.5):
     '''
     Generates a new generation of population through the processes of selection, crossover, and mutation.
 
@@ -501,6 +547,7 @@ def succession(population: np.array, fitness: np.array, crossover_method: str, m
     - mutation_rate (float): The probability of mutation occurring in an offspring.
     - mutation_scale (float): The scale of mutation when it occurs.
     - population_size (int): The number of individuals in the population.
+    - select_parents_method: The parent selection method. 'sus' selects parents standard uniform sampling, 'roulette_fittest' selects parents using a more simple version of roulette wheel selection that also excludes lower fitness parents.
     - parent_ratio (float): The percentage of individuals extracted from the population to be parents. Optional, defaults to 0.5.
 
     Returns:
@@ -510,20 +557,23 @@ def succession(population: np.array, fitness: np.array, crossover_method: str, m
     - The population and fitness arrays must be of the same length, each entry in the fitness array corresponding to an individual in the population array.
     '''
     # Select the best parents for mating
-    parents = select_parents(population, fitness, parent_ratio)
+    parents = select_parents(population, fitness, select_parents_method, parent_ratio)
 
-    # Generate the next generation using crossover and introcuce some variation through mutation
-    offspring = mutate(crossover(parents, crossover_method, population_size, parent_ratio), mutation_rate, mutation_scale)
+    # Generate the next generation using crossover 
+    offspring = crossover(parents, crossover_method, population_size, parent_ratio)
+
+    # introcuce some variation through mutation
+    offspring_mutated = mutate(offspring, mutation_rate, mutation_scale)
 
     # Apply valid range limits to offspring
-    offspring_valid = [apply_limits(individual) for individual in offspring]
+    offspring_valid = [apply_limits(individual) for individual in offspring_mutated]
 
     # Create the new population
     new_population = np.concatenate((parents, offspring_valid))
     
     return new_population
 
-def evolution(population_size: int, max_num_generations: int, target_zlc: float, distance_metric: str, crossover_method: str, mutation_rate: float, mutation_scale: float, parent_ratio: float=0.5, log: bool=False, plot: bool=False):
+def evolution(population_size: int, max_num_generations: int, target_zlc: float, distance_metric: str, crossover_method: str, mutation_rate: float, mutation_scale: float, select_parents_method: str='sus', parent_ratio: float=0.5, log: bool=False, plot: bool=False):
     '''
     Conducts the genetic algorithm's evolution process. 
     The goal is to find parameters for an IBI generation algorithm in order to minimize the distance of the zero-lag coefficient (zlcs) in an RSA Synchrony algorithm to a target zlc.
@@ -542,6 +592,7 @@ def evolution(population_size: int, max_num_generations: int, target_zlc: float,
     - crossover_method (str): The crossover method to be used for generating new individuals. [options: 'arithmetic', 'blend']
     - mutation_rate (float): The probability of mutation occurring in an individual.
     - mutation_scale (float): The scale of mutation when it occurs.
+    - select_parents_method: The parent selection method. 'sus' selects parents standard uniform sampling, 'roulette_fittest' selects parents using a more simple version of roulette wheel selection that also excludes lower fitness parents. (Default: 'sus')
     - parent_ratio (float): The percentage of individuals extracted from the population to be parents. Optional, defaults to 0.5.
     - log (bool): Toggles logging.
     - plot (bool): Toggles plot creation.
@@ -566,7 +617,16 @@ def evolution(population_size: int, max_num_generations: int, target_zlc: float,
     for generation_index in range(max_num_generations):
 
         # create new generation of population
-        population = succession(population, fitness, crossover_method, mutation_rate, mutation_scale, population_size, parent_ratio)
+        population = succession(
+            population, 
+            fitness, 
+            crossover_method, 
+            mutation_rate, 
+            mutation_scale, 
+            population_size, 
+            select_parents_method,
+            parent_ratio
+        )
 
         # Make sure that population doesn't become larger
         population = population if population.shape[0] <= population_size else np.random.choice(population, population_size, replace=False)

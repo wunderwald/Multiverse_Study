@@ -1,11 +1,5 @@
 '''
 Open for experimentation / TODO:
-    
-- algorithm converges quickly now and results in a 50/50 split of good and bad results. 
-    -> work on exploraion/exploitation balance
-    -> experiment with increasing offspring/old_population ratio
-    -> add more mutation (mb not only to offspring)
-    -> increase weight ranges
 
 - expand weight ranges?
 - randomize crossover method for each crossover
@@ -23,6 +17,7 @@ DISTANCE_METRIC = 'abs'
 CROSSOVER_METHOD = 'arithmetic'
 MUTATION_RATE = .1
 MUTATION_SCALE = .8
+SELECT_PARENTS_METHOD = 'sus'
 PARENT_RATIO = 0.1
 TARGET_ZLC = 300.0
 
@@ -39,6 +34,7 @@ final_population, fitness = gen.evolution(
     crossover_method=CROSSOVER_METHOD,
     mutation_rate=MUTATION_RATE,
     mutation_scale=MUTATION_SCALE,
+    select_parents_method=SELECT_PARENTS_METHOD,
     parent_ratio=PARENT_RATIO,
     log=LOG,
     plot=PLOT
