@@ -5,7 +5,7 @@ Open for experimentation:
 
 Create (parallel) batch optimization (run a lot of optimizations simultaneously)
 - Stop on convergence (i.e. 30 generations with same best fitness)
-- add a bit of hyperparameter randomness for each optimization
+- add a bit of hyperparameter randomness for each optimization (also population size)
 - Store individuals that are close to max fitness in database
 '''
 
