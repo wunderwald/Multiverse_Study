@@ -12,7 +12,7 @@ import genetic as gen
 
 # set hyper-parameters
 POPULATION_SIZE = 100
-MAX_NUM_GENERATIONS = 50
+MAX_NUM_GENERATIONS = 200
 DISTANCE_METRIC = 'abs'
 CROSSOVER_METHOD = 'arithmetic'
 MUTATION_RATE = .1
