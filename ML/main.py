@@ -17,13 +17,13 @@ import numpy as np
 import genetic as gen
 
 # set hyper-parameters
-POPULATION_SIZE = 200
+POPULATION_SIZE = 100
 MAX_NUM_GENERATIONS = 50
 DISTANCE_METRIC = 'abs'
 CROSSOVER_METHOD = 'arithmetic'
-MUTATION_RATE = .3
-MUTATION_SCALE = .7
-PARENT_RATIO = 0.7
+MUTATION_RATE = .1
+MUTATION_SCALE = .8
+PARENT_RATIO = 0.1
 TARGET_ZLC = 300.0
 
 # Output parameters

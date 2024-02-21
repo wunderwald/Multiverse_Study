@@ -385,7 +385,7 @@ def crossover_blend(parent0_v: np.array, parent1_v: np.array, alpha: float=.5):
 
     return child0_v, child1_v
 
-def crossover(parents: np.array, crossover_method: str):
+def crossover(parents: np.array, crossover_method: str, population_size: int, parent_ratio: float=0.5):
     '''
     Performs crossover operation on a set of parent individuals to generate offspring.
 
@@ -397,6 +397,8 @@ def crossover(parents: np.array, crossover_method: str):
     - parents (np.array): An array of parent individuals, where each individual is a dictionary of gene names and values.
     - crossover_method (str): The method of crossover to be used. Options include 'arithmetic' and 'blend'.
 
+    - parent_ratio (float): The percentage of individuals extracted from the population to be parents. Optional, defaults to 0.5.
+
     Returns:
     np.array: An array of offspring individuals, each represented as a dictionary of gene names and values.
 
@@ -405,7 +407,7 @@ def crossover(parents: np.array, crossover_method: str):
     - The crossover operation is applied to the parameter vectors of the parents, and the results are converted back into dictionaries for the offspring.
     '''
     # initialize offspring
-    offspring_size = parents.shape[0] - parents.shape[0] % 2
+    offspring_size = int(population_size * (1 - clamp(parent_ratio, 0, 1)))
     offspring = np.empty(offspring_size, dtype=object)
 
     # perform crossover operation
@@ -413,8 +415,7 @@ def crossover(parents: np.array, crossover_method: str):
         # select pair of parents
         idx0 = i*2
         idx1 = i*2 + 1
-        parent0 = parents[idx0]
-        parent1 = parents[idx1]
+        parent0, parent1 = (parents[idx0], parents[idx1]) if idx1 < parents.shape[0] else np.random.choice(parents, 2)
 
         # extract parameter vector from parents
         parent0_v = np.array(list(parent0.values()))
@@ -485,7 +486,7 @@ def mutate(offspring: np.array, mutation_rate: float, mutation_scale: float):
     '''
     return np.array([gaussian_mutation(individual, mutation_rate, mutation_scale) for individual in offspring])
 
-def succession(population: np.array, fitness: np.array, crossover_method: str, mutation_rate: float, mutation_scale: float, parent_ratio: float=0.5):
+def succession(population: np.array, fitness: np.array, crossover_method: str, mutation_rate: float, mutation_scale: float, population_size: int, parent_ratio: float=0.5):
     '''
     Generates a new generation of population through the processes of selection, crossover, and mutation.
 
@@ -499,6 +500,7 @@ def succession(population: np.array, fitness: np.array, crossover_method: str, m
     - crossover_method (str): The crossover method to be used for generating offspring.
     - mutation_rate (float): The probability of mutation occurring in an offspring.
     - mutation_scale (float): The scale of mutation when it occurs.
+    - population_size (int): The number of individuals in the population.
     - parent_ratio (float): The percentage of individuals extracted from the population to be parents. Optional, defaults to 0.5.
 
     Returns:
@@ -511,7 +513,7 @@ def succession(population: np.array, fitness: np.array, crossover_method: str, m
     parents = select_parents(population, fitness, parent_ratio)
 
     # Generate the next generation using crossover and introcuce some variation through mutation
-    offspring = mutate(crossover(parents, crossover_method), mutation_rate, mutation_scale)
+    offspring = mutate(crossover(parents, crossover_method, population_size, parent_ratio), mutation_rate, mutation_scale)
 
     # Apply valid range limits to offspring
     offspring_valid = [apply_limits(individual) for individual in offspring]
@@ -564,7 +566,7 @@ def evolution(population_size: int, max_num_generations: int, target_zlc: float,
     for generation_index in range(max_num_generations):
 
         # create new generation of population
-        population = succession(population, fitness, crossover_method, mutation_rate, mutation_scale, parent_ratio)
+        population = succession(population, fitness, crossover_method, mutation_rate, mutation_scale, population_size, parent_ratio)
 
         # Make sure that population doesn't become larger
         population = population if population.shape[0] <= population_size else np.random.choice(population, population_size, replace=False)
