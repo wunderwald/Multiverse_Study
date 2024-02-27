@@ -617,12 +617,16 @@ def evolution(population_size: int, max_num_generations: int, target_zlc: float,
     # initialize population and fitness
     population = initialize_population(population_size)
     fitness = evaluate_fitness(population, target_zlc, distance_metric)
+    last_gen_index = 0
 
     # initialize history for best fitness values
     best_fitness_history = []
     
     # iterate over generations
     for generation_index in range(max_num_generations):
+
+        # update last gen index
+        last_gen_index = generation_index
 
         # create new generation of population
         population = succession(
@@ -656,8 +660,8 @@ def evolution(population_size: int, max_num_generations: int, target_zlc: float,
             plot_fitness_distribution(fitness, generation_index, './plots')
 
         # optionally break on convergence
-        if stop_on_convergence:
+        if stop_on_convergence and is_converging:
             break
 
 
-    return population, fitness
+    return population, fitness, last_gen_index

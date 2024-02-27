@@ -42,7 +42,7 @@ def genetic_optimization(i):
         db_collection = db[f"fittest_individuals_{int(round(datetime.now().timestamp() * 1000))}"]
 
     # run genetic evolution algorithm
-    final_population, fitness = gen.evolution(
+    final_population, fitness, last_generation_index = gen.evolution(
         population_size=POPULATION_SIZE,
         max_num_generations=MAX_NUM_GENERATIONS,
         target_zlc=TARGET_ZLC,
@@ -61,7 +61,7 @@ def genetic_optimization(i):
 
     # log
     if LOG_MINIMAL:
-        print(f'# optimization {i} done, best fitness: {best_fitness}')
+        print(f'# optimization {i} done, best fitness: {best_fitness}, num generations: {last_generation_index}')
 
     # export data
     if WRITE_TO_DATABASE:
