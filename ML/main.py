@@ -11,7 +11,7 @@ import numpy as np
 import genetic as gen
 
 # genetic parameter optimization
-def genetic_optimization():
+def genetic_optimization(i):
 
     # set hyper-parameters
     POPULATION_SIZE = 200
@@ -61,7 +61,7 @@ def genetic_optimization():
 
     # log
     if LOG_MINIMAL:
-        print(f'# optimization done, best fitness: {best_fitness}')
+        print(f'# optimization {i} done, best fitness: {best_fitness}')
 
     # export data
     if WRITE_TO_DATABASE:
@@ -91,6 +91,7 @@ def genetic_optimization():
         db_collection.insert_one(record)
 
 # execute batch of optimizations in parallel
-NUM_PARALLEL_OPTIMIZATIONS = 10
-with Pool() as pool:
-    pool.map(genetic_optimization, range(NUM_PARALLEL_OPTIMIZATIONS))
+if __name__ == '__main__':
+    NUM_PARALLEL_OPTIMIZATIONS = 10
+    with Pool() as pool:
+        pool.map(genetic_optimization, range(NUM_PARALLEL_OPTIMIZATIONS))
