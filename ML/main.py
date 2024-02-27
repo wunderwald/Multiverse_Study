@@ -21,8 +21,14 @@ PARENT_RATIO = 0.1
 TARGET_ZLC = 300.0
 
 # Output parameters
+WRITE_TO_DATABASE = True
 LOG = True
 PLOT = True
+
+# initialize database
+if WRITE_TO_DATABASE:
+    # TODO
+    pass
 
 # run genetic evolution algorithm
 final_population, fitness = gen.evolution(
@@ -41,4 +47,14 @@ final_population, fitness = gen.evolution(
 best_fitness = np.max(fitness)
 
 # export data
-# TODO write best individuals to database
+if WRITE_TO_DATABASE:
+    '''
+    data structure:
+    {
+        hyperparameters: {},
+        fittest_individuals: [
+            { parameters, fitness }
+        ]
+    }
+    '''
+    pass
