@@ -1,6 +1,7 @@
 '''
 TODO
-add a bit of hyperparameter randomness for each optimization (also population size)
+- add a bit of hyperparameter randomness for each optimization (also population size)
+- make sure that individuals are never equal (apply mutation if equals are found)
 '''
 
 from pymongo import MongoClient
