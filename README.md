@@ -34,7 +34,7 @@ The functions to be included in the build are defined in `__init__.py` (in the p
 
 ### Installing
 
-In the ML package, install the builds of the other packages using `pip install ../RSA_Drew/dist/rsa-<VERSION>-py3-none-any.whl [--force-reinstall]` (for example)
+In the ML package, install the builds of the other packages using `pip install ../RSA_Drew/dist/rsa_drew-<VERSION>-py3-none-any.whl [--force-reinstall]` (for example)
 
 ## DEPENDENCIES
 
