@@ -14,7 +14,7 @@ import genetic as gen
 def genetic_optimization(i):
 
     # set hyper-parameters
-    POPULATION_SIZE = 200
+    POPULATION_SIZE = 120
     MAX_NUM_GENERATIONS = 200
     DISTANCE_METRIC = 'abs'
     CROSSOVER_METHOD = 'shuffle'
@@ -28,7 +28,7 @@ def genetic_optimization(i):
 
     # Output parameters
     WRITE_TO_DATABASE = True
-    LOG = False
+    LOG = True
     LOG_MINIMAL = True
     PLOT = False
 
@@ -79,9 +79,9 @@ def genetic_optimization(i):
             'STOP_ON_CONVERGENCE': STOP_ON_CONVERGENCE,
             'CONVERGENCE_N': CONVERGENCE_N
         }
-        # select fittest individuals (indivisuals in the best 10% of the fitness range)
+        # select fittest individuals (indivisuals in the best 20% of the fitness range)
         fitness_range = abs(np.max(fitness) - np.min(fitness))
-        fittest_individuals = [{'individual': i, 'fitness': f} for i, f in zip(final_population, fitness) if f >= best_fitness - .1 * fitness_range]
+        fittest_individuals = [{'individual': i, 'fitness': f} for i, f in zip(final_population, fitness) if f >= best_fitness - .2 * fitness_range]
         # make database record
         record = {
             'hyperparameters': hyperparameters,
@@ -92,6 +92,6 @@ def genetic_optimization(i):
 
 # execute batch of optimizations in parallel
 if __name__ == '__main__':
-    NUM_PARALLEL_OPTIMIZATIONS = 10
+    NUM_PARALLEL_OPTIMIZATIONS = 5
     with Pool() as pool:
         pool.map(genetic_optimization, range(NUM_PARALLEL_OPTIMIZATIONS))
