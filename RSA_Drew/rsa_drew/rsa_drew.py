@@ -38,7 +38,8 @@ def rsa_synchrony(mother_ibi, infant_ibi, export_steps=False):
         os.makedirs(export_dir)
     export_ts = f"{time.time()}".replace(".", "_")
     export_subdir = os.path.join(export_dir, export_ts)
-    os.makedirs(export_subdir)
+    if not os.path.exists(export_subdir):
+        os.makedirs(export_subdir)
 
     # load filters
     filt_M_path = pkg_resources.resource_filename('rsa_drew', 'adult_rsa_5Hz_cLSq.csv')
