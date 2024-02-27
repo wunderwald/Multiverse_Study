@@ -20,13 +20,14 @@ MUTATION_RATE = .1
 MUTATION_SCALE = .9
 SELECT_PARENTS_METHOD = 'sus'
 PARENT_RATIO = 0.1
-TARGET_ZLC = 300.0
 STOP_ON_CONVERGENCE = True
+CONVERGENCE_N = 30
+TARGET_ZLC = 300.0
 
 # Output parameters
 WRITE_TO_DATABASE = True
 LOG = True
-PLOT = True
+PLOT = False
 
 # initialize database
 if WRITE_TO_DATABASE:
@@ -48,7 +49,8 @@ final_population, fitness = gen.evolution(
     mutation_scale=MUTATION_SCALE,
     select_parents_method=SELECT_PARENTS_METHOD,
     parent_ratio=PARENT_RATIO,
-    STOP_ON_CONVERGENCE=STOP_ON_CONVERGENCE,
+    stop_on_convergence=STOP_ON_CONVERGENCE,
+    convergence_N=CONVERGENCE_N,
     log=LOG,
     plot=PLOT
 )
@@ -67,7 +69,8 @@ if WRITE_TO_DATABASE:
         'SELECT_PARENTS_METHOD': SELECT_PARENTS_METHOD,
         'PARENT_RATIO': PARENT_RATIO,
         'TARGET_ZLC': TARGET_ZLC,
-        'STOP_ON_CONVERGENCE': STOP_ON_CONVERGENCE
+        'STOP_ON_CONVERGENCE': STOP_ON_CONVERGENCE,
+        'CONVERGENCE_N': CONVERGENCE_N
     }
     # select fittest individuals (indivisuals in the best 10% of the fitness range)
     fitness_range = abs(np.max(fitness) - np.min(fitness))

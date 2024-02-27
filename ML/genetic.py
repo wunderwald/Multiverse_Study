@@ -576,7 +576,7 @@ def succession(population: np.array, fitness: np.array, crossover_method: str, m
     
     return new_population
 
-def evolution(population_size: int, max_num_generations: int, target_zlc: float, distance_metric: str, crossover_method: str, mutation_rate: float, mutation_scale: float, select_parents_method: str='sus', parent_ratio: float=0.5, log: bool=False, plot: bool=False):
+def evolution(population_size: int, max_num_generations: int, target_zlc: float, distance_metric: str, crossover_method: str, mutation_rate: float, mutation_scale: float, select_parents_method: str='sus', parent_ratio: float=0.5, stop_on_convergence: bool=False, convergence_N: int=30, log: bool=False, plot: bool=False):
     '''
     Conducts the genetic algorithm's evolution process. 
     The goal is to find parameters for an IBI generation algorithm in order to minimize the distance of the zero-lag coefficient (zlcs) in an RSA Synchrony algorithm to a target zlc.
@@ -597,6 +597,8 @@ def evolution(population_size: int, max_num_generations: int, target_zlc: float,
     - mutation_scale (float): The scale of mutation when it occurs.
     - select_parents_method: The parent selection method. 'sus' selects parents standard uniform sampling, 'roulette_fittest' selects parents using a more simple version of roulette wheel selection that also excludes lower fitness parents. (Default: 'sus')
     - parent_ratio (float): The percentage of individuals extracted from the population to be parents. Optional, defaults to 0.5.
+    - stop_on_convergence (bool): Stop creating new generations if best fitness stays the same for a number of generations.
+    - convergence_N (int): number of equal best fitness values in a row as convergence condition
     - log (bool): Toggles logging.
     - plot (bool): Toggles plot creation.
 
@@ -616,6 +618,9 @@ def evolution(population_size: int, max_num_generations: int, target_zlc: float,
     population = initialize_population(population_size)
     fitness = evaluate_fitness(population, target_zlc, distance_metric)
 
+    # initialize history for best fitness values
+    best_fitness_history = []
+    
     # iterate over generations
     for generation_index in range(max_num_generations):
 
@@ -636,15 +641,23 @@ def evolution(population_size: int, max_num_generations: int, target_zlc: float,
 
         # calculate fitness
         fitness = evaluate_fitness(population, target_zlc, distance_metric)
-        best_fitness = np.max(fitness)        
+        best_fitness = np.max(fitness)    
+
+        # test for convergence (last N best fitness values are equal)
+        best_fitness_history.append(best_fitness)
+        is_converging = len(best_fitness_history) >= convergence_N and len(set(best_fitness_history[-convergence_N:])) == 1    
 
         # inform about fitness state
         if log:
-            print(f"# Generation {generation_index} - best fitness: {best_fitness}")
+            print(f"# Generation {generation_index} - best fitness: {best_fitness}{' [converging]' if is_converging else ''}")
         
         # plot fitness distribution
         if plot:
             plot_fitness_distribution(fitness, generation_index, './plots')
+
+        # optionally break on convergence
+        if stop_on_convergence:
+            break
 
 
     return population, fitness
