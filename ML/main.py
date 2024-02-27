@@ -27,7 +27,7 @@ def genetic_optimization(i):
 
     # Output parameters
     WRITE_TO_DATABASE = True
-    LOG = False
+    LOG = True
     LOG_MINIMAL = True
     PLOT = False
 
