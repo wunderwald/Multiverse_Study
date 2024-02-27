@@ -1,7 +1,6 @@
 '''
 TODO
-Create (parallel) batch optimization (run a lot of optimizations simultaneously)
-- add a bit of hyperparameter randomness for each optimization (also population size)
+add a bit of hyperparameter randomness for each optimization (also population size)
 '''
 
 from pymongo import MongoClient
@@ -28,7 +27,7 @@ def genetic_optimization(i):
 
     # Output parameters
     WRITE_TO_DATABASE = True
-    LOG = True
+    LOG = False
     LOG_MINIMAL = True
     PLOT = False
 
