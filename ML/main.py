@@ -21,7 +21,7 @@ def genetic_optimization(i):
 
     # Output parameters
     WRITE_TO_DATABASE = True
-    LOG = False
+    LOG = True
     LOG_MINIMAL = True
     PLOT = False
 
@@ -77,7 +77,7 @@ def genetic_optimization(i):
 
         # select fittest individuals (indivisuals in the best 20% of the fitness range)
         fitness_range = abs(np.max(fitness) - np.min(fitness))
-        fittest_individuals = [{'individual': i, 'fitness': f} for i, f in zip(final_population, fitness) if f >= best_fitness - .2 * fitness_range or f > 80]
+        fittest_individuals = [{'individual': i, 'fitness': f} for i, f in zip(final_population, fitness) if f >= best_fitness - .2 * fitness_range or f > 50]
         
         # make database record
         record = {
