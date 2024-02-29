@@ -64,26 +64,27 @@ def genetic_optimization(i):
 
     # export data
     if WRITE_TO_DATABASE:
-        # collect hyperparameters
-        hyperparameters = {
-            'POPULATION_SIZE': POPULATION_SIZE,
+        # collect hyperparameters and constants
+        hyperparams_and_constants = {
             'MAX_NUM_GENERATIONS': MAX_NUM_GENERATIONS,
             'DISTANCE_METRIC': DISTANCE_METRIC,
-            'CROSSOVER_METHOD': CROSSOVER_METHOD,
-            'MUTATION_RATE': MUTATION_RATE,
-            'MUTATION_SCALE': MUTATION_SCALE,
-            'SELECT_PARENTS_METHOD': SELECT_PARENTS_METHOD,
-            'PARENT_RATIO': PARENT_RATIO,
             'TARGET_ZLC': TARGET_ZLC,
             'STOP_ON_CONVERGENCE': STOP_ON_CONVERGENCE,
-            'CONVERGENCE_N': CONVERGENCE_N
+            'CONVERGENCE_N': CONVERGENCE_N,
+            'POPULATION_SIZE': hyperparams['POPULATION_SIZE'],
+            'CROSSOVER_METHOD': hyperparams['CROSSOVER_METHOD'],
+            'MUTATION_RATE': hyperparams['MUTATION_RATE'],
+            'MUTATION_SCALE': hyperparams['MUTATION_SCALE'],
+            'SELECT_PARENTS_METHOD': hyperparams['SELECT_PARENTS_METHOD'],
+            'PARENT_RATIO': hyperparams['PARENT_RATIO'],
+            
         }
         # select fittest individuals (indivisuals in the best 20% of the fitness range)
         fitness_range = abs(np.max(fitness) - np.min(fitness))
         fittest_individuals = [{'individual': i, 'fitness': f} for i, f in zip(final_population, fitness) if f >= best_fitness - .2 * fitness_range or f > 80]
         # make database record
         record = {
-            'hyperparameters': hyperparameters,
+            'hyperparameters': hyperparams_and_constants,
             'fittest_individuals': fittest_individuals
         }
         # write record to database
