@@ -1,6 +1,5 @@
 '''
 TODO
-- add a bit of hyperparameter randomness for each optimization (also population size)
 - make sure that individuals are never equal (apply mutation if equals are found)
 '''
 
@@ -9,26 +8,25 @@ from datetime import datetime
 from multiprocessing import Pool
 import numpy as np
 import genetic as gen
+import hyperparameters as hyper
 
 # genetic parameter optimization
 def genetic_optimization(i):
 
-    # set hyper-parameters
-    POPULATION_SIZE = 120
+    # set hyper-constants
+    TARGET_ZLC=300
     MAX_NUM_GENERATIONS = 200
     DISTANCE_METRIC = 'abs'
-    CROSSOVER_METHOD = 'shuffle'
-    MUTATION_RATE = .1
-    MUTATION_SCALE = .9
-    SELECT_PARENTS_METHOD = 'sus'
-    PARENT_RATIO = 0.1
     STOP_ON_CONVERGENCE = True
     CONVERGENCE_N = 30
-    TARGET_ZLC = 300.0
+    RANDOM_HYPERPARAMETERS = True
+
+    # get hyper-parameters
+    hyperparams = hyper.random_hyperparams() if RANDOM_HYPERPARAMETERS else hyper.default_hyperparams()
 
     # Output parameters
-    WRITE_TO_DATABASE = True
-    LOG = True
+    WRITE_TO_DATABASE = False
+    LOG = False
     LOG_MINIMAL = True
     PLOT = False
 
@@ -43,17 +41,18 @@ def genetic_optimization(i):
 
     # run genetic evolution algorithm
     final_population, fitness, last_generation_index = gen.evolution(
-        population_size=POPULATION_SIZE,
         max_num_generations=MAX_NUM_GENERATIONS,
-        target_zlc=TARGET_ZLC,
         distance_metric=DISTANCE_METRIC,
-        crossover_method=CROSSOVER_METHOD,
-        mutation_rate=MUTATION_RATE,
-        mutation_scale=MUTATION_SCALE,
-        select_parents_method=SELECT_PARENTS_METHOD,
-        parent_ratio=PARENT_RATIO,
+        target_zlc=TARGET_ZLC,
         stop_on_convergence=STOP_ON_CONVERGENCE,
         convergence_N=CONVERGENCE_N,
+        population_size=hyperparams['POPULATION_SIZE'],        
+        crossover_method=hyperparams['CROSSOVER_METHOD'],
+        mutation_rate=hyperparams['MUTATION_RATE'],
+        mutation_scale=hyperparams['MUTATION_SCALE'],
+        select_parents_method=hyperparams['SELECT_PARENTS_METHOD'],
+        parent_ratio=hyperparams['PARENT_RATIO'],
+        
         log=LOG,
         plot=PLOT
     )
