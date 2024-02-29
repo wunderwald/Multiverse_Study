@@ -20,8 +20,8 @@ def genetic_optimization(i):
     hyperparams = hyper.random_hyperparams() if RANDOM_HYPERPARAMETERS else hyper.default_hyperparams()
 
     # Output parameters
-    WRITE_TO_DATABASE = False
-    LOG = True
+    WRITE_TO_DATABASE = True
+    LOG = False
     LOG_MINIMAL = True
     PLOT = False
 
