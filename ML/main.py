@@ -1,11 +1,6 @@
-'''
-TODO
-- make sure that individuals are never equal (apply mutation if equals are found)
-'''
-
+from multiprocessing import Pool
 from pymongo import MongoClient
 from datetime import datetime
-from multiprocessing import Pool
 import numpy as np
 import genetic as gen
 import hyperparameters as hyper
@@ -26,7 +21,7 @@ def genetic_optimization(i):
 
     # Output parameters
     WRITE_TO_DATABASE = False
-    LOG = False
+    LOG = True
     LOG_MINIMAL = True
     PLOT = False
 
@@ -64,6 +59,7 @@ def genetic_optimization(i):
 
     # export data
     if WRITE_TO_DATABASE:
+
         # collect hyperparameters and constants
         hyperparams_and_constants = {
             'MAX_NUM_GENERATIONS': MAX_NUM_GENERATIONS,
@@ -79,19 +75,22 @@ def genetic_optimization(i):
             'PARENT_RATIO': hyperparams['PARENT_RATIO'],
             
         }
+
         # select fittest individuals (indivisuals in the best 20% of the fitness range)
         fitness_range = abs(np.max(fitness) - np.min(fitness))
         fittest_individuals = [{'individual': i, 'fitness': f} for i, f in zip(final_population, fitness) if f >= best_fitness - .2 * fitness_range or f > 80]
         # make database record
+
         record = {
             'hyperparameters': hyperparams_and_constants,
             'fittest_individuals': fittest_individuals
         }
+
         # write record to database
         db_collection.insert_one(record)
 
 # execute batch of optimizations in parallel
 if __name__ == '__main__':
-    NUM_PARALLEL_OPTIMIZATIONS = 5
+    NUM_PARALLEL_OPTIMIZATIONS = 1
     with Pool() as pool:
         pool.map(genetic_optimization, range(NUM_PARALLEL_OPTIMIZATIONS))
