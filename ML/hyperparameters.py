@@ -11,8 +11,8 @@ OPTIONS_SELECT_PARENTS_METHOD = {
 }
 RANGE_MUTATION_RATE = [.05, .3]
 RANGE_MUTATION_SCALE = [.55, .95]
-RANGE_PARENT_RATIO = [.05, .45]
-RANGE_POPULATION_SIZE = [80, 180]
+RANGE_PARENT_RATIO = [.1, .25]
+RANGE_POPULATION_SIZE = [100, 180]
 
 def pick_option(weighted_options):
     options = list(weighted_options.keys())
