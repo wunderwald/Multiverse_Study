@@ -25,15 +25,6 @@ def genetic_optimization(i):
     LOG_MINIMAL = True
     PLOT = False
 
-    # initialize database
-    if WRITE_TO_DATABASE:
-        # connect to mongo db client
-        mongodb_client = MongoClient('mongodb://localhost:27017/')
-        # open or create database
-        db = mongodb_client['genetic_rsa']
-        # open or create collection for current optimization batch
-        db_collection = db[f"fittest_individuals_{int(round(datetime.now().timestamp() * 1000))}"]
-
     # run genetic evolution algorithm
     final_population, fitness, last_generation_index = gen.evolution(
         max_num_generations=MAX_NUM_GENERATIONS,
@@ -59,6 +50,15 @@ def genetic_optimization(i):
 
     # export data
     if WRITE_TO_DATABASE:
+        
+        # connect to mongo db client
+        mongodb_client = MongoClient('mongodb://localhost:27017/')
+
+        # open or create database
+        db = mongodb_client['genetic_rsa']
+
+        # open or create collection for current optimization batch
+        db_collection = db[f"fittest_individuals_{int(round(datetime.now().timestamp() * 1000))}"]
 
         # collect hyperparameters and constants
         hyperparams_and_constants = {
@@ -72,15 +72,14 @@ def genetic_optimization(i):
             'MUTATION_RATE': hyperparams['MUTATION_RATE'],
             'MUTATION_SCALE': hyperparams['MUTATION_SCALE'],
             'SELECT_PARENTS_METHOD': hyperparams['SELECT_PARENTS_METHOD'],
-            'PARENT_RATIO': hyperparams['PARENT_RATIO'],
-            
+            'PARENT_RATIO': hyperparams['PARENT_RATIO'],     
         }
 
         # select fittest individuals (indivisuals in the best 20% of the fitness range)
         fitness_range = abs(np.max(fitness) - np.min(fitness))
         fittest_individuals = [{'individual': i, 'fitness': f} for i, f in zip(final_population, fitness) if f >= best_fitness - .2 * fitness_range or f > 80]
+        
         # make database record
-
         record = {
             'hyperparameters': hyperparams_and_constants,
             'fittest_individuals': fittest_individuals
