@@ -281,7 +281,6 @@ def evaluate_fitness(population: np.array, target_zlc: float, distance_metric: s
     '''
     return [evaluate_fitness_individual(individual, target_zlc, distance_metric) for individual in population]
 
-
 def select_parents_sus(population: np.array, fitness: np.array, num_parents: int):
     '''
     Selects parents from the population using Stochastic Universal Sampling (SUS).
@@ -535,6 +534,23 @@ def mutate(offspring: np.array, mutation_rate: float, mutation_scale: float):
     '''
     return np.array([gaussian_mutation(individual, mutation_rate, mutation_scale) for individual in offspring])
 
+def uniquify(population: np.array):
+    # Convert dictionaries to a hashable type (e.g., strings) for identification
+    stringified_individuals = np.array([str(sorted(d.items())) for d in population])
+    
+    # Track processed duplicates to skip the first occurrence
+    processed = set()
+    
+    for i, stringified_individual in enumerate(stringified_individuals):
+        if stringified_individual in processed:
+            # Apply func to duplicate occurrences after the first
+            population[i] = gaussian_mutation(individual=population[i], mutation_rate=.8, mutation_scale=.05)
+        else:
+            # Mark this dict as seen (including the first occurrence)
+            processed.add(stringified_individual)
+    
+    return population
+
 def succession(population: np.array, fitness: np.array, crossover_method: str, mutation_rate: float, mutation_scale: float, population_size: int, select_parents_method: str='sus', parent_ratio: float=0.5):
     '''
     Generates a new generation of population through the processes of selection, crossover, and mutation.
@@ -642,6 +658,9 @@ def evolution(population_size: int, max_num_generations: int, target_zlc: float,
 
         # Make sure that population doesn't become larger
         population = population if population.shape[0] <= population_size else np.random.choice(population, population_size, replace=False)
+
+        # make sure that there are no dublicates in the population
+        population = uniquify(population)
 
         # calculate fitness
         fitness = evaluate_fitness(population, target_zlc, distance_metric)
