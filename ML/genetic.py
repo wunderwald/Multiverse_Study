@@ -518,7 +518,6 @@ def gaussian_mutation(individual, mutation_rate, mutation_scale=0.1):
                 individual_mutated[key] = value
         return individual_mutated
     except:
-        print(individual)
         raise ValueError()
 
 def mutate(offspring: np.array, mutation_rate: float, mutation_scale: float):
@@ -536,7 +535,7 @@ def mutate(offspring: np.array, mutation_rate: float, mutation_scale: float):
     Returns:
     np.array: An array of mutated individuals. The structure of the array is similar to the input offspring array, but with mutations applied to the individuals.
     '''
-    return np.array([gaussian_mutation(individual, mutation_rate, mutation_scale) for individual in offspring if individual])
+    return np.array([gaussian_mutation(individual, mutation_rate, mutation_scale) for individual in offspring if individual is not None])
 
 def uniquify(population: np.array):
     # Convert dictionaries to a hashable type (e.g., strings) for identification
@@ -664,7 +663,7 @@ def evolution(population_size: int, max_num_generations: int, target_zlc: float,
         population = population if population.shape[0] <= population_size else np.random.choice(population, population_size, replace=False)
 
         # make sure that there are no dublicates in the population
-        population = uniquify(population)
+        population = np.array([apply_limits(individual) for individual in uniquify(population)])
 
         # calculate fitness
         fitness = evaluate_fitness(population, target_zlc, distance_metric)

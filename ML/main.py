@@ -11,7 +11,7 @@ def genetic_optimization(i):
     # set hyper-constants
     TARGET_ZLC=300
     MAX_NUM_GENERATIONS = 200
-    DISTANCE_METRIC = 'abs'
+    DISTANCE_METRIC = 'euclidean'
     STOP_ON_CONVERGENCE = True
     CONVERGENCE_N = 30
     RANDOM_HYPERPARAMETERS = True
@@ -91,6 +91,6 @@ def genetic_optimization(i):
 
 # execute batch of optimizations in parallel
 if __name__ == '__main__':
-    NUM_PARALLEL_OPTIMIZATIONS = 1
+    NUM_PARALLEL_OPTIMIZATIONS = 10
     with Pool() as pool:
         pool.map(genetic_optimization, range(NUM_PARALLEL_OPTIMIZATIONS))
