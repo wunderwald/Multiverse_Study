@@ -508,14 +508,18 @@ def gaussian_mutation(individual, mutation_rate, mutation_scale=0.1):
     dict: A dictionary representing the mutated individual. The structure is the same as the input individual, but with mutations applied to some of the genes.
     '''
     individual_mutated = {}
-    for key, value in individual.items():
-        if np.random.rand() < mutation_rate:
-            limits = get_limits(key)
-            rng = 2*np.pi if 'phase' in key else abs(limits[1] - limits[0])
-            individual_mutated[key] = value * np.random.normal(0, mutation_scale * rng)
-        else:
-            individual_mutated[key] = value
-    return individual_mutated
+    try:
+        for key, value in individual.items():
+            if np.random.rand() < mutation_rate:
+                limits = get_limits(key)
+                rng = 2*np.pi if 'phase' in key else abs(limits[1] - limits[0])
+                individual_mutated[key] = value * np.random.normal(0, mutation_scale * rng)
+            else:
+                individual_mutated[key] = value
+        return individual_mutated
+    except:
+        print(individual)
+        raise ValueError()
 
 def mutate(offspring: np.array, mutation_rate: float, mutation_scale: float):
     '''
@@ -532,7 +536,7 @@ def mutate(offspring: np.array, mutation_rate: float, mutation_scale: float):
     Returns:
     np.array: An array of mutated individuals. The structure of the array is similar to the input offspring array, but with mutations applied to the individuals.
     '''
-    return np.array([gaussian_mutation(individual, mutation_rate, mutation_scale) for individual in offspring])
+    return np.array([gaussian_mutation(individual, mutation_rate, mutation_scale) for individual in offspring if individual])
 
 def uniquify(population: np.array):
     # Convert dictionaries to a hashable type (e.g., strings) for identification
