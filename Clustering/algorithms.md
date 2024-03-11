@@ -47,4 +47,13 @@ Combinations of these types of closeness and further variations are possible.
 
 ## Algorithm choices
 
-The cluster characteristics are used to pre-process the data and to create different data sets of reduced dimensionality for finding clusters.
+The cluster characteristics and domain knowledge are used to:
+
+- **pre-process** the data and to create different data sets of reduced dimensionality for finding clusters
+- create **custom distance metrics** that quantify closeness of data points in a meaningful way
+
+The algorithm **DBSCAN** (density-based spatial clustering of applications with noise) has a couple of advantages:
+
+- noisy data is suported
+- custom distance metrics are possible
+- the number of resulting clusters does not need to be fixed but is based on density
