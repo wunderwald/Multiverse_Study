@@ -8,7 +8,12 @@ def distance_weight_distribution(a: dict, b: dict):
 
     Returns: Distance value (float)
     '''
-    return 'TODO'
+    base_ibi_adult_a = a['individual']['base_ibi_adult']
+    base_ibi_adult_b = b['individual']['base_ibi_adult']
+    base_ibi_infant_a = a['individual']['base_ibi_infant']
+    base_ibi_infant_b = b['individual']['base_ibi_infant']
+
+    return abs(base_ibi_adult_a - base_ibi_adult_b) + abs(base_ibi_infant_a - base_ibi_infant_b)
 
 def distance_band(a: dict, b: dict, band: str):
     '''
