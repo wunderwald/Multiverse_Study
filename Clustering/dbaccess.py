@@ -20,10 +20,10 @@ def get_db_entries():
         # make result entries for each individual in the document
         for document in documents:
             hyperparameters = document['hyperparameters']
-            for individual in document['fittest_individuals']:
+            for d in document['fittest_individuals']:
                 results.append({
                     'hyperparameters': hyperparameters,
-                    'dyad_parameters': individual
+                    'dyad_parameters': d['individual']
                 })
 
 

@@ -1,4 +1,6 @@
-def distance_weight_distribution(a: dict, b: dict):
+import numpy as np
+
+def distance_base_ibi(a: dict, b: dict):
     '''
     Calculate distance between two data points based on distribution of weights over frequency bands (vlf, lf, hf).
 
@@ -8,10 +10,10 @@ def distance_weight_distribution(a: dict, b: dict):
 
     Returns: Distance value (float)
     '''
-    base_ibi_adult_a = a['individual']['base_ibi_adult']
-    base_ibi_adult_b = b['individual']['base_ibi_adult']
-    base_ibi_infant_a = a['individual']['base_ibi_infant']
-    base_ibi_infant_b = b['individual']['base_ibi_infant']
+    base_ibi_adult_a = a['dyad_parameters']['base_ibi_adult']
+    base_ibi_adult_b = b['dyad_parameters']['base_ibi_adult']
+    base_ibi_infant_a = a['dyad_parameters']['base_ibi_infant']
+    base_ibi_infant_b = b['dyad_parameters']['base_ibi_infant']
 
     return abs(base_ibi_adult_a - base_ibi_adult_b) + abs(base_ibi_infant_a - base_ibi_infant_b)
 
@@ -46,7 +48,7 @@ def distance_band_hf(a: dict, b: dict):
     '''
     return distance_band(a=a, b=b, band='hf')
 
-def distance_base_ibi(a: dict, b: dict):
+def distance_weight_distribution(a: dict, b: dict):
     '''
     Calculate distance between two data points based on distribution of weights over frequency bands (vlf, lf, hf).
 
@@ -67,14 +69,23 @@ def get_distance_metric(method: str):
 
     Returns: distance metric function (callable)
     '''
-    if method is 'weight_distribution':
+    if method == 'weight_distribution':
         return distance_weight_distribution
-    if method is 'band_vlf':
+    if method == 'band_vlf':
         return distance_band_vlf
-    if method is 'band_lf':
+    if method == 'band_lf':
         return distance_band_lf
-    if method is 'band_hf':
+    if method == 'band_hf':
         return distance_band_hf
-    if method is 'base_ibi':
+    if method == 'base_ibi':
         return distance_base_ibi
     return lambda a, b: print('! invalid metric')
+
+def create_distance_matrix(data, distance_metric):
+    n = len(data)
+    distance_matrix = np.zeros((n, n))
+    for i in range(n):
+        for j in range(i+1, n):
+            distance_matrix[i, j] = distance_metric(data[i], data[j])
+            distance_matrix[j, i] = distance_matrix[i, j]  # Distance matrix is symmetric
+    return distance_matrix
