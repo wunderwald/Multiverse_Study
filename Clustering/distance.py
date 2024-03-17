@@ -52,3 +52,24 @@ def distance_base_ibi(a: dict, b: dict):
     Returns: Distance value (float)
     '''
     return 'TODO'
+
+def get_distance_metric(method: str):
+    '''
+    Returns a distance metric function based on the selected metric.
+
+    Params:
+    - method (string): id of the selected custom distance metric. 
+
+    Returns: distance metric function (callable)
+    '''
+    if method is 'weight_distribution':
+        return distance_weight_distribution
+    if method is 'band_vlf':
+        return distance_band_vlf
+    if method is 'band_lf':
+        return distance_band_lf
+    if method is 'band_hf':
+        return distance_band_hf
+    if method is 'base_ibi':
+        return distance_base_ibi
+    return lambda a, b: print('! invalid metric')
