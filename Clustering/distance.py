@@ -8,8 +8,6 @@ MORE METRICS
 
 - combined metrics: stamdard deviation, weight distribution, ibi similariry and more, combine it to one distance value
 
-
-
 '''
 
 
