@@ -1,5 +1,19 @@
 import numpy as np
 
+'''
+MORE METRICS
+
+- generate IBI sequence
+    -> then use standard deviation of IBI seq
+
+- combined metrics: stamdard deviation, weight distribution, ibi similariry and more, combine it to one distance value
+
+
+
+'''
+
+
+
 def distance_base_ibi(a: dict, b: dict):
     '''
     Calculate distance between two data points based on distribution of weights over frequency bands (vlf, lf, hf).
