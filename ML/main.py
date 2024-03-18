@@ -55,7 +55,7 @@ def genetic_optimization(i):
         mongodb_client = MongoClient('mongodb://localhost:27017/')
 
         # open or create database
-        db = mongodb_client['genetic_rsa']
+        db = mongodb_client['genetic_rsa_extended_ibi']
 
         # open or create collection for current optimization batch
         db_collection = db[f"fittest_individuals_{int(round(datetime.now().timestamp() * 1000))}"]

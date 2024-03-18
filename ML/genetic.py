@@ -14,8 +14,8 @@ NUM_LF_FREQS = 6
 NUM_HF_FREQS = 6
 
 # parameter ranges for IBI generation
-rng_base_ibi_adult = [650, 850] # original [650, 750]
-rng_base_ibi_infant = [400, 600] # original [450, 550]
+rng_base_ibi_adult = [100, 2000] # original [650, 750], genetic_rsa: [650, 850]
+rng_base_ibi_infant = [100, 2000] # original [450, 550], genetic_rsa: [400, 600]
 rng_freq_vlf = [0.01, 0.04]
 rng_freq_lf = [0.04, 0.15]
 rng_freq_hf = [0.15, 0.4]
