@@ -1,9 +1,9 @@
 from pymongo import MongoClient
 
-def get_db_entries():
+def get_db_entries(database_id='genetic_rsa'):
     # Connect to the local MongoDB instance and open database
     client = MongoClient('mongodb://localhost:27017/')
-    db = client['genetic_rsa']
+    db = client[database_id]
 
     # initialize results
     results = []

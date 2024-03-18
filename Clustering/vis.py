@@ -5,7 +5,7 @@ import numpy as np
 from ibi_generator import generate_dyad_ibi, plot_dyad_ibi_sequences
 
 # get data points from database
-data = get_db_entries()
+data = get_db_entries('genetic_rsa_extended_ibi')
 
 base_ibi_adult = [ d['dyad_parameters']['base_ibi_adult'] for d in data ]
 base_ibi_infant = [ d['dyad_parameters']['base_ibi_infant'] for d in data ]
@@ -48,8 +48,8 @@ def print_histograms(adult, infant, harmonics):
 
     # Plotting third histogram
     axs[2].hist(harmonics, bins=25, color='salmon', edgecolor='black')  # Adjust the number of bins as needed
-    axs[2].set_title('Infant')
-    axs[2].set_xlabel('Harmonic (Infant/Adult)')
+    axs[2].set_title('Harmonic')
+    axs[2].set_xlabel('Infant/Adult')
     axs[2].set_ylabel('Frequency')
     axs[2].grid(True)
 
@@ -62,29 +62,31 @@ def ibi_combinations_by_harmonic(min, max):
     filtered = [(infant, adult) for (infant, adult) in combinations if infant/adult > min and infant/adult < max ]
     return filtered
 
+def plot_ibi_dyad():
+    dyad = filtered_data[8]['dyad_parameters']
+    adult = {}
+    infant = {}
+    for key, value in dyad.items():
+        if 'adult' in key:
+            if 'base_ibi' in key:
+                adult['base_ibi'] = value
+            elif 'freq' in key:
+                adult.setdefault('frequencies', []).append(value)
+            elif 'weight' in key:
+                adult.setdefault('freq_weights', []).append(value)
+            elif 'phase' in key:
+                adult.setdefault('phase_shifts', []).append(value)
+        elif 'infant' in key:
+            if 'base_ibi' in key:
+                infant['base_ibi'] = value
+            elif 'freq' in key:
+                infant.setdefault('frequencies', []).append(value)
+            elif 'weight' in key:
+                infant.setdefault('freq_weights', []).append(value)
+            elif 'phase' in key:
+                infant.setdefault('phase_shifts', []).append(value)
 
-dyad = filtered_data[8]['dyad_parameters']
-adult = {}
-infant = {}
-for key, value in dyad.items():
-    if 'adult' in key:
-        if 'base_ibi' in key:
-            adult['base_ibi'] = value
-        elif 'freq' in key:
-            adult.setdefault('frequencies', []).append(value)
-        elif 'weight' in key:
-            adult.setdefault('freq_weights', []).append(value)
-        elif 'phase' in key:
-            adult.setdefault('phase_shifts', []).append(value)
-    elif 'infant' in key:
-        if 'base_ibi' in key:
-            infant['base_ibi'] = value
-        elif 'freq' in key:
-            infant.setdefault('frequencies', []).append(value)
-        elif 'weight' in key:
-            infant.setdefault('freq_weights', []).append(value)
-        elif 'phase' in key:
-            infant.setdefault('phase_shifts', []).append(value)
+    ibi_adult, ibi_infant = generate_dyad_ibi(500, adult, infant)
+    plot_dyad_ibi_sequences(ibi_adult, ibi_infant)
 
-ibi_adult, ibi_infant = generate_dyad_ibi(500, adult, infant)
-plot_dyad_ibi_sequences(ibi_adult, ibi_infant)
+print_histograms(base_ibi_adult, base_ibi_infant, base_ibi_harmonics)
