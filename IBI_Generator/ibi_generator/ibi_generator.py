@@ -9,20 +9,44 @@ TODO
 
 - create interpolate.py
 
-- add noise percentage to param gen (bias to 0, else range [.05, .4])
+- add noise percentage to param gen (bias to 0, else range [.0, .1])
 
 '''
 
 import numpy as np
+import random
+import math
 
 def simulate_noise(ibi_sequence, noise_percentage):
-    noise_indices = []
     if noise_percentage <= 0:
         return ibi_sequence
+
+    # determine missing data / noise regions
+    min_samples_per_region = 2
+    max_samples_per_region = 20
+    num_noise_samples = math.floor(noise_percentage * ibi_sequence.shape[0])
+    remaining_noise_samples = num_noise_samples
+    noise_areas = []
+
+    i = 0
+    while i < ibi_sequence.shape[0] and remaining_noise_samples >= min_samples_per_region:
+        create_noise_area = random.random() < noise_percentage
+        if create_noise_area:
+            noise_area_length = random.randint(min_samples_per_region, min(max_samples_per_region, remaining_noise_samples))
+            if i + noise_area_length >= ibi_sequence.shape[0]:
+                noise_area_length = ibi_sequence.shape[0] - (i + 1)
+            noise_areas.append([idx for idx in range(i, i + noise_area_length)])
+            remaining_noise_samples = remaining_noise_samples - noise_area_length
+            i = i + noise_area_length
+        i = i + 1 
     
+    print(noise_areas)
+
     # TODO: select noise areas, apply interpolation
 
-    return ibi_sequence
+    # return ibi_sequence
+
+print( simulate_noise(np.array([i for i in range(200)]), .01) )
 
 def generate_ibi_sequence(num_samples, base_ibi, frequencies, freq_weights, phase_shifts, noise_percentage=0):
     """
