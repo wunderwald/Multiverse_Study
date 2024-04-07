@@ -14,6 +14,7 @@ def genetic_optimization(i):
     DISTANCE_METRIC = 'euclidean'
     STOP_ON_CONVERGENCE = True
     CONVERGENCE_N = 30
+    USE_NOISE = True
     RANDOM_HYPERPARAMETERS = True
 
     # get hyper-parameters
@@ -38,7 +39,7 @@ def genetic_optimization(i):
         mutation_scale=hyperparams['MUTATION_SCALE'],
         select_parents_method=hyperparams['SELECT_PARENTS_METHOD'],
         parent_ratio=hyperparams['PARENT_RATIO'],
-        
+        use_noise = USE_NOISE,
         log=LOG,
         plot=PLOT
     )
@@ -65,6 +66,7 @@ def genetic_optimization(i):
             'MAX_NUM_GENERATIONS': MAX_NUM_GENERATIONS,
             'DISTANCE_METRIC': DISTANCE_METRIC,
             'TARGET_ZLC': TARGET_ZLC,
+            'USE_NOISE': USE_NOISE,
             'STOP_ON_CONVERGENCE': STOP_ON_CONVERGENCE,
             'CONVERGENCE_N': CONVERGENCE_N,
             'POPULATION_SIZE': hyperparams['POPULATION_SIZE'],
