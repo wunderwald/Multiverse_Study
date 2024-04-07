@@ -1,3 +1,4 @@
 from .ibi_generator import generate_dyad_ibi
 from .parameter_generator import generate_dyad_ibi_params
 from .ibi_plotter import plot_dyad_ibi_sequences
+from .ibi_interpolation import interpolate_ibi

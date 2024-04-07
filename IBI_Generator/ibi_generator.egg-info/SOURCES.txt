@@ -1,6 +1,7 @@
 setup.py
 ibi_generator/__init__.py
 ibi_generator/ibi_generator.py
+ibi_generator/ibi_interpolation.py
 ibi_generator/ibi_plotter.py
 ibi_generator/main.py
 ibi_generator/parameter_generator.py
