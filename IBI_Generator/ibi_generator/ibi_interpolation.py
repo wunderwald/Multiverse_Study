@@ -1,8 +1,8 @@
 from scipy.interpolate import CubicSpline
 import numpy as np
+import copy
 
-
-def interpolate_ibi(ibi_sequence, interpolation_range):
+def interpolate_ibi_single_range(ibi_sequence, interpolation_range):
     '''
     Applies cubic spline interpolation to replace samples in a specified index range with interpolated values.
 
@@ -15,7 +15,7 @@ def interpolate_ibi(ibi_sequence, interpolation_range):
     '''
 
     # transform ibi sequence to time series
-    t = [ 0 ]
+    t = [0]
     ibi_sum = 0
     for i in range(ibi_sequence.shape[0] - 1):
         ibi_sum = ibi_sum + ibi_sequence[i]
@@ -37,3 +37,19 @@ def interpolate_ibi(ibi_sequence, interpolation_range):
     ibi_sequence[interpolation_range] = interpolated_samples_scaled
     
     return ibi_sequence
+
+def interpolate_ibi(ibi_sequence, interpolation_ranges):
+    '''
+    Applies cubic spline interpolation to replace samples in a specified index ranges with interpolated values.
+
+    Parameters:
+    - ibi_sequence [numpy.ndarray]: a 1-dimensional list of ibi samples
+    - interpolation_range [array-like]: a list of contiguous lists of indices to be replaced by interpolated values
+
+    Returns: 
+    numpy.ndarray: the ibi sequence with interpolated samples in the specified ranges
+    '''
+    ibi_sequence_intpl = np.copy(ibi_sequence)
+    for interpolation_range in interpolation_ranges:
+        ibi_sequence_intpl = interpolate_ibi_single_range(ibi_sequence_intpl, interpolation_range)
+    return ibi_sequence_intpl
