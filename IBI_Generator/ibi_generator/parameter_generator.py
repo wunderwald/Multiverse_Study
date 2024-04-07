@@ -1,11 +1,3 @@
-'''
-TODO
-
-- add noise percentage to param gen (bias to 0, else range [.0, .1])
-
-'''
-
-
 import numpy as np
 import random
 
