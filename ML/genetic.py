@@ -24,7 +24,7 @@ rng_weights_vlf = [0.00001, 1.0] # original [0.015, 1.0]
 rng_weights_lf = [0.00001, 0.5] # original [0.004, 0.4]
 rng_weights_hf = [0.00001, 0.3] # original [0.002, 0.2]
 rng_phase_shift = [0, 2 * np.pi]
-rng_noise_percentage = [0.01, 0.1]
+rng_noise_percentage = [0.05, 0.15]
 
 # -------
 # HELPERS
