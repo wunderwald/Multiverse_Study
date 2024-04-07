@@ -691,9 +691,11 @@ def evolution(population_size: int, max_num_generations: int, target_zlc: float,
         fitness = evaluate_fitness(population, target_zlc, distance_metric)
         best_fitness = np.max(fitness)    
 
-        # test for convergence (last N best fitness values are equal)
+        # test for convergence:
+        # (if noise is disabled) last N best fitness values are equal
+        # (if noise is ensabled) last N best fitness values are over threshold
         best_fitness_history.append(best_fitness)
-        is_converging = len(best_fitness_history) >= convergence_N and len(set(best_fitness_history[-convergence_N:])) == 1    
+        is_converging = len(best_fitness_history) >= convergence_N and (all(fitness > 300 for fitness in best_fitness_history) if use_noise else len(set(best_fitness_history[-convergence_N:])) == 1 )
 
         # inform about fitness state
         if log:
