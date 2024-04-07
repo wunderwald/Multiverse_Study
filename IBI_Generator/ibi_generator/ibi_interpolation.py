@@ -1,6 +1,5 @@
 from scipy.interpolate import CubicSpline
 import numpy as np
-import copy
 
 def interpolate_ibi_single_range(ibi_sequence, interpolation_range):
     '''
