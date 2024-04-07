@@ -24,7 +24,7 @@ rng_weights_vlf = [0.00001, 1.0] # original [0.015, 1.0]
 rng_weights_lf = [0.00001, 0.5] # original [0.004, 0.4]
 rng_weights_hf = [0.00001, 0.3] # original [0.002, 0.2]
 rng_phase_shift = [0, 2 * np.pi]
-rng_noise_percentage = [0, .2]
+rng_noise_percentage = [0.01, 0.2]
 
 # -------
 # HELPERS
@@ -177,10 +177,8 @@ def initialize_individual(use_noise: bool):
     phase_shifts_infant = np.random.uniform(0, 2 * np.pi, NUM_VLF_FREQS + NUM_LF_FREQS + NUM_HF_FREQS)
 
     # Randomize noise percentage
-    adult_signal_is_noisy = random.random() < .5 if use_noise else 0
-    infant_signal_is_noisy = random.random() < .5 if use_noise else 0
-    noise_percentage_adult = random.uniform(*rng_noise_percentage) if adult_signal_is_noisy else .0
-    noise_percentage_infant = random.uniform(*rng_noise_percentage) if infant_signal_is_noisy else .0
+    noise_percentage_adult = random.uniform(*rng_noise_percentage)
+    noise_percentage_infant = random.uniform(*rng_noise_percentage)
 
     # Collect parameters in dict
     individual = {}
