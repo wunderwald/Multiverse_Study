@@ -40,8 +40,6 @@ def simulate_noise(ibi_sequence, noise_percentage):
             remaining_noise_samples = remaining_noise_samples - noise_area_length
             i = i + noise_area_length
         i = i + 1 
-    
-    print(noise_areas)
 
     # TODO: select noise areas, apply interpolation
 
