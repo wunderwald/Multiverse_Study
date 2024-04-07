@@ -1,6 +1,30 @@
+'''
+TODO
+
+- noise area selection
+    - noise_percentage * num_samples = num_noise_samples
+    - set min and max length of missing data regions
+    - distribute num_noise_samples over one or more regions
+    - call interpolate for those regions
+
+- create interpolate.py
+
+- add noise percentage to param gen (bias to 0, else range [.05, .4])
+
+'''
+
 import numpy as np
 
-def generate_ibi_sequence(num_samples, base_ibi, frequencies, freq_weights, phase_shifts):
+def simulate_noise(ibi_sequence, noise_percentage):
+    noise_indices = []
+    if noise_percentage <= 0:
+        return ibi_sequence
+    
+    # TODO: select noise areas, apply interpolation
+
+    return ibi_sequence
+
+def generate_ibi_sequence(num_samples, base_ibi, frequencies, freq_weights, phase_shifts, noise_percentage=0):
     """
     Generates an IBI (Inter-Beat-Interval) sequence.
 
@@ -10,6 +34,7 @@ def generate_ibi_sequence(num_samples, base_ibi, frequencies, freq_weights, phas
     - frequencies (array-like): An array of 16 frequencies in Hz that are used to manipulate the base_ibi sequence.
     - freq_weights (array-like): Weights for each frequency band.
     - phase_shifts (array-like): An array of 16 phase shifts, one for each frequency band.
+    - noise_percentage (float): Proporion of regions of missing data that are simulated and then bridged using spline interpolation. (in range [0, 1])
 
     Returns:
     - numpy.ndarray: An array representing the IBI sequence.
@@ -51,9 +76,9 @@ def generate_dyad_ibi(recording_time_s, adult_params, infant_params):
     Parameters:
     - recording_time_s (float): Total recording time in seconds.
     - adult_params (dict): Dictionary of parameters for the adult's IBI sequence. 
-                           Must include 'base_ibi', 'frequencies', 'freq_weights', and 'phase_shifts'.
+                           Must include 'base_ibi', 'frequencies', 'freq_weights', 'phase_shifts', and optionally 'noise_percentage'.
     - infant_params (dict): Dictionary of parameters for the infant's IBI sequence.
-                            Must include 'base_ibi', 'frequencies', 'freq_weights', and 'phase_shifts'.
+                            Must include 'base_ibi', 'frequencies', 'freq_weights', 'phase_shifts' and optionally 'noise_percentage'.
 
     Returns:
     - tuple: A tuple containing two numpy arrays, one for the adult's IBI sequence and one for the infant's IBI sequence.
@@ -83,14 +108,16 @@ def generate_dyad_ibi(recording_time_s, adult_params, infant_params):
             adult_params['base_ibi'], 
             adult_params['frequencies'],
             adult_params['freq_weights'],
-            adult_params['phase_shifts']
+            adult_params['phase_shifts'],
+            adult_params.get('noise_percentage', 0)
         )
         infant_ibi_full = generate_ibi_sequence(
             num_samples, 
             infant_params['base_ibi'], 
             infant_params['frequencies'],
             infant_params['freq_weights'],
-            infant_params['phase_shifts']
+            infant_params['phase_shifts'],
+            infant_params.get('noise_percentage', 0)
         )
     except ValueError as e:
         raise ValueError(f"Error generating IBI sequence: {e}")
