@@ -1,51 +1,51 @@
-'''
-TODO
-
-- noise area selection
-    - noise_percentage * num_samples = num_noise_samples
-    - set min and max length of missing data regions
-    - distribute num_noise_samples over one or more regions
-    - call interpolate for those regions
-
-- create interpolate.py
-
-- add noise percentage to param gen (bias to 0, else range [.0, .1])
-
-'''
-
 import numpy as np
 import random
 import math
+from .ibi_interpolation import interpolate_ibi
 
 def simulate_noise(ibi_sequence, noise_percentage):
+    '''
+    Simulates the effect of noisy recordings on IBI data based on a percentage of noisy samples. First, regions with faulty data are randomly selected, then these regions are replaced with samples calculated with cubic spline interpolation.
+
+    Parameters:
+    - ibi_sequence [numpy_ndarray]: the initial ibi sequence
+    - noise_percentage [float]: the percentage of samples to be reaplaced.
+
+    Returns:
+    - numpy.ndarray: the ibi sequence with interpolated samples in the simulated noisy regions.
+    '''
+
+    if noise_percentage < 0: noise_percentage = 0
+    if noise_percentage > 1: noise_percentage = 1
+
     # return if no noise is applied
     if noise_percentage <= 0:
         return ibi_sequence
 
-    # determine missing data / noise regions
+    # determine faulty data / noise regions
     min_samples_per_region = 2
     max_samples_per_region = 20
     num_noise_samples = math.floor(noise_percentage * ibi_sequence.shape[0])
     remaining_noise_samples = num_noise_samples
-    noise_areas = []
+    noise_regions = []
 
     i = 0
     while i < ibi_sequence.shape[0] and remaining_noise_samples >= min_samples_per_region:
-        create_noise_area = random.random() < noise_percentage
-        if create_noise_area:
-            noise_area_length = random.randint(min_samples_per_region, min(max_samples_per_region, remaining_noise_samples))
-            if i + noise_area_length >= ibi_sequence.shape[0]:
-                noise_area_length = ibi_sequence.shape[0] - (i + 1)
-            noise_areas.append([idx for idx in range(i, i + noise_area_length)])
-            remaining_noise_samples = remaining_noise_samples - noise_area_length
-            i = i + noise_area_length
+        create_noise_region = random.random() < noise_percentage
+        if create_noise_region:
+            noise_region_length = random.randint(min_samples_per_region, min(max_samples_per_region, remaining_noise_samples))
+            if i + noise_region_length >= ibi_sequence.shape[0]:
+                noise_region_length = ibi_sequence.shape[0] - (i + 1)
+            noise_regions.append([idx for idx in range(i, i + noise_region_length)])
+            remaining_noise_samples = remaining_noise_samples - noise_region_length
+            i = i + noise_region_length
         i = i + 1 
 
-    # TODO: select noise areas, apply interpolation
+    # apply interpolation to noise regions
+    ibi_sequence_interpolated = interpolate_ibi(ibi_sequence, noise_regions)
 
-    # return ibi_sequence
+    return ibi_sequence_interpolated
 
-print( simulate_noise(np.array([i for i in range(200)]), .01) )
 
 def generate_ibi_sequence(num_samples, base_ibi, frequencies, freq_weights, phase_shifts, noise_percentage=0):
     """
@@ -89,6 +89,9 @@ def generate_ibi_sequence(num_samples, base_ibi, frequencies, freq_weights, phas
 
         # Multiply the IBI sequence by the scaled sine wave (1 + value) to adjust the base IBI
         ibi_sequence *= (1 + scaled_sine_wave)
+
+    # simulate areas with faulty data that are then interpolated
+    ibi_sequence = simulate_noise(ibi_sequence, noise_percentage)
 
     return ibi_sequence
 
