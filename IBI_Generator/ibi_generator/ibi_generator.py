@@ -18,6 +18,7 @@ import random
 import math
 
 def simulate_noise(ibi_sequence, noise_percentage):
+    # return if no noise is applied
     if noise_percentage <= 0:
         return ibi_sequence
 
