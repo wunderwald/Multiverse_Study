@@ -92,6 +92,6 @@ def genetic_optimization(i):
 
 # execute batch of optimizations in parallel
 if __name__ == '__main__':
-    NUM_PARALLEL_OPTIMIZATIONS = 5
+    NUM_PARALLEL_OPTIMIZATIONS = 50
     with Pool() as pool:
         pool.map(genetic_optimization, range(NUM_PARALLEL_OPTIMIZATIONS))
