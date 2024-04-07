@@ -55,7 +55,7 @@ def genetic_optimization(i):
         mongodb_client = MongoClient('mongodb://localhost:27017/')
 
         # open or create database
-        db = mongodb_client['genetic_rsa_extended_ibi']
+        db = mongodb_client['genetic_rsa_extended_ibi_w_noise']
 
         # open or create collection for current optimization batch
         db_collection = db[f"fittest_individuals_{int(round(datetime.now().timestamp() * 1000))}"]
@@ -90,6 +90,6 @@ def genetic_optimization(i):
 
 # execute batch of optimizations in parallel
 if __name__ == '__main__':
-    NUM_PARALLEL_OPTIMIZATIONS = 500
+    NUM_PARALLEL_OPTIMIZATIONS = 5
     with Pool() as pool:
         pool.map(genetic_optimization, range(NUM_PARALLEL_OPTIMIZATIONS))

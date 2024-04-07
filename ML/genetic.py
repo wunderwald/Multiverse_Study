@@ -1,4 +1,5 @@
 import numpy as np
+import random
 import ibi_generator as ibi
 import rsa_drew as rsa
 from plot import plot_fitness_distribution, clear_folder
@@ -23,6 +24,7 @@ rng_weights_vlf = [0.00001, 1.0] # original [0.015, 1.0]
 rng_weights_lf = [0.00001, 0.5] # original [0.004, 0.4]
 rng_weights_hf = [0.00001, 0.3] # original [0.002, 0.2]
 rng_phase_shift = [0, 2 * np.pi]
+rng_noise_percentage = [0, .2]
 
 # -------
 # HELPERS
@@ -73,6 +75,8 @@ def get_limits(key: str):
         return rng_freq_lf
     if 'freq' in key and 'hf' in key:
         return rng_freq_hf
+    if 'noise' in key:
+        return rng_noise_percentage
     return [float('-inf'), float('inf')]
 
 def apply_limits(individual: dict):
@@ -116,14 +120,16 @@ def extract_ibi_params(individual: dict):
         'base_ibi': individual['base_ibi_adult'],
         'frequencies': [value for key, value in individual.items() if 'freq' in key and 'adult' in key],
         'freq_weights': [value for key, value in individual.items() if 'weight' in key and 'adult' in key],
-        'phase_shifts': [value for key, value in individual.items() if 'phase' in key and 'adult' in key]
+        'phase_shifts': [value for key, value in individual.items() if 'phase' in key and 'adult' in key],
+        'noise_percentage': individual['noise_percentage_adult']
     }
 
     infant_params = {
         'base_ibi': individual['base_ibi_infant'],
         'frequencies': [value for key, value in individual.items() if 'freq' in key and 'infant' in key],
         'freq_weights': [value for key, value in individual.items() if 'weight' in key and 'infant' in key],
-        'phase_shifts': [value for key, value in individual.items() if 'phase' in key and 'infant' in key]
+        'phase_shifts': [value for key, value in individual.items() if 'phase' in key and 'infant' in key],
+        'noise_percentage': individual['noise_percentage_infant']
     }
 
     return adult_params, infant_params
@@ -170,6 +176,12 @@ def initialize_individual():
     phase_shifts_adult = np.random.uniform(0, 2 * np.pi, NUM_VLF_FREQS + NUM_LF_FREQS + NUM_HF_FREQS)
     phase_shifts_infant = np.random.uniform(0, 2 * np.pi, NUM_VLF_FREQS + NUM_LF_FREQS + NUM_HF_FREQS)
 
+    # Randomize noise percentage
+    adult_signal_is_noisy = random.random() < .5
+    infant_signal_is_noisy = random.random() < .5
+    noise_percentage_adult = random.uniform(*rng_noise_percentage) if adult_signal_is_noisy else .0
+    noise_percentage_infant = random.uniform(*rng_noise_percentage) if infant_signal_is_noisy else .0
+
     # Collect parameters in dict
     individual = {}
     individual['base_ibi_adult'] = base_ibi_adult
@@ -196,6 +208,9 @@ def initialize_individual():
         individual[f"hf_weight_{i}_infant"] = hf_weights_infant[i]
         individual[f"hf_phase_{i}_infant"] = phase_shifts_infant[i + NUM_VLF_FREQS + NUM_LF_FREQS]
         individual[f"hf_phase_{i}_adult"] = phase_shifts_adult[i + NUM_VLF_FREQS + NUM_LF_FREQS]
+
+    individual['noise_percentage_adult'] = noise_percentage_adult
+    individual['noise_percentage_infant'] = noise_percentage_infant
 
     return individual
 
@@ -484,6 +499,12 @@ def crossover(parents: np.array, crossover_method: str, population_size: int, pa
         # turn parameter vectors to dicts
         child0 = dict(zip(param_names, child0_v.tolist()))
         child1 = dict(zip(param_names, child1_v.tolist()))
+
+        # set parent's noise levels to children (this parameter is not due to optimization)
+        child0['noise_percentage_adult'] = parent0['noise_percentage_adult']
+        child0['noise_percentage_infant'] = parent0['noise_percentage_infant']
+        child1['noise_percentage_adult'] = parent1['noise_percentage_adult']
+        child1['noise_percentage_infant'] = parent1['noise_percentage_infant']
         
         # add children to offspring
         offspring[idx0] = child0
