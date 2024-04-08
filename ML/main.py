@@ -14,7 +14,7 @@ def genetic_optimization(i):
     DISTANCE_METRIC = 'euclidean'
     STOP_ON_CONVERGENCE = True
     CONVERGENCE_N = 30
-    USE_NOISE = True
+    USE_NOISE = False
     RANDOM_HYPERPARAMETERS = True
 
     # get hyper-parameters
@@ -92,6 +92,6 @@ def genetic_optimization(i):
 
 # execute batch of optimizations in parallel
 if __name__ == '__main__':
-    NUM_PARALLEL_OPTIMIZATIONS = 50
+    NUM_PARALLEL_OPTIMIZATIONS = 200
     with Pool() as pool:
         pool.map(genetic_optimization, range(NUM_PARALLEL_OPTIMIZATIONS))
