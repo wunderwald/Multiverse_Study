@@ -162,9 +162,8 @@ def run_brute_force_mixed_params(db_name, num_results):
 
 
 if __name__ == '__main__':
-    # DB_NAME = 'genetic_x_brute_force'
-    # # run brute force batches
-    # run_brute_force_mixed_params(db_name=DB_NAME, num_results=500)
-    # # run genetic batches
-    # run_gen_batches_mixed_params(db_name=DB_NAME, num_optimizations=200)
-    run_gen_batches_mixed_params(db_name='test', num_optimizations=2)
+    DB_NAME = 'genetic_x_brute_force'
+    # run brute force batches
+    run_brute_force_mixed_params(db_name=DB_NAME, num_results=500)
+    # run genetic batches
+    run_gen_batches_mixed_params(db_name=DB_NAME, num_optimizations=200)
