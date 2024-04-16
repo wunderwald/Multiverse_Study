@@ -18,7 +18,7 @@ def genetic_optimization(args):
 
     # set hyper-constants
     TARGET_ZLC = 300
-    MAX_NUM_GENERATIONS = 60
+    MAX_NUM_GENERATIONS = 84
     DISTANCE_METRIC = 'euclidean'
     STOP_ON_CONVERGENCE = True
     CONVERGENCE_N = 10
