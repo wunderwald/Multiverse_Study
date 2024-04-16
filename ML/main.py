@@ -18,16 +18,15 @@ def genetic_optimization(args):
 
     # set hyper-constants
     TARGET_ZLC = 300
-    MAX_NUM_GENERATIONS = 200
+    MAX_NUM_GENERATIONS = 60
     DISTANCE_METRIC = 'euclidean'
     STOP_ON_CONVERGENCE = True
-    CONVERGENCE_N = 30
+    CONVERGENCE_N = 10
     USE_NOISE = use_noise
     RANDOM_HYPERPARAMETERS = True
 
     # get hyper-parameters
-    hyperparams = hyper.random_hyperparams(
-    ) if RANDOM_HYPERPARAMETERS else hyper.default_hyperparams()
+    hyperparams = hyper.random_hyperparams() if RANDOM_HYPERPARAMETERS else hyper.default_hyperparams()
 
     # Output parameters
     LOG = True
@@ -100,8 +99,6 @@ def genetic_optimization(args):
     db_collection.insert_one(record)
 
 # batch genetic optimization
-
-
 def genetic_optimization_batch(db_name, db_collection, use_noise=False, ibi_range_type='physiological', num_optimizations=200):
     static_params = {'db_name': db_name, 'db_collection': db_collection,
                      'use_noise': use_noise, 'ibi_range_type': ibi_range_type}
@@ -110,7 +107,7 @@ def genetic_optimization_batch(db_name, db_collection, use_noise=False, ibi_rang
     with Pool() as pool:
         pool.map(genetic_optimization, params)
 
-
+# batch brute force
 def brute_force_batch(db_name, db_collection, num_results, ibi_range_type, use_noise, target_zlc=200, max_deviation=100, log=True):
     results = gen.brute_force(
         target_zlc=target_zlc,
@@ -120,13 +117,24 @@ def brute_force_batch(db_name, db_collection, num_results, ibi_range_type, use_n
         ibi_range_type=ibi_range_type,
         log=log
     )
-    #TODO write to db
+    # connect to mongo db client
+    mongodb_client = MongoClient('mongodb://localhost:27017/')
+
+    # open or create database
+    db = mongodb_client[db_name]
+
+    # open or create collection for current optimization batch
+    db_collection = db[db_collection]
+
+    # store results
+    record = {'dyads': results.tolist()}
+    db_collection.insert_one(record)
 
 
 def run_gen_batches_mixed_params(db_name, num_optimizations):
     for use_noise in [False, True]:
         for ibi_range_type in ['physiological', 'extended_separated', 'extended_overlapping', 'extended_equal']:
-            db_collection = f"genetic__{ibi_range_type}_ibi_{'w_noise' if use_noise else ''}"
+            db_collection = f"genetic_{ibi_range_type}_ibi{'_w_noise' if use_noise else ''}"
             print(
                 f"##### Running genetic optimization batch {'with' if use_noise else 'without'} noise with ibi_range_type={ibi_range_type} #####")
             genetic_optimization_batch(
@@ -143,7 +151,7 @@ def run_brute_force_mixed_params(db_name, num_results):
         for ibi_range_type in ['physiological', 'extended_separated', 'extended_overlapping', 'extended_equal']:
             print(
                 f"##### Running brute force {'with' if use_noise else 'without'} noise with ibi_range_type={ibi_range_type} #####")
-            db_collection = f"brute_force__{ibi_range_type}_ibi_{'w_noise' if use_noise else ''}"
+            db_collection = f"brute_force_{ibi_range_type}_ibi{'_w_noise' if use_noise else ''}"
             brute_force_batch(
                 db_name=db_name, 
                 db_collection=db_collection, 
@@ -154,8 +162,9 @@ def run_brute_force_mixed_params(db_name, num_results):
 
 
 if __name__ == '__main__':
-    DB_NAME = 'genetic_x_brute_force'
-    # run brute force batches
-    run_brute_force_mixed_params(db_name=DB_NAME, num_results=1000)
-    # run genetic batches
-    run_gen_batches_mixed_params(db_name=DB_NAME, num_optimizations=500)
+    # DB_NAME = 'genetic_x_brute_force'
+    # # run brute force batches
+    # run_brute_force_mixed_params(db_name=DB_NAME, num_results=500)
+    # # run genetic batches
+    # run_gen_batches_mixed_params(db_name=DB_NAME, num_optimizations=200)
+    run_gen_batches_mixed_params(db_name='test', num_optimizations=2)
