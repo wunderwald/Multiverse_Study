@@ -1,8 +1,8 @@
 '''
 TODO
-- Add parameter to genetic: ibi_ranges_type: physiological (default), extended_separated, extended_overlapping, extended_equal
-- add parameters to genetic_optiization(i): db_name, db_collection, use_noise
+- add parameters to genetic_optiization(i): db_name, db_collection, use_noise, ibi_type
 - pack multithreaded genetic optimization into function: genetic_multi()
+- Add ibi type to export
 
 '''
 
@@ -25,6 +25,7 @@ def genetic_optimization(i):
     CONVERGENCE_N = 30
     USE_NOISE = False
     RANDOM_HYPERPARAMETERS = True
+    IBI_BASE_RANGE_TYPE = 'physiological'
 
     # get hyper-parameters
     hyperparams = hyper.random_hyperparams() if RANDOM_HYPERPARAMETERS else hyper.default_hyperparams()
@@ -48,6 +49,7 @@ def genetic_optimization(i):
         mutation_scale=hyperparams['MUTATION_SCALE'],
         select_parents_method=hyperparams['SELECT_PARENTS_METHOD'],
         parent_ratio=hyperparams['PARENT_RATIO'],
+        ibi_range_type=IBI_BASE_RANGE_TYPE,
         use_noise = USE_NOISE,
         log=LOG,
         plot=PLOT

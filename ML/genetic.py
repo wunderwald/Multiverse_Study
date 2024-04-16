@@ -15,8 +15,16 @@ NUM_LF_FREQS = 6
 NUM_HF_FREQS = 6
 
 # parameter ranges for IBI generation
-rng_base_ibi_adult = [250, 2000] # ogenetic_rsa: [650, 850]
-rng_base_ibi_infant = [100, 1600] # genetic_rsa: [400, 600]
+rng_base_ibi_adult_physiologial = [650, 850] # physiologically correct values
+rng_base_ibi_infant_physiologial = [400, 600] 
+rng_base_ibi_adult_ext_ovr = [250, 2000] # extended and overlapping ranges
+rng_base_ibi_infant_ext_ovr = [100, 1600] 
+rng_base_ibi_adult_ext_sep = [650, 1150] # extended and separated ranges
+rng_base_ibi_infant_ext_sep = [100, 600] 
+rng_base_ibi_adult_ext_eq = [100, 2000] # extended equal ranges
+rng_base_ibi_infant_ext_eq = [100, 2000] 
+rng_base_ibi_adult = [None, None] # default value, must be updated using set_ibi_range_adult
+rng_base_ibi_infant = [None, None] # default value, must be updated using set_ibi_range_infant
 rng_freq_vlf = [0.01, 0.04]
 rng_freq_lf = [0.04, 0.15]
 rng_freq_hf = [0.15, 0.4]
@@ -25,6 +33,44 @@ rng_weights_lf = [0.00001, 0.5] # original [0.004, 0.4]
 rng_weights_hf = [0.00001, 0.3] # original [0.002, 0.2]
 rng_phase_shift = [0, 2 * np.pi]
 rng_noise_percentage = [0.05, 0.15]
+
+# setters for base ibi ranges (must be called before any optiization process)
+def set_ibi_range_adult(ibi_range_type):
+    if ibi_range_type == 'physiological':
+        rng_base_ibi_adult[0] = rng_base_ibi_adult_physiologial[0]
+        rng_base_ibi_adult[1] = rng_base_ibi_adult_physiologial[1]
+        return
+    if ibi_range_type == 'extended_separated':
+        rng_base_ibi_adult[0] = rng_base_ibi_adult_ext_sep[0]
+        rng_base_ibi_adult[1] = rng_base_ibi_adult_ext_sep[1]
+        return
+    if ibi_range_type == 'extended_overlapping':
+        rng_base_ibi_adult[0] = rng_base_ibi_adult_ext_ovr[0]
+        rng_base_ibi_adult[1] = rng_base_ibi_adult_ext_ovr[1]
+        return
+    if ibi_range_type == 'extended_equal':
+        rng_base_ibi_adult[0] = rng_base_ibi_adult_ext_eq[0]
+        rng_base_ibi_adult[1] = rng_base_ibi_adult_ext_eq[1]
+        return
+    raise ValueError(f'Invalid ibi range type: {ibi_range_type} [options: physiological, extended_separated, extended_overlapping, extended_equal]')
+def set_ibi_range_infant(ibi_range_type):
+    if ibi_range_type == 'physiological':
+        rng_base_ibi_infant[0] = rng_base_ibi_infant_physiologial[0]
+        rng_base_ibi_infant[1] = rng_base_ibi_infant_physiologial[1]
+        return
+    if ibi_range_type == 'extended_separated':
+        rng_base_ibi_infant[0] = rng_base_ibi_infant_ext_sep[0]
+        rng_base_ibi_infant[1] = rng_base_ibi_infant_ext_sep[1]
+        return
+    if ibi_range_type == 'extended_overlapping':
+        rng_base_ibi_infant[0] = rng_base_ibi_infant_ext_ovr[0]
+        rng_base_ibi_infant[1] = rng_base_ibi_infant_ext_ovr[1]
+        return
+    if ibi_range_type == 'extended_equal':
+        rng_base_ibi_infant[0] = rng_base_ibi_infant_ext_eq[0]
+        rng_base_ibi_infant[1] = rng_base_ibi_infant_ext_eq[1]
+        return
+    raise ValueError(f'Invalid ibi range type: {ibi_range_type} [options: physiological, extended_separated, extended_overlapping, extended_equal]')
 
 # -------
 # HELPERS
@@ -614,7 +660,7 @@ def succession(population: np.array, fitness: np.array, crossover_method: str, m
     
     return new_population
 
-def evolution(population_size: int, max_num_generations: int, target_zlc: float, distance_metric: str, crossover_method: str, mutation_rate: float, mutation_scale: float, select_parents_method: str='sus', parent_ratio: float=0.5, use_noise: bool=False, stop_on_convergence: bool=False, convergence_N: int=30, log: bool=False, plot: bool=False):
+def evolution(population_size: int, max_num_generations: int, target_zlc: float, distance_metric: str, crossover_method: str, mutation_rate: float, mutation_scale: float, select_parents_method: str='sus', parent_ratio: float=0.5, ibi_range_type: str='physiological', use_noise: bool=False, stop_on_convergence: bool=False, convergence_N: int=30, log: bool=False, plot: bool=False):
     '''
     Conducts the genetic algorithm's evolution process. 
     The goal is to find parameters for an IBI generation algorithm in order to minimize the distance of the zero-lag coefficient (zlcs) in an RSA Synchrony algorithm to a target zlc.
@@ -635,6 +681,7 @@ def evolution(population_size: int, max_num_generations: int, target_zlc: float,
     - mutation_scale (float): The scale of mutation when it occurs.
     - select_parents_method: The parent selection method. 'sus' selects parents standard uniform sampling, 'roulette_fittest' selects parents using a more simple version of roulette wheel selection that also excludes lower fitness parents. (Default: 'sus')
     - parent_ratio (float): The percentage of individuals extracted from the population to be parents. Optional, defaults to 0.5.
+    - ibi_range_type (str): The type of ibi ranges. Options: 'physiological', 'extended_separated', 'extended_overlapping', 'extended_equal'. Optional, default: 'physiological'
     - use_noise (bool): Assign a noise percentage to each individual that determines how many randomly selected ibi samples are replaced by interpolated values. Optional, defaults to False.
     - stop_on_convergence (bool): Stop creating new generations if best fitness stays the same for a number of generations.
     - convergence_N (int): number of equal best fitness values in a row as convergence condition
@@ -652,6 +699,10 @@ def evolution(population_size: int, max_num_generations: int, target_zlc: float,
     # clear plot folder
     if plot:
         clear_folder('./plots')
+
+    # set ibi ranges by range type
+    set_ibi_range_adult(ibi_range_type)
+    set_ibi_range_infant(ibi_range_type)
 
     # initialize population and fitness
     population = initialize_population(population_size, use_noise)
@@ -710,7 +761,7 @@ def evolution(population_size: int, max_num_generations: int, target_zlc: float,
 
     return population, fitness, last_gen_index
 
-def brute_force(target_zlc: float, max_deviation: float, num_results: int, use_noise: bool, log: bool=True):
+def brute_force(target_zlc: float, max_deviation: float, num_results: int, use_noise: bool, ibi_range_type: str='physiological', log: bool=True):
     '''
     Uses brute force to generate parameter sets that are comparable to fittest individuals created using evolution().
 
@@ -719,11 +770,16 @@ def brute_force(target_zlc: float, max_deviation: float, num_results: int, use_n
     - max_deviation (float): The maximum absolute deviation of the target_zlc for a parameter set to be considered a result.
     - num_results (int): The number of parameter sets to be generated.
     - use_noise (bool): toggles noise in IBI generation.
+    - ibi_range_type (str): The type of ibi ranges. Options: 'physiological', 'extended_separated', 'extended_overlapping', 'extended_equal'. Optional, default: 'physiological'
     - log (bool): toggles logging. (optional, default: True)
 
     Returns: 
     - numpy.ndarray: Array of length num_results containing the result parameter sets.
     '''
+
+    # set ibi ranges by range type
+    set_ibi_range_adult(ibi_range_type)
+    set_ibi_range_infant(ibi_range_type)
 
     # init results vector
     result_index = 0
@@ -739,6 +795,3 @@ def brute_force(target_zlc: float, max_deviation: float, num_results: int, use_n
             results = np.append(results, individual)
 
     return results
-
-            
-
