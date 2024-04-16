@@ -1,11 +1,12 @@
-from dbaccess import get_db_entries
+from dbaccess import get_db_entries, get_db_entries_random_dyads
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from ibi_generator import generate_dyad_ibi, plot_dyad_ibi_sequences
 
 # get data points from database
-data = get_db_entries('genetic_rsa_extended_ibi')
+# data = get_db_entries('genetic_rsa_extended_ibi')
+data = get_db_entries_random_dyads()
 
 base_ibi_adult = [ d['dyad_parameters']['base_ibi_adult'] for d in data ]
 base_ibi_infant = [ d['dyad_parameters']['base_ibi_infant'] for d in data ]
