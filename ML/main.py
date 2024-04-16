@@ -1,3 +1,12 @@
+'''
+TODO
+- Add parameter to genetic: ibi_ranges_type: physiological (default), extended_separated, extended_overlapping, extended_equal
+- add parameters to genetic_optiization(i): db_name, db_collection, use_noise
+- pack multithreaded genetic optimization into function: genetic_multi()
+
+'''
+
+
 from multiprocessing import Pool
 from pymongo import MongoClient
 from datetime import datetime
@@ -56,7 +65,7 @@ def genetic_optimization(i):
         mongodb_client = MongoClient('mongodb://localhost:27017/')
 
         # open or create database
-        db = mongodb_client['genetic_rsa_extended_ibi_w_noise']
+        db = mongodb_client['genetic_rsa_extended_ibi_w_noise' if USE_NOISE else 'genetic_rsa_extended_ibi']
 
         # open or create collection for current optimization batch
         db_collection = db[f"fittest_individuals_{int(round(datetime.now().timestamp() * 1000))}"]

@@ -15,8 +15,8 @@ NUM_LF_FREQS = 6
 NUM_HF_FREQS = 6
 
 # parameter ranges for IBI generation
-rng_base_ibi_adult = [100, 2000] # original [650, 750], genetic_rsa: [650, 850]
-rng_base_ibi_infant = [100, 2000] # original [450, 550], genetic_rsa: [400, 600]
+rng_base_ibi_adult = [250, 2000] # ogenetic_rsa: [650, 850]
+rng_base_ibi_infant = [100, 1600] # genetic_rsa: [400, 600]
 rng_freq_vlf = [0.01, 0.04]
 rng_freq_lf = [0.04, 0.15]
 rng_freq_hf = [0.15, 0.4]
@@ -709,3 +709,36 @@ def evolution(population_size: int, max_num_generations: int, target_zlc: float,
 
 
     return population, fitness, last_gen_index
+
+def brute_force(target_zlc: float, max_deviation: float, num_results: int, use_noise: bool, log: bool=True):
+    '''
+    Uses brute force to generate parameter sets that are comparable to fittest individuals created using evolution().
+
+    Parameters: 
+    - target_zlc (float): A target value for the zero-lag coefficient fitness evaluation function.
+    - max_deviation (float): The maximum absolute deviation of the target_zlc for a parameter set to be considered a result.
+    - num_results (int): The number of parameter sets to be generated.
+    - use_noise (bool): toggles noise in IBI generation.
+    - log (bool): toggles logging. (optional, default: True)
+
+    Returns: 
+    - numpy.ndarray: Array of length num_results containing the result parameter sets.
+    '''
+
+    # init results vector
+    result_index = 0
+    results = np.array([])
+
+    # iteratively generate results
+    while result_index < num_results:
+        individual = initialize_individual(use_noise=use_noise)
+        fitness = evaluate_fitness_individual(individual=individual, target_zlc=target_zlc, distance_metric='euclidian')
+        if fitness > 1/max_deviation:
+            if log: print(f'# result {result_index} of {num_results} found')
+            result_index = result_index + 1
+            results = np.append(results, individual)
+
+    return results
+
+            
+
