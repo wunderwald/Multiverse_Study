@@ -134,6 +134,11 @@ def brute_force_batch(db_name, db_collection, num_results, ibi_range_type, use_n
 def run_gen_batches_mixed_params(db_name, num_optimizations):
     for use_noise in [False, True]:
         for ibi_range_type in ['physiological', 'extended_separated', 'extended_overlapping', 'extended_equal']:
+
+            # remove later!
+            if not use_noise and (ibi_range_type == 'physiological' or ibi_range_type == 'extended_separated' or ibi_range_type == 'extended_overlapping'): 
+                continue
+
             db_collection = f"genetic_{ibi_range_type}_ibi{'_w_noise' if use_noise else ''}"
             print(
                 f"##### Running genetic optimization batch {'with' if use_noise else 'without'} noise with ibi_range_type={ibi_range_type} #####")
@@ -164,6 +169,6 @@ def run_brute_force_mixed_params(db_name, num_results):
 if __name__ == '__main__':
     DB_NAME = 'genetic_x_brute_force'
     # run brute force batches
-    run_brute_force_mixed_params(db_name=DB_NAME, num_results=500)
+    # run_brute_force_mixed_params(db_name=DB_NAME, num_results=500)
     # run genetic batches
     run_gen_batches_mixed_params(db_name=DB_NAME, num_optimizations=200)
