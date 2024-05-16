@@ -52,7 +52,11 @@ def set_ibi_range_adult(ibi_range_type):
         rng_base_ibi_adult[0] = rng_base_ibi_adult_ext_eq[0]
         rng_base_ibi_adult[1] = rng_base_ibi_adult_ext_eq[1]
         return
-    raise ValueError(f'Invalid ibi range type: {ibi_range_type} [options: physiological, extended_separated, extended_overlapping, extended_equal]')
+    if ibi_range_type == 'adult_dyad_physiological':
+        rng_base_ibi_adult[0] = rng_base_ibi_adult_physiologial[0]
+        rng_base_ibi_adult[1] = rng_base_ibi_adult_physiologial[1]
+        return
+    raise ValueError(f'Invalid ibi range type: {ibi_range_type} [options: physiological, extended_separated, extended_overlapping, extended_equal, adult_dyad_physiological]')
 def set_ibi_range_infant(ibi_range_type):
     if ibi_range_type == 'physiological':
         rng_base_ibi_infant[0] = rng_base_ibi_infant_physiologial[0]
@@ -70,7 +74,11 @@ def set_ibi_range_infant(ibi_range_type):
         rng_base_ibi_infant[0] = rng_base_ibi_infant_ext_eq[0]
         rng_base_ibi_infant[1] = rng_base_ibi_infant_ext_eq[1]
         return
-    raise ValueError(f'Invalid ibi range type: {ibi_range_type} [options: physiological, extended_separated, extended_overlapping, extended_equal]')
+    if ibi_range_type == 'adult_dyad_physiological':
+        rng_base_ibi_infant[0] = rng_base_ibi_adult_physiologial[0]
+        rng_base_ibi_infant[1] = rng_base_ibi_adult_physiologial[1]
+        return
+    raise ValueError(f'Invalid ibi range type: {ibi_range_type} [options: physiological, extended_separated, extended_overlapping, extended_equal, adult_dyad_physiological]')
 
 # -------
 # HELPERS
@@ -275,7 +283,7 @@ def initialize_population(population_size: int, use_noise: bool):
     population = [initialize_individual(use_noise) for _ in range(population_size)]
     return np.array(population)
 
-def evaluate_fitness_individual(individual: dict, target_zlc: float, distance_metric: str='euclidian'):
+def evaluate_fitness_individual(individual: dict, target_zlc: float, distance_metric: str='euclidian', adult_dyads: bool=False):
     '''
     Calculates the fitness of an individual based on the deviation of its measured zero-lag coefficient (ZLC) of RSA cross-correlation from a target ZLC.
 
@@ -304,7 +312,7 @@ def evaluate_fitness_individual(individual: dict, target_zlc: float, distance_me
         )
 
         # calculate synchrony
-        zlc, _ = rsa.rsa_synchrony(adult_ibi, infant_ibi)
+        zlc, _ = rsa.rsa_synchrony(adult_ibi, infant_ibi) if not adult_dyads else rsa.rsa_synchrony_adults(adult_ibi, infant_ibi)
 
         # calculate fitness
         abs_distance = abs(zlc - target_zlc)
@@ -323,7 +331,7 @@ def evaluate_fitness_individual(individual: dict, target_zlc: float, distance_me
     except ValueError:
         return float('-inf')
     
-def evaluate_fitness(population: np.array, target_zlc: float, distance_metric: str='euclidian'):
+def evaluate_fitness(population: np.array, target_zlc: float, distance_metric: str='euclidian', adult_dyads: bool=False):
     '''
     Evaluates the fitness of each individual in the population based on the deviation from the ideal zero-lag coefficient (ZLC) of RSA cross-correlation.
 
@@ -338,7 +346,7 @@ def evaluate_fitness(population: np.array, target_zlc: float, distance_metric: s
     Returns:
     np.array: An array of fitness values, one for each individual in the population. Lower fitness values indicate a closer match to the target ZLC and thus a more desirable solution.
     '''
-    return [evaluate_fitness_individual(individual, target_zlc, distance_metric) for individual in population]
+    return [evaluate_fitness_individual(individual, target_zlc, distance_metric, adult_dyads) for individual in population]
 
 def select_parents_sus(population: np.array, fitness: np.array, num_parents: int):
     '''
@@ -681,7 +689,7 @@ def evolution(population_size: int, max_num_generations: int, target_zlc: float,
     - mutation_scale (float): The scale of mutation when it occurs.
     - select_parents_method: The parent selection method. 'sus' selects parents standard uniform sampling, 'roulette_fittest' selects parents using a more simple version of roulette wheel selection that also excludes lower fitness parents. (Default: 'sus')
     - parent_ratio (float): The percentage of individuals extracted from the population to be parents. Optional, defaults to 0.5.
-    - ibi_range_type (str): The type of ibi ranges. Options: 'physiological', 'extended_separated', 'extended_overlapping', 'extended_equal'. Optional, default: 'physiological'
+    - ibi_range_type (str): The type of ibi ranges. Options: 'physiological', 'extended_separated', 'extended_overlapping', 'extended_equal', 'adult_dyad_physiological'. Optional, default: 'physiological'
     - use_noise (bool): Assign a noise percentage to each individual that determines how many randomly selected ibi samples are replaced by interpolated values. Optional, defaults to False.
     - stop_on_convergence (bool): Stop creating new generations if best fitness stays the same for a number of generations.
     - convergence_N (int): number of equal best fitness values in a row as convergence condition
@@ -704,9 +712,12 @@ def evolution(population_size: int, max_num_generations: int, target_zlc: float,
     set_ibi_range_adult(ibi_range_type)
     set_ibi_range_infant(ibi_range_type)
 
+    # check if evolution is for adult dyads
+    adult_dyads = (ibi_range_type == 'adult_dyad_physiological')
+
     # initialize population and fitness
     population = initialize_population(population_size, use_noise)
-    fitness = evaluate_fitness(population, target_zlc, distance_metric)
+    fitness = evaluate_fitness(population, target_zlc, distance_metric, adult_dyads)
     last_gen_index = 0
 
     # initialize history for best fitness values
@@ -737,7 +748,7 @@ def evolution(population_size: int, max_num_generations: int, target_zlc: float,
         population = np.array([apply_limits(individual) for individual in uniquify(population)])
 
         # calculate fitness
-        fitness = evaluate_fitness(population, target_zlc, distance_metric)
+        fitness = evaluate_fitness(population, target_zlc, distance_metric, adult_dyads)
         best_fitness = np.max(fitness)    
 
         # test for convergence:
@@ -770,7 +781,7 @@ def brute_force(target_zlc: float, max_deviation: float, num_results: int, use_n
     - max_deviation (float): The maximum absolute deviation of the target_zlc for a parameter set to be considered a result.
     - num_results (int): The number of parameter sets to be generated.
     - use_noise (bool): toggles noise in IBI generation.
-    - ibi_range_type (str): The type of ibi ranges. Options: 'physiological', 'extended_separated', 'extended_overlapping', 'extended_equal'. Optional, default: 'physiological'
+    - ibi_range_type (str): The type of ibi ranges. Options: 'physiological', 'extended_separated', 'extended_overlapping', 'extended_equal', 'adult_dyad_physiological'. Optional, default: 'physiological'
     - log (bool): toggles logging. (optional, default: True)
 
     Returns: 
@@ -788,7 +799,7 @@ def brute_force(target_zlc: float, max_deviation: float, num_results: int, use_n
     # iteratively generate results
     while result_index < num_results:
         individual = initialize_individual(use_noise=use_noise)
-        fitness = evaluate_fitness_individual(individual=individual, target_zlc=target_zlc, distance_metric='euclidian')
+        fitness = evaluate_fitness_individual(individual=individual, target_zlc=target_zlc, distance_metric='euclidian', adult_dyads=(ibi_range_type=='adult_dyad_physiological'))
         if fitness > 1/max_deviation:
             if log: print(f'# result {result_index+1} of {num_results} found')
             result_index = result_index + 1
