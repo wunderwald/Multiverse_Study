@@ -1,7 +1,7 @@
 import numpy as np
 import random
 import math
-from .ibi_interpolation import interpolate_ibi
+from ibi_interpolation import interpolate_ibi
 
 def simulate_noise(ibi_sequence, noise_percentage):
     '''

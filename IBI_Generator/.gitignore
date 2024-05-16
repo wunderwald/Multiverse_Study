@@ -1,4 +1,5 @@
 ibi_env/*
 *.pyc
-*/dyad_ibi_data/*
+dyad_ibi_data/*
+adult_dyad_ibi_data/*
 ibi_generator.egg_info/*
