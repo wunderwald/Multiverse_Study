@@ -165,10 +165,21 @@ def run_brute_force_mixed_params(db_name, num_results):
                 use_noise=use_noise,
             )
 
+def run_brute_force_final_dyads(db_name, num_results):
+    use_noise = False
+    ibi_range_type = 'physiological'
+    print(
+        f"##### Running brute force {'with' if use_noise else 'without'} noise with ibi_range_type={ibi_range_type} #####")
+    db_collection = f"brute_force_{ibi_range_type}_ibi{'_w_noise' if use_noise else ''}"
+    brute_force_batch(
+        db_name=db_name, 
+        db_collection=db_collection, 
+        num_results=num_results, 
+        ibi_range_type=ibi_range_type,
+        use_noise=use_noise,
+    )
+
 
 if __name__ == '__main__':
-    DB_NAME = 'genetic_x_brute_force'
-    # run brute force batches
-    # run_brute_force_mixed_params(db_name=DB_NAME, num_results=500)
-    # run genetic batches
-    run_gen_batches_mixed_params(db_name=DB_NAME, num_optimizations=200)
+    DB_NAME = 'dyads_final'
+    run_brute_force_final_dyads(db_name=DB_NAME, num_results=2000)
