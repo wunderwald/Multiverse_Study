@@ -120,9 +120,9 @@ def rsa_synchrony_adults(adult_0_ibi, adult_1_ibi):
         raise ValueError("! Insufficient length of filtered RSA data")
 
     f = interp1d(np.arange(len(RSA_0_filt)), RSA_0_filt)
-    RSA_0_filt_intpl = f(np.linspace(0, len(RSA_0_filt) - 1, len(r_M)))
+    RSA_0_filt_intpl = f(np.linspace(0, len(RSA_0_filt) - 1, len(r_0)))
     f = interp1d(np.arange(len(RSA_1_filt)), RSA_1_filt)
-    RSA_1_filt_intpl = f(np.linspace(0, len(RSA_1_filt) - 1, len(r_M)))
+    RSA_1_filt_intpl = f(np.linspace(0, len(RSA_1_filt) - 1, len(r_0)))
 
     # calculate log of variance with sliding window
     window_size = 74  # 15 seconds window at 5 Hz sampling rate

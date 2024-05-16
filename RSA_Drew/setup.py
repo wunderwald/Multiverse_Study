@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='rsa_drew',
-    version='1.1',
+    version='1.11',
     packages=find_packages(),
     package_data={'rsa_drew': ['*.csv']},
     description='Calculate RSA Synchrony',
