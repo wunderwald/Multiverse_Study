@@ -9,13 +9,13 @@ DO_PLOT = False
 DO_EXPORT = True
 ITERATIONS = 1
 RECORDING_LENGTH_S = 300  # 5 minutes
-#OUTPUT_DIR = './dyad_ibi_data'
-OUTPUT_DIR = './adult_dyad_ibi_data'
+OUTPUT_DIR = './dyad_ibi_data'
+#OUTPUT_DIR = './adult_dyad_ibi_data'
 
 # db keys
 DB_NAME = 'dyads_final'
-# DB_COLLECTION = 'brute_force_physiological_ibi'
-DB_COLLECTION = 'brute_force_adult_dyad_physiological_ibi'
+DB_COLLECTION = 'brute_force_physiological_ibi'
+#DB_COLLECTION = 'brute_force_adult_dyad_physiological_ibi'
 
 def save_ibi_to_csv(ibi_sequence, directory, filename):
     """
