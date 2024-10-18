@@ -25,8 +25,13 @@ for dyad in dyads:
     ibi_b = pd.read_csv(ibi_b_path)['ms'].to_numpy().flatten()
 
     # calculate synchrony
-    sync = rsa_epoch_synchrony(ibi_a, ibi_b)
-
+    sync = rsa_epoch_synchrony(
+        ibi_a_ms=ibi_a, 
+        ibi_b_ms=ibi_b, 
+        epoch_length_ms=30000,
+        rsa_method='porges_bohrer',
+        sync_type='pearson_corr'
+    )
     sync_scores.append(sync)
 
 # Create the histogram

@@ -1,7 +1,8 @@
+import math
+import scipy.stats
 import neurokit2 as nk2
 from neurokit2.hrv.hrv_rsa import _hrv_rsa_pb
-import scipy.stats
-import math
+from resample import resample_ibi
 
 # --------------------------------
 # HELPERS
@@ -78,7 +79,9 @@ def rsa_hf_hrv(ibi_ms):
     return hrv_hf_power
 
 def rsa_porges_bohrer(ibi_ms):
-    rsa = _hrv_rsa_pb(ecg_period=ibi_ms, sampling_rate=1000, continuous=False)
+    resampling_rate = 100
+    ibi_resampled = resample_ibi(ibi_ms, resampling_rate)
+    rsa = _hrv_rsa_pb(ibi_resampled, resampling_rate)
     return rsa["RSA_PorgesBohrer"]
 
 def rsa_drew_single_window(ibi_ms):
