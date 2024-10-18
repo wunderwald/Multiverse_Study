@@ -29,12 +29,11 @@ for dyad in dyads:
 
     sync_scores.append(sync)
 
-
 # Create the histogram
 plt.hist(sync_scores, bins=50, alpha=0.7, color='blue', edgecolor='black')
 
 # Add titles and labels
-plt.title('Distribution of sync scores (30000ms epochs, HF-HRV, Pearson correlation)')
+plt.title('Distribution of sync scores (30000ms epochs, Porges Bohrer, Pearson correlation)')
 plt.xlabel('Synchrony')
 plt.ylabel('Frequency')
 

@@ -1,5 +1,5 @@
 import neurokit2 as nk2
-import numpy as np
+from neurokit2.hrv.hrv_rsa import _hrv_rsa_pb
 import scipy.stats
 import math
 
@@ -73,11 +73,16 @@ def synchrony(rsa_epochs_a, rsa_epochs_b, sync_type):
 
 def rsa_hf_hrv(ibi_ms):
     peaks = ibi_to_peaks(ibi_ms)
-    hrv_power = nk2.hrv_frequency(peaks, sampling_rate=1000)
-    hrv_hf_power = hrv_power['HRV_HF'][0]
+    hrv = nk2.hrv_frequency(peaks, sampling_rate=1000)
+    hrv_hf_power = hrv['HRV_HF'][0]
     return hrv_hf_power
 
+def rsa_porges_bohrer(ibi_ms):
+    rsa = _hrv_rsa_pb(ecg_period=ibi_ms, sampling_rate=1000, continuous=False)
+    return rsa["RSA_PorgesBohrer"]
+
 def rsa_drew_single_window(ibi_ms):
+    # TODO
     pass
 
 def rsa_per_epoch(ibi_ms, epoch_length_ms, rsa_method):
@@ -91,7 +96,7 @@ def rsa_per_epoch(ibi_ms, epoch_length_ms, rsa_method):
     Parameters:
     - ibi_ms (array-like): list of ibi samples in ms
     - epoch_length_ms (float): (max) length of epochs in ms
-    - rsa_method (string): options are 'hf_hrv', 'drew'...
+    - rsa_method (string): options are 'hf_hrv', 'drew', 'porges_bohrer'...
 
     Returns:
     - epochs (array): list of epoch-based rsa values 
@@ -111,6 +116,8 @@ def rsa_per_epoch(ibi_ms, epoch_length_ms, rsa_method):
         match rsa_method:
             case 'hf_hrv':
                 rsa_value = rsa_hf_hrv(epoch)
+            case 'porges_bohrer':
+                rsa_value = rsa_porges_bohrer(epoch)
             case 'drew':
                 rsa_value = rsa_drew_single_window(epoch)
         rsa_epochs.append(rsa_value)
