@@ -49,7 +49,7 @@ def simulate_noise(ibi_sequence, noise_percentage):
 
 def generate_ibi_sequence(num_samples, base_ibi, frequencies, freq_weights, phase_shifts, noise_percentage=0):
     """
-    Generates an IBI (Inter-Beat-Interval) sequence.
+    Generates an IBI (Inter-Beat-Interval) sequence using HRV simulation.
 
     Parameters:
     - num_samples (int): Number of samples in the output sequence.
