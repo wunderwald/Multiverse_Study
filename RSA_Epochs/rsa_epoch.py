@@ -41,8 +41,8 @@ def synchrony(rsa_epochs_a, rsa_epochs_b, sync_type):
     Calculates synchrony based on a type of synchrony measure.
 
     Parameters:
-    - rsa_epochs_a: (array-like): list of rsa epoch values.
-    - rsa_epochs_b: (array-like): list of rsa epoch values.
+    - rsa_epochs_a: (array-like): list of rsa epoch values (adult for adult_infant dyads)
+    - rsa_epochs_b: (array-like): list of rsa epoch values (infant for adult_infant dyads)
     - sync_type (str): Options are 'pearson_corr', 'spearman_corr', 'kendall_corr',
 
     Returns:
