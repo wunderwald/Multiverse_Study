@@ -9,6 +9,80 @@ from .resampled_ibi_ts import resampled_IBI_ts
 from .poly_filter_data_2011 import poly_filter_data_2011
 from .sliding_window import sliding_window_log_var
 
+def rsa_adult(adult_ibi):
+    """
+    This function calculates continuous RSA for an adult using a Porges-Bohrer approach.
+
+    Parameters:
+    - adult_ibi (array-like): list of adult IBIs in ms
+    
+    Returns:
+    - RSA_A_filt (array-like): a filtered, continuous RSA signal
+    - r_A (array-like): the input RSA data, resampled to 5hz
+    """
+
+    # load filter
+    filt_A_path = pkg_resources.resource_filename('rsa_drew', 'adult_rsa_5Hz_cLSq.csv')
+    filt_A = pd.read_csv(filt_A_path).to_numpy().flatten()
+
+    # resample IBI data to 5Hz
+    r_A = resampled_IBI_ts(adult_ibi, 5, False)
+
+    # get RSA/BPM and filter RSA
+    RSA_A, BPM_A = poly_filter_data_2011(r_A[:, 1], 51, True) 
+    RSA_A_filt = convolve(RSA_A, filt_A, mode='valid')
+
+    return RSA_A_filt, r_A
+   
+
+def rsa_infant(infant_ibi):
+    """
+    This function calculates continuous RSA for an infant using a Porges-Bohrer approach.
+
+    Parameters:
+    - adult_ibi (array-like): list of infant IBIs in ms
+    
+    Returns:
+    - RSA_I_filt (array-like): a filtered, continuous RSA signal
+    - r_I (array-like): the input RSA data, resampled to 5hz
+    """
+    # load filter
+    filt_I_path = pkg_resources.resource_filename('rsa_drew', 'child_RSA.csv')
+    filt_I = pd.read_csv(filt_I_path).to_numpy().flatten()
+
+    # resample IBI data to 5Hz
+    r_I = resampled_IBI_ts(infant_ibi, 5, False)
+
+    # get RSA/BPM and filter RSA
+    RSA_I, BPM_I = poly_filter_data_2011(r_I[:, 1], 51, True)
+    RSA_I_filt = convolve(RSA_I, filt_I, mode='valid')   
+
+    return RSA_I_filt, r_I
+
+def rsa_magnitude_adult(adult_ibi):
+    """
+    This function calculates (single-value) RSA magnitude for an adult using a Porges-Bohrer approach.
+
+    Parameters:
+    - adult_ibi (array-like): list of adult IBIs in ms
+    
+    Returns:
+    - rsa_magnitude (float): RSA magnitude measured as the log of the variance of a filtered, continuous RSA signal
+    """
+    return np.log(np.var(rsa_adult(adult_ibi)))
+
+def rsa_magnitude_infant(infant_ibi):
+    """
+    This function calculates (single-value) RSA magnitude for an infant using a Porges-Bohrer approach.
+
+    Parameters:
+    - infant_ibi (array-like): list of infant IBIs in ms
+    
+    Returns:
+    - rsa_magnitude (float): RSA magnitude measured as the log of the variance of a filtered, continuous RSA signal
+    """
+    return np.log(np.var(rsa_infant(infant_ibi)))
+
 def rsa_synchrony(mother_ibi, infant_ibi):
     """
     This function calculates the zero lag coefficient and the full cross-correlation function (ccf)
@@ -27,22 +101,9 @@ def rsa_synchrony(mother_ibi, infant_ibi):
     - ValueError: If the length of filtered RSA data is insufficient for further processing.
     """
 
-    # load filters
-    filt_M_path = pkg_resources.resource_filename('rsa_drew', 'adult_rsa_5Hz_cLSq.csv')
-    filt_I_path = pkg_resources.resource_filename('rsa_drew', 'child_RSA.csv')
-    filt_M = pd.read_csv(filt_M_path).to_numpy().flatten()
-    filt_I = pd.read_csv(filt_I_path).to_numpy().flatten()
-
-    # resample IBI data to 5Hz
-    r_M = resampled_IBI_ts(mother_ibi, 5, False)
-    r_I = resampled_IBI_ts(infant_ibi, 5, False)
-
-    # get RSA/BPM and filter RSA
-    RSA_M, BPM_M = poly_filter_data_2011(r_M[:, 1], 51, True) 
-    RSA_M_filt = convolve(RSA_M, filt_M, mode='valid')
-
-    RSA_I, BPM_I = poly_filter_data_2011(r_I[:, 1], 51, True)
-    RSA_I_filt = convolve(RSA_I, filt_I, mode='valid')    
+    # calculate RSA for mother and infant
+    RSA_M_filt, r_M = rsa_adult(mother_ibi)
+    RSA_I_filt, _ = rsa_infant(infant_ibi)
 
     # interpolate filtered RSA data
     if len(RSA_M_filt) < 2 or len(RSA_I_filt) < 2:
