@@ -85,9 +85,6 @@ def rsa_porges_bohrer(ibi_ms):
     rsa = _hrv_rsa_pb(ibi_resampled, resampling_rate)
     return rsa["RSA_PorgesBohrer"]
 
-def rsa_drew_magnitude(ibi_ms):
-    return rsa_magnitude_adult(ibi_ms)
-
 def rsa_per_epoch(ibi_ms, epoch_length_ms, rsa_method, age_type='adult'):
     '''
     Calculates epoch-based RSA in epochs of a set length.
@@ -124,7 +121,7 @@ def rsa_per_epoch(ibi_ms, epoch_length_ms, rsa_method, age_type='adult'):
             case 'porges_bohrer':
                 rsa_value = rsa_porges_bohrer(epoch)
             case 'drew':
-                rsa_value = rsa_magnitude_adult(epoch) if age_type == 'adult' else rsa_magnitude_infant(epoch)
+                rsa_value = rsa_magnitude_infant(epoch) if age_type == 'infant' else rsa_magnitude_adult(epoch)
         rsa_epochs.append(rsa_value)
     return rsa_epochs
 
