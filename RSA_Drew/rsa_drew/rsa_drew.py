@@ -69,7 +69,8 @@ def rsa_magnitude_adult(adult_ibi):
     Returns:
     - rsa_magnitude (float): RSA magnitude measured as the log of the variance of a filtered, continuous RSA signal
     """
-    return np.log(np.var(rsa_adult(adult_ibi)))
+    rsa_filtered, _ = rsa_adult(adult_ibi)
+    return np.log(np.var(rsa_filtered))
 
 def rsa_magnitude_infant(infant_ibi):
     """
@@ -81,7 +82,8 @@ def rsa_magnitude_infant(infant_ibi):
     Returns:
     - rsa_magnitude (float): RSA magnitude measured as the log of the variance of a filtered, continuous RSA signal
     """
-    return np.log(np.var(rsa_infant(infant_ibi)))
+    rsa_filtered, _ = rsa_infant(infant_ibi)
+    return np.log(np.var(rsa_filtered))
 
 def rsa_synchrony(mother_ibi, infant_ibi):
     """
