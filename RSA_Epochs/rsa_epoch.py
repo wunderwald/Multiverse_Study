@@ -3,6 +3,7 @@ import scipy.stats
 import neurokit2 as nk2
 from neurokit2.hrv.hrv_rsa import _hrv_rsa_pb
 from resample import resample_ibi
+from rsa_drew import rsa_magnitude_adult
 
 # --------------------------------
 # HELPERS
@@ -84,9 +85,8 @@ def rsa_porges_bohrer(ibi_ms):
     rsa = _hrv_rsa_pb(ibi_resampled, resampling_rate)
     return rsa["RSA_PorgesBohrer"]
 
-def rsa_drew_single_window(ibi_ms):
-    # TODO
-    pass
+def rsa_drew_magnitude(ibi_ms):
+    return rsa_magnitude_adult(ibi_ms)
 
 def rsa_per_epoch(ibi_ms, epoch_length_ms, rsa_method):
     '''
@@ -122,7 +122,7 @@ def rsa_per_epoch(ibi_ms, epoch_length_ms, rsa_method):
             case 'porges_bohrer':
                 rsa_value = rsa_porges_bohrer(epoch)
             case 'drew':
-                rsa_value = rsa_drew_single_window(epoch)
+                rsa_value = rsa_magnitude_adult(epoch)
         rsa_epochs.append(rsa_value)
     return rsa_epochs
 
